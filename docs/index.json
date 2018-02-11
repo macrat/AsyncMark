@@ -3,7 +3,7 @@
     "__docId__": 0,
     "kind": "file",
     "name": "dist/promise-bench.mjs",
-    "content": "import now from 'performance-now';\n\n\n/**\n * The result of benchmark.\n */\nexport class Result {\n\t/**\n\t * @param {String} name - name of benchmark.\n\t * @param {Number[]} msecs - times of benchmark result.\n\t *\n\t * @ignore\n\t */\n\tconstructor(name, msecs) {\n\t\t/**\n\t\t * Name of this test.\n\t\t *\n\t\t * @type {String}\n\t\t */\n\t\tthis.name = name;\n\n\t\t/**\n\t\t * Times of benchmark result in milliseconds.\n\t\t *\n\t\t * @type {Number[]}\n\t\t */\n\t\tthis.msecs = msecs;\n\t}\n\n\t/**\n\t * Total milliseconds of this benchmark.\n\t *\n\t * @type {Number}\n\t */\n\tget total() {\n\t\treturn this.msecs.reduce((x, y) => x + y);\n\t}\n\n\t/**\n\t * Average time of this benchmark in milliseconds.\n\t *\n\t * @type {Number}\n\t */\n\tget average() {\n\t\treturn this.total / this.msecs.length;\n\t}\n\n\t/**\n\t * Time variance of times.\n\t *\n\t * @type {Number}\n\t */\n\tget variance() {\n\t\tconst avg = this.average;\n\t\treturn this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / this.msecs.length;\n\t}\n\n\t/**\n\t * Standard division of times.\n\t *\n\t * @type {Number}\n\t */\n\tget std() {\n\t\treturn Math.sqrt(this.variance);\n\t}\n\n\t/**\n\t * Standard error of the mean of times.\n\t *\n\t * @type {Number}\n\t */\n\tget sem() {\n\t\treturn this.std / Math.sqrt(this.msecs.length);\n\t}\n\n\t/**\n\t * Guessed error range of this benchmark.\n\t *\n\t * @type {Number}\n\t */\n\tget error() {\n\t\treturn this.sem * 1.96;\n\t}\n\n\t/**\n\t * Error range per average time.\n\t *\n\t * @type {Number}\n\t */\n\tget errorRate() {\n\t\treturn this.error / this.average;\n\t}\n\n\t/**\n\t * Convert to string for printing.\n\t *\n\t * @return {String}\n\t */\n\ttoString() {\n\t\tconst avg = Math.round(this.average * 10000) / 10000;\n\t\tconst error = Math.round(this.error * 10000) / 10000;\n\t\tconst rate = Math.round(this.errorRate * 10000) / 100;\n\t\treturn `${this.name}: ${avg}msec +-${error}msec (${rate}%) / ${this.msecs.length} times tried`;\n\t}\n}\n\n\n/**\n * Class for benchmarking.\n *\n * Benchmark will execute by flow like this.\n *\n *   - before\n *   - beforeEach\n *   - fun\n *   - afterEach\n *   - after\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import Benchmark from 'promise-bench';\n * \n * \n * new Benchmark({\n *     name: 'timeout',\n *     fun() {\n *         return new Promise((resolve, reject) => {\n *             setTimeout(resolve, 100);\n *         });\n *     },\n * }).run().catch(console.error);\n */\nexport default class Benchmark {\n\t/**\n\t * @param {Object|function} [options] - options for this benchmark or benchmarking function.\n\t * @param {Number} [options.name='unnamed'] - name of this benchmark.\n\t * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.\n\t * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.\n\t * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.\n\t * @param {?Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.\n\t * @param {function} [options.before] - setup function. see {@link Benchmark#before}.\n\t * @param {function} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.\n\t * @param {function} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.\n\t * @param {function} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.\n\t * @param {function} [options.after] - teardown function. see {@link Benchmark#after}.\n\t */\n\tconstructor(options={}) {\n\t\t/**\n\t\t * Name of this benchmark.\n\t\t *\n\t\t * @type {String}\n\t\t */\n\t\tthis.name = options.name || 'unnamed';\n\n\t\t/**\n\t\t * Wanted maximum error rate.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.targetErrorRate = options.targetErrorRate || 0.1;\n\n\t\t/**\n\t\t * Maximum number of executing test.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.maxNumber = options.maxNumber || 10000;\n\n\t\t/**\n\t\t * Minimal number of executing test.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.minNumber = options.minNumber || 30;\n\n\t\t/**\n\t\t * The number of executing the test.\n\t\t * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.\n\t\t *\n\t\t * @type {Number|null}\n\t\t */\n\t\tthis.number = options.number || null;\n\n\t\tif (typeof options === 'function') {\n\t\t\tthis.fun = options;\n\t\t} else {\n\t\t\toptions.__proto__ = Benchmark.prototype;\n\n\t\t\t/** @ignore */\n\t\t\tthis.__proto__ = options;\n\t\t}\n\t}\n\n\t/**\n\t * Setup before execute benchmark.\n\t *\n\t * At the time executing this method, `this` is the unique object for the benchmark.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#after}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync before() {}\n\n\t/**\n\t * Setup before each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Number} count - count of done tests in this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync beforeEach(count) {}\n\n\t/**\n\t * Setup before each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\t *\n\t * In default, couses error that `'target function is not defined'`.\n\t *\n\t * @abstract \n\t *\n\t * @return {?Promise}\n\t */\n\tasync fun() {\n\t\tthrow 'target function is not defined';\n\t}\n\n\t/**\n\t * Teardown after each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Number} count - count of done tests in this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tafterEach(count) {}\n\n\t/**\n\t * Teardown after execute benchmark.\n\t *\n\t * At the time executing this method, `this` is the unique object for the benchmark.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, shows test result.\n\t *\n\t * @param {Result} result - result of this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tafter(result) {\n\t\tconsole.log(String(result));\n\t}\n\n\t/**\n\t * Execute benchmark.\n\t *\n\t * @param {Object} [context] - the `this` for each benchmarking functions.\n\t *\n\t * @return {Promise<Result>}\n\t */\n\tasync run(context=undefined) {\n\t\tif (!context) {\n\t\t\tcontext = {__proto__: this};\n\t\t}\n\n\t\tawait this.before.call(context);\n\n\t\tconst loopNum = this.number || this.maxNumber;\n\n\t\tconst msecs = [];\n\t\tfor (let i=0; i<loopNum; i++) {\n\t\t\tconst ctx = {__proto__: context};\n\n\t\t\tawait this.beforeEach.call(ctx, i);\n\n\t\t\tconst start = now();\n\t\t\tawait this.fun.call(ctx);\n\t\t\tconst end = now();\n\n\t\t\tawait this.afterEach.call(ctx, i);\n\t\t\tmsecs.push(end - start);\n\n\t\t\tif (!this.number && i + 1 >= this.minNumber) {\n\t\t\t\tconst result = new Result(this.name, msecs);\n\t\t\t\tif (result.errorRate <= this.targetErrorRate) {\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\tconst result = new Result(this.name, msecs);\n\t\tawait this.after.call(context, result);\n\t\treturn result;\n\t}\n}\n\n\n/**\n * A set of {@link Benchmark}s for executing those sequential or parallel.\n *\n *\n * @example\n * import {Suite} from 'promise-bench';\n * \n * \n * new Suite({\n *     beforeEach() {\n *         this.text = 'hello world';\n *     },\n *     async: true,\n * })\n * .add(function() {\n *     /o/.test(this.text);\n * })\n * .add({\n *     name: 'String#indexOf'\n *     before() {\n *         console.log('starting String#indexOf...');\n *     },\n *     fun() {\n *         this.text.indexOf('o') > -1;\n *     },\n * })\n * .add({\n *     name: 'String#match'\n *     fun() {\n *         !!this.text.match(/o/);\n *     },\n *     after(result) {\n *         console.log('String#match is done! ' + result);\n *     },\n * })\n * .run()\n */\nexport class Suite {\n\t/**\n\t * @param {Object} [options={}] - default options for benchmarks in this suite.\n\t * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.\n\t * @param {function} [options.beforeSuite] - setup function. see {@link Suite#beforeSuite}.\n\t * @param {function} [options.afterSuite] - setup function. see {@link Suite#afterSuite}.\n\t */\n\tconstructor(options={}) {\n\t\t/**\n\t\t * Default options for benchmarks in this suite.\n\t\t *\n\t\t * @type {Object}\n\t\t */\n\t\tthis.options = options;\n\n\t\t/**\n\t\t * A list of {@link Benchmark}.\n\t\t *\n\t\t * @type {Benchmark[]}\n\t\t */\n\t\tthis.benchmarks = [];\n\n\t\t/**\n\t\t * Flag for executing each benchmark asynchronously.\n\t\t *\n\t\t * @type {Boolean}\n\t\t */\n\t\tthis.async = options.async || false;\n\n\t\tif (options.beforeSuite) {\n\t\t\tthis.beforeSuite = options.beforeSuite;\n\t\t}\n\n\t\tif (options.afterSuite) {\n\t\t\tthis.afterSuite = options.afterSuite;\n\t\t}\n\t}\n\n\t/**\n\t * Setup before execute all benchmarks.\n\t *\n\t * At the time executing this method, `this` is the unique object for the suite.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call {@link Suite#afterSuite}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync beforeSuite() {}\n\n\t/**\n\t * Teardown after execute all benchmarks.\n\t *\n\t * At the time executing this method, `this` is the unique object for the suite.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Result[]} results - a list of benchmark result.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync afterSuite(results) {}\n\n\t/**\n\t * Adding {@link Benchmark} instance into this {@link Suite}.\n\t *\n\t * @param {Benchmark} benchmark - the benchmark instance for adding.\n\t *\n\t * @return {Suite} returns this suite for method chain.\n\t */\n\taddBenchmark(benchmark) {\n\t\tthis.benchmarks.push(benchmark);\n\t\treturn this;\n\t}\n\n\t/**\n\t * Make new benchmark and adding into this {@link Suite}.\n\t *\n\t * @param {Object|function} [options={}] - arguments for {@link Benchmark#constructor}.\n\t *\n\t * @return {Suite} returns this suite for method chain.\n\t */\n\tadd(options={}) {\n\t\tif (typeof options === 'function') {\n\t\t\tthis.addBenchmark(new Benchmark(Object.assign({fun: options}, this.options)));\n\t\t} else {\n\t\t\tthis.addBenchmark(new Benchmark(Object.assign(Object.assign({}, options), this.options)));\n\t\t}\n\t\treturn this;\n\t}\n\n\t/**\n\t * Execute benchmarks in this suite.\n\t *\n\t * All benchmarks will execute parallel if enabled {@link Suite#async} option.\n\t * Else do execute sequentially by added order.\n\t *\n\t * @param {Object} [context] - the `this` for each benchmarking functions.\n\t *\n\t * @return {Promise<Result[]>}\n\t */\n\tasync run(context=undefined) {\n\t\tif (!context) {\n\t\t\tcontext = {__proto__: this};\n\t\t}\n\n\t\tawait this.beforeSuite.call(context);\n\n\t\tif (this.async) {\n\t\t\treturn await Promise.all(this.benchmarks.map(x => x.run(context))).then(async (result) => {\n\t\t\t\tawait this.afterSuite.call(context, result);\n\t\t\t\treturn result;\n\t\t\t});\n\t\t}\n\n\t\tconst result = [];\n\t\tfor (let b of this.benchmarks) {\n\t\t\tresult.push(await b.run(context));\n\t\t}\n\n\t\tawait this.afterSuite.call(context, result);\n\n\t\treturn result;\n\t}\n}\n",
+    "content": "const now = (typeof performance !== 'undefined' && performance.now) ?  performance.now : function() {\n\tconst hr = process.hrtime();\n\treturn (hr[0] * 1e9 + hr[1]) / 1e6;\n};\n\n\n/**\n * The result of benchmark.\n */\nexport class Result {\n\t/**\n\t * @param {String} name - name of benchmark.\n\t * @param {Number[]} msecs - times of benchmark result.\n\t *\n\t * @ignore\n\t */\n\tconstructor(name, msecs) {\n\t\t/**\n\t\t * Name of this test.\n\t\t *\n\t\t * @type {String}\n\t\t */\n\t\tthis.name = name;\n\n\t\t/**\n\t\t * Times of benchmark result in milliseconds.\n\t\t *\n\t\t * @type {Number[]}\n\t\t */\n\t\tthis.msecs = msecs;\n\t}\n\n\t/**\n\t * Total milliseconds of this benchmark.\n\t *\n\t * @type {Number}\n\t */\n\tget total() {\n\t\treturn this.msecs.reduce((x, y) => x + y);\n\t}\n\n\t/**\n\t * Average time of this benchmark in milliseconds.\n\t *\n\t * @type {Number}\n\t */\n\tget average() {\n\t\treturn this.total / this.msecs.length;\n\t}\n\n\t/**\n\t * Time variance of times.\n\t *\n\t * @type {Number}\n\t */\n\tget variance() {\n\t\tconst avg = this.average;\n\t\treturn this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / this.msecs.length;\n\t}\n\n\t/**\n\t * Standard division of times.\n\t *\n\t * @type {Number}\n\t */\n\tget std() {\n\t\treturn Math.sqrt(this.variance);\n\t}\n\n\t/**\n\t * Standard error of the mean of times.\n\t *\n\t * @type {Number}\n\t */\n\tget sem() {\n\t\treturn this.std / Math.sqrt(this.msecs.length);\n\t}\n\n\t/**\n\t * Guessed error range of this benchmark.\n\t *\n\t * @type {Number}\n\t */\n\tget error() {\n\t\treturn this.sem * 1.96;\n\t}\n\n\t/**\n\t * Error range per average time.\n\t *\n\t * @type {Number}\n\t */\n\tget errorRate() {\n\t\treturn this.error / this.average;\n\t}\n\n\t/**\n\t * Convert to string for printing.\n\t *\n\t * @return {String}\n\t */\n\ttoString() {\n\t\tconst avg = Math.round(this.average * 10000) / 10000;\n\t\tconst error = Math.round(this.error * 10000) / 10000;\n\t\tconst rate = Math.round(this.errorRate * 10000) / 100;\n\t\treturn `${this.name}: ${avg}msec +-${error}msec (${rate}%) / ${this.msecs.length} times tried`;\n\t}\n}\n\n\n/**\n * Class for benchmarking.\n *\n * Benchmark will execute by flow like this.\n *\n *   - before\n *   - beforeEach\n *   - fun\n *   - afterEach\n *   - after\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import Benchmark from 'promise-bench';\n * \n * \n * new Benchmark({\n *     name: 'timeout',\n *     fun() {\n *         return new Promise((resolve, reject) => {\n *             setTimeout(resolve, 100);\n *         });\n *     },\n * }).run().catch(console.error);\n */\nexport default class Benchmark {\n\t/**\n\t * @param {Object|function} [options] - options for this benchmark or benchmarking function.\n\t * @param {Number} [options.name='unnamed'] - name of this benchmark.\n\t * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.\n\t * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.\n\t * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.\n\t * @param {?Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.\n\t * @param {function} [options.before] - setup function. see {@link Benchmark#before}.\n\t * @param {function} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.\n\t * @param {function} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.\n\t * @param {function} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.\n\t * @param {function} [options.after] - teardown function. see {@link Benchmark#after}.\n\t */\n\tconstructor(options={}) {\n\t\t/**\n\t\t * Name of this benchmark.\n\t\t *\n\t\t * @type {String}\n\t\t */\n\t\tthis.name = options.name || 'unnamed';\n\n\t\t/**\n\t\t * Wanted maximum error rate.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.targetErrorRate = options.targetErrorRate || 0.1;\n\n\t\t/**\n\t\t * Maximum number of executing test.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.maxNumber = options.maxNumber || 10000;\n\n\t\t/**\n\t\t * Minimal number of executing test.\n\t\t * This value will be ignore if set {@link Benchmark#number}.\n\t\t *\n\t\t * @type {Number}\n\t\t */\n\t\tthis.minNumber = options.minNumber || 30;\n\n\t\t/**\n\t\t * The number of executing the test.\n\t\t * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.\n\t\t *\n\t\t * @type {Number|null}\n\t\t */\n\t\tthis.number = options.number || null;\n\n\t\tif (typeof options === 'function') {\n\t\t\tthis.fun = options;\n\t\t} else {\n\t\t\toptions.__proto__ = Benchmark.prototype;\n\n\t\t\t/** @ignore */\n\t\t\tthis.__proto__ = options;\n\t\t}\n\t}\n\n\t/**\n\t * Setup before execute benchmark.\n\t *\n\t * At the time executing this method, `this` is the unique object for the benchmark.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#after}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync before() {}\n\n\t/**\n\t * Setup before each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Number} count - count of done tests in this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync beforeEach(count) {}\n\n\t/**\n\t * Setup before each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\t *\n\t * In default, couses error that `'target function is not defined'`.\n\t *\n\t * @abstract \n\t *\n\t * @return {?Promise}\n\t */\n\tasync fun() {\n\t\tthrow 'target function is not defined';\n\t}\n\n\t/**\n\t * Teardown after each tests.\n\t *\n\t * At the time executing this method, `this` is the unique object for the test.\n\t * So you can use `this` for storing testing data.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Number} count - count of done tests in this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tafterEach(count) {}\n\n\t/**\n\t * Teardown after execute benchmark.\n\t *\n\t * At the time executing this method, `this` is the unique object for the benchmark.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, shows test result.\n\t *\n\t * @param {Result} result - result of this benchmark.\n\t *\n\t * @return {?Promise}\n\t */\n\tafter(result) {\n\t\tconsole.log(String(result));\n\t}\n\n\t/**\n\t * Execute benchmark.\n\t *\n\t * @param {Object} [context] - the `this` for each benchmarking functions.\n\t *\n\t * @return {Promise<Result>}\n\t */\n\tasync run(context=undefined) {\n\t\tif (!context) {\n\t\t\tcontext = {__proto__: this};\n\t\t}\n\n\t\tawait this.before.call(context);\n\n\t\tconst loopNum = this.number || this.maxNumber;\n\n\t\tconst msecs = [];\n\t\tfor (let i=0; i<loopNum; i++) {\n\t\t\tconst ctx = {__proto__: context};\n\n\t\t\tawait this.beforeEach.call(ctx, i);\n\n\t\t\tconst start = now();\n\t\t\tawait this.fun.call(ctx);\n\t\t\tconst end = now();\n\n\t\t\tawait this.afterEach.call(ctx, i);\n\t\t\tmsecs.push(end - start);\n\n\t\t\tif (!this.number && i + 1 >= this.minNumber) {\n\t\t\t\tconst result = new Result(this.name, msecs);\n\t\t\t\tif (result.errorRate <= this.targetErrorRate) {\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\tconst result = new Result(this.name, msecs);\n\t\tawait this.after.call(context, result);\n\t\treturn result;\n\t}\n}\n\n\n/**\n * Support for CommonJS\n */\nexport {Benchmark};\n\n\n/**\n * A set of {@link Benchmark}s for executing those sequential or parallel.\n *\n *\n * @example\n * import {Suite} from 'promise-bench';\n * \n * \n * new Suite({\n *     beforeEach() {\n *         this.text = 'hello world';\n *     },\n *     async: true,\n * })\n * .add(function() {\n *     /o/.test(this.text);\n * })\n * .add({\n *     name: 'String#indexOf'\n *     before() {\n *         console.log('starting String#indexOf...');\n *     },\n *     fun() {\n *         this.text.indexOf('o') > -1;\n *     },\n * })\n * .add({\n *     name: 'String#match'\n *     fun() {\n *         !!this.text.match(/o/);\n *     },\n *     after(result) {\n *         console.log('String#match is done! ' + result);\n *     },\n * })\n * .run()\n */\nexport class Suite {\n\t/**\n\t * @param {Object} [options={}] - default options for benchmarks in this suite.\n\t * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.\n\t * @param {function} [options.beforeSuite] - setup function. see {@link Suite#beforeSuite}.\n\t * @param {function} [options.afterSuite] - setup function. see {@link Suite#afterSuite}.\n\t */\n\tconstructor(options={}) {\n\t\t/**\n\t\t * Default options for benchmarks in this suite.\n\t\t *\n\t\t * @type {Object}\n\t\t */\n\t\tthis.options = options;\n\n\t\t/**\n\t\t * A list of {@link Benchmark}.\n\t\t *\n\t\t * @type {Benchmark[]}\n\t\t */\n\t\tthis.benchmarks = [];\n\n\t\t/**\n\t\t * Flag for executing each benchmark asynchronously.\n\t\t *\n\t\t * @type {Boolean}\n\t\t */\n\t\tthis.async = options.async || false;\n\n\t\tif (options.beforeSuite) {\n\t\t\tthis.beforeSuite = options.beforeSuite;\n\t\t}\n\n\t\tif (options.afterSuite) {\n\t\t\tthis.afterSuite = options.afterSuite;\n\t\t}\n\t}\n\n\t/**\n\t * Setup before execute all benchmarks.\n\t *\n\t * At the time executing this method, `this` is the unique object for the suite.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call {@link Suite#afterSuite}\n\t *\n\t * In default, do nothing.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync beforeSuite() {}\n\n\t/**\n\t * Teardown after execute all benchmarks.\n\t *\n\t * At the time executing this method, `this` is the unique object for the suite.\n\t * So you can use `this` for storing testing data like a database.\n\t * Data of `this` that set in this method will discard after call this method.\n\t *\n\t * In default, do nothing.\n\t *\n\t * @param {Result[]} results - a list of benchmark result.\n\t *\n\t * @return {?Promise}\n\t */\n\tasync afterSuite(results) {}\n\n\t/**\n\t * Adding {@link Benchmark} instance into this {@link Suite}.\n\t *\n\t * @param {Benchmark} benchmark - the benchmark instance for adding.\n\t *\n\t * @return {Suite} returns this suite for method chain.\n\t */\n\taddBenchmark(benchmark) {\n\t\tthis.benchmarks.push(benchmark);\n\t\treturn this;\n\t}\n\n\t/**\n\t * Make new benchmark and adding into this {@link Suite}.\n\t *\n\t * @param {Object|function} [options={}] - arguments for {@link Benchmark#constructor}.\n\t *\n\t * @return {Suite} returns this suite for method chain.\n\t */\n\tadd(options={}) {\n\t\tif (typeof options === 'function') {\n\t\t\tthis.addBenchmark(new Benchmark(Object.assign({fun: options}, this.options)));\n\t\t} else {\n\t\t\tthis.addBenchmark(new Benchmark(Object.assign(Object.assign({}, options), this.options)));\n\t\t}\n\t\treturn this;\n\t}\n\n\t/**\n\t * Execute benchmarks in this suite.\n\t *\n\t * All benchmarks will execute parallel if enabled {@link Suite#async} option.\n\t * Else do execute sequentially by added order.\n\t *\n\t * @param {Object} [context] - the `this` for each benchmarking functions.\n\t *\n\t * @return {Promise<Result[]>}\n\t */\n\tasync run(context=undefined) {\n\t\tif (!context) {\n\t\t\tcontext = {__proto__: this};\n\t\t}\n\n\t\tawait this.beforeSuite.call(context);\n\n\t\tif (this.async) {\n\t\t\treturn await Promise.all(this.benchmarks.map(x => x.run(context))).then(async (result) => {\n\t\t\t\tawait this.afterSuite.call(context, result);\n\t\t\t\treturn result;\n\t\t\t});\n\t\t}\n\n\t\tconst result = [];\n\t\tfor (let b of this.benchmarks) {\n\t\t\tresult.push(await b.run(context));\n\t\t}\n\n\t\tawait this.afterSuite.call(context, result);\n\n\t\treturn result;\n\t}\n}\n",
     "static": true,
     "longname": "/home/ena/PromiseBench/dist/promise-bench.mjs",
     "access": "public",
@@ -12,6 +12,27 @@
   },
   {
     "__docId__": 1,
+    "kind": "variable",
+    "name": "now",
+    "memberof": "dist/promise-bench.mjs",
+    "static": true,
+    "longname": "dist/promise-bench.mjs~now",
+    "access": "public",
+    "export": false,
+    "importPath": "promise-bench/dist/promise-bench.mjs",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 2,
     "kind": "class",
     "name": "Result",
     "memberof": "dist/promise-bench.mjs",
@@ -22,11 +43,11 @@
     "importPath": "promise-bench/dist/promise-bench.mjs",
     "importStyle": "{Result}",
     "description": "The result of benchmark.",
-    "lineNumber": 7,
+    "lineNumber": 10,
     "interface": false
   },
   {
-    "__docId__": 2,
+    "__docId__": 3,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "dist/promise-bench.mjs~Result",
@@ -36,7 +57,7 @@
     "longname": "dist/promise-bench.mjs~Result#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 14,
+    "lineNumber": 17,
     "ignore": true,
     "params": [
       {
@@ -62,7 +83,7 @@
     ]
   },
   {
-    "__docId__": 3,
+    "__docId__": 4,
     "kind": "member",
     "name": "name",
     "memberof": "dist/promise-bench.mjs~Result",
@@ -70,7 +91,7 @@
     "longname": "dist/promise-bench.mjs~Result#name",
     "access": "public",
     "description": "Name of this test.",
-    "lineNumber": 20,
+    "lineNumber": 23,
     "type": {
       "nullable": null,
       "types": [
@@ -81,7 +102,7 @@
     }
   },
   {
-    "__docId__": 4,
+    "__docId__": 5,
     "kind": "member",
     "name": "msecs",
     "memberof": "dist/promise-bench.mjs~Result",
@@ -89,7 +110,7 @@
     "longname": "dist/promise-bench.mjs~Result#msecs",
     "access": "public",
     "description": "Times of benchmark result in milliseconds.",
-    "lineNumber": 27,
+    "lineNumber": 30,
     "type": {
       "nullable": null,
       "types": [
@@ -100,7 +121,7 @@
     }
   },
   {
-    "__docId__": 5,
+    "__docId__": 6,
     "kind": "get",
     "name": "total",
     "memberof": "dist/promise-bench.mjs~Result",
@@ -110,28 +131,7 @@
     "longname": "dist/promise-bench.mjs~Result#total",
     "access": "public",
     "description": "Total milliseconds of this benchmark.",
-    "lineNumber": 35,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Number"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 6,
-    "kind": "get",
-    "name": "average",
-    "memberof": "dist/promise-bench.mjs~Result",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "dist/promise-bench.mjs~Result#average",
-    "access": "public",
-    "description": "Average time of this benchmark in milliseconds.",
-    "lineNumber": 44,
+    "lineNumber": 38,
     "type": {
       "nullable": null,
       "types": [
@@ -144,15 +144,15 @@
   {
     "__docId__": 7,
     "kind": "get",
-    "name": "variance",
+    "name": "average",
     "memberof": "dist/promise-bench.mjs~Result",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "dist/promise-bench.mjs~Result#variance",
+    "longname": "dist/promise-bench.mjs~Result#average",
     "access": "public",
-    "description": "Time variance of times.",
-    "lineNumber": 53,
+    "description": "Average time of this benchmark in milliseconds.",
+    "lineNumber": 47,
     "type": {
       "nullable": null,
       "types": [
@@ -165,15 +165,15 @@
   {
     "__docId__": 8,
     "kind": "get",
-    "name": "std",
+    "name": "variance",
     "memberof": "dist/promise-bench.mjs~Result",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "dist/promise-bench.mjs~Result#std",
+    "longname": "dist/promise-bench.mjs~Result#variance",
     "access": "public",
-    "description": "Standard division of times.",
-    "lineNumber": 63,
+    "description": "Time variance of times.",
+    "lineNumber": 56,
     "type": {
       "nullable": null,
       "types": [
@@ -186,15 +186,15 @@
   {
     "__docId__": 9,
     "kind": "get",
-    "name": "sem",
+    "name": "std",
     "memberof": "dist/promise-bench.mjs~Result",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "dist/promise-bench.mjs~Result#sem",
+    "longname": "dist/promise-bench.mjs~Result#std",
     "access": "public",
-    "description": "Standard error of the mean of times.",
-    "lineNumber": 72,
+    "description": "Standard division of times.",
+    "lineNumber": 66,
     "type": {
       "nullable": null,
       "types": [
@@ -207,15 +207,15 @@
   {
     "__docId__": 10,
     "kind": "get",
-    "name": "error",
+    "name": "sem",
     "memberof": "dist/promise-bench.mjs~Result",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "dist/promise-bench.mjs~Result#error",
+    "longname": "dist/promise-bench.mjs~Result#sem",
     "access": "public",
-    "description": "Guessed error range of this benchmark.",
-    "lineNumber": 81,
+    "description": "Standard error of the mean of times.",
+    "lineNumber": 75,
     "type": {
       "nullable": null,
       "types": [
@@ -228,15 +228,15 @@
   {
     "__docId__": 11,
     "kind": "get",
-    "name": "errorRate",
+    "name": "error",
     "memberof": "dist/promise-bench.mjs~Result",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "dist/promise-bench.mjs~Result#errorRate",
+    "longname": "dist/promise-bench.mjs~Result#error",
     "access": "public",
-    "description": "Error range per average time.",
-    "lineNumber": 90,
+    "description": "Guessed error range of this benchmark.",
+    "lineNumber": 84,
     "type": {
       "nullable": null,
       "types": [
@@ -248,6 +248,27 @@
   },
   {
     "__docId__": 12,
+    "kind": "get",
+    "name": "errorRate",
+    "memberof": "dist/promise-bench.mjs~Result",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "dist/promise-bench.mjs~Result#errorRate",
+    "access": "public",
+    "description": "Error range per average time.",
+    "lineNumber": 93,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 13,
     "kind": "method",
     "name": "toString",
     "memberof": "dist/promise-bench.mjs~Result",
@@ -257,7 +278,7 @@
     "longname": "dist/promise-bench.mjs~Result#toString",
     "access": "public",
     "description": "Convert to string for printing.",
-    "lineNumber": 99,
+    "lineNumber": 102,
     "return": {
       "nullable": null,
       "types": [
@@ -269,7 +290,7 @@
     "params": []
   },
   {
-    "__docId__": 13,
+    "__docId__": 14,
     "kind": "class",
     "name": "Benchmark",
     "memberof": "dist/promise-bench.mjs",
@@ -283,11 +304,11 @@
     "examples": [
       "import Benchmark from 'promise-bench';\n\n\nnew Benchmark({\n    name: 'timeout',\n    fun() {\n        return new Promise((resolve, reject) => {\n            setTimeout(resolve, 100);\n        });\n    },\n}).run().catch(console.error);"
     ],
-    "lineNumber": 135,
+    "lineNumber": 138,
     "interface": false
   },
   {
-    "__docId__": 14,
+    "__docId__": 15,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -297,7 +318,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 149,
+    "lineNumber": 152,
     "params": [
       {
         "nullable": null,
@@ -421,7 +442,7 @@
     ]
   },
   {
-    "__docId__": 15,
+    "__docId__": 16,
     "kind": "member",
     "name": "name",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -429,7 +450,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#name",
     "access": "public",
     "description": "Name of this benchmark.",
-    "lineNumber": 155,
+    "lineNumber": 158,
     "type": {
       "nullable": null,
       "types": [
@@ -440,7 +461,7 @@
     }
   },
   {
-    "__docId__": 16,
+    "__docId__": 17,
     "kind": "member",
     "name": "targetErrorRate",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -448,26 +469,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#targetErrorRate",
     "access": "public",
     "description": "Wanted maximum error rate.\nThis value will be ignore if set {@link Benchmark#number}.",
-    "lineNumber": 163,
-    "type": {
-      "nullable": null,
-      "types": [
-        "Number"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 17,
-    "kind": "member",
-    "name": "maxNumber",
-    "memberof": "dist/promise-bench.mjs~Benchmark",
-    "static": false,
-    "longname": "dist/promise-bench.mjs~Benchmark#maxNumber",
-    "access": "public",
-    "description": "Maximum number of executing test.\nThis value will be ignore if set {@link Benchmark#number}.",
-    "lineNumber": 171,
+    "lineNumber": 166,
     "type": {
       "nullable": null,
       "types": [
@@ -480,13 +482,13 @@
   {
     "__docId__": 18,
     "kind": "member",
-    "name": "minNumber",
+    "name": "maxNumber",
     "memberof": "dist/promise-bench.mjs~Benchmark",
     "static": false,
-    "longname": "dist/promise-bench.mjs~Benchmark#minNumber",
+    "longname": "dist/promise-bench.mjs~Benchmark#maxNumber",
     "access": "public",
-    "description": "Minimal number of executing test.\nThis value will be ignore if set {@link Benchmark#number}.",
-    "lineNumber": 179,
+    "description": "Maximum number of executing test.\nThis value will be ignore if set {@link Benchmark#number}.",
+    "lineNumber": 174,
     "type": {
       "nullable": null,
       "types": [
@@ -499,13 +501,32 @@
   {
     "__docId__": 19,
     "kind": "member",
+    "name": "minNumber",
+    "memberof": "dist/promise-bench.mjs~Benchmark",
+    "static": false,
+    "longname": "dist/promise-bench.mjs~Benchmark#minNumber",
+    "access": "public",
+    "description": "Minimal number of executing test.\nThis value will be ignore if set {@link Benchmark#number}.",
+    "lineNumber": 182,
+    "type": {
+      "nullable": null,
+      "types": [
+        "Number"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "member",
     "name": "number",
     "memberof": "dist/promise-bench.mjs~Benchmark",
     "static": false,
     "longname": "dist/promise-bench.mjs~Benchmark#number",
     "access": "public",
     "description": "The number of executing the test.\nWill decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.",
-    "lineNumber": 187,
+    "lineNumber": 190,
     "type": {
       "nullable": null,
       "types": [
@@ -517,7 +538,7 @@
     }
   },
   {
-    "__docId__": 21,
+    "__docId__": 22,
     "kind": "member",
     "name": "__proto__",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -525,7 +546,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#__proto__",
     "access": "private",
     "description": null,
-    "lineNumber": 195,
+    "lineNumber": 198,
     "ignore": true,
     "type": {
       "types": [
@@ -534,7 +555,7 @@
     }
   },
   {
-    "__docId__": 22,
+    "__docId__": 23,
     "kind": "method",
     "name": "before",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -544,7 +565,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#before",
     "access": "public",
     "description": "Setup before execute benchmark.\n\nAt the time executing this method, `this` is the unique object for the benchmark.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call {@link Benchmark#after}\n\nIn default, do nothing.",
-    "lineNumber": 210,
+    "lineNumber": 213,
     "return": {
       "nullable": true,
       "types": [
@@ -556,7 +577,7 @@
     "params": []
   },
   {
-    "__docId__": 23,
+    "__docId__": 24,
     "kind": "method",
     "name": "beforeEach",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -566,7 +587,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#beforeEach",
     "access": "public",
     "description": "Setup before each tests.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\nIn default, do nothing.",
-    "lineNumber": 225,
+    "lineNumber": 228,
     "params": [
       {
         "nullable": null,
@@ -589,7 +610,7 @@
     }
   },
   {
-    "__docId__": 24,
+    "__docId__": 25,
     "kind": "method",
     "name": "fun",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -599,7 +620,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#fun",
     "access": "public",
     "description": "Setup before each tests.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\nIn default, couses error that `'target function is not defined'`.",
-    "lineNumber": 240,
+    "lineNumber": 243,
     "return": {
       "nullable": true,
       "types": [
@@ -612,7 +633,7 @@
     "params": []
   },
   {
-    "__docId__": 25,
+    "__docId__": 26,
     "kind": "method",
     "name": "afterEach",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -622,7 +643,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#afterEach",
     "access": "public",
     "description": "Teardown after each tests.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call this method.\n\nIn default, do nothing.",
-    "lineNumber": 257,
+    "lineNumber": 260,
     "params": [
       {
         "nullable": null,
@@ -645,7 +666,7 @@
     }
   },
   {
-    "__docId__": 26,
+    "__docId__": 27,
     "kind": "method",
     "name": "after",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -655,7 +676,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#after",
     "access": "public",
     "description": "Teardown after execute benchmark.\n\nAt the time executing this method, `this` is the unique object for the benchmark.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call this method.\n\nIn default, shows test result.",
-    "lineNumber": 272,
+    "lineNumber": 275,
     "params": [
       {
         "nullable": null,
@@ -678,7 +699,7 @@
     }
   },
   {
-    "__docId__": 27,
+    "__docId__": 28,
     "kind": "method",
     "name": "run",
     "memberof": "dist/promise-bench.mjs~Benchmark",
@@ -688,7 +709,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#run",
     "access": "public",
     "description": "Execute benchmark.",
-    "lineNumber": 283,
+    "lineNumber": 286,
     "params": [
       {
         "nullable": null,
@@ -711,7 +732,7 @@
     }
   },
   {
-    "__docId__": 28,
+    "__docId__": 29,
     "kind": "class",
     "name": "Suite",
     "memberof": "dist/promise-bench.mjs",
@@ -725,11 +746,11 @@
     "examples": [
       "import {Suite} from 'promise-bench';\n\n\nnew Suite({\n    beforeEach() {\n        this.text = 'hello world';\n    },\n    async: true,\n})\n.add(function() {\n    /o/.test(this.text);\n})\n.add({\n    name: 'String#indexOf'\n    before() {\n        console.log('starting String#indexOf...');\n    },\n    fun() {\n        this.text.indexOf('o') > -1;\n    },\n})\n.add({\n    name: 'String#match'\n    fun() {\n        !!this.text.match(/o/);\n    },\n    after(result) {\n        console.log('String#match is done! ' + result);\n    },\n})\n.run()"
     ],
-    "lineNumber": 357,
+    "lineNumber": 366,
     "interface": false
   },
   {
-    "__docId__": 29,
+    "__docId__": 30,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -739,7 +760,7 @@
     "longname": "dist/promise-bench.mjs~Suite#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 364,
+    "lineNumber": 373,
     "params": [
       {
         "nullable": null,
@@ -788,7 +809,7 @@
     ]
   },
   {
-    "__docId__": 30,
+    "__docId__": 31,
     "kind": "member",
     "name": "options",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -796,7 +817,7 @@
     "longname": "dist/promise-bench.mjs~Suite#options",
     "access": "public",
     "description": "Default options for benchmarks in this suite.",
-    "lineNumber": 370,
+    "lineNumber": 379,
     "type": {
       "nullable": null,
       "types": [
@@ -807,7 +828,7 @@
     }
   },
   {
-    "__docId__": 31,
+    "__docId__": 32,
     "kind": "member",
     "name": "benchmarks",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -815,7 +836,7 @@
     "longname": "dist/promise-bench.mjs~Suite#benchmarks",
     "access": "public",
     "description": "A list of {@link Benchmark}.",
-    "lineNumber": 377,
+    "lineNumber": 386,
     "type": {
       "nullable": null,
       "types": [
@@ -826,7 +847,7 @@
     }
   },
   {
-    "__docId__": 32,
+    "__docId__": 33,
     "kind": "member",
     "name": "async",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -834,7 +855,7 @@
     "longname": "dist/promise-bench.mjs~Suite#async",
     "access": "public",
     "description": "Flag for executing each benchmark asynchronously.",
-    "lineNumber": 384,
+    "lineNumber": 393,
     "type": {
       "nullable": null,
       "types": [
@@ -845,7 +866,7 @@
     }
   },
   {
-    "__docId__": 35,
+    "__docId__": 36,
     "kind": "method",
     "name": "beforeSuite",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -855,7 +876,7 @@
     "longname": "dist/promise-bench.mjs~Suite#beforeSuite",
     "access": "public",
     "description": "Setup before execute all benchmarks.\n\nAt the time executing this method, `this` is the unique object for the suite.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call {@link Suite#afterSuite}\n\nIn default, do nothing.",
-    "lineNumber": 406,
+    "lineNumber": 415,
     "return": {
       "nullable": true,
       "types": [
@@ -867,7 +888,7 @@
     "params": []
   },
   {
-    "__docId__": 36,
+    "__docId__": 37,
     "kind": "method",
     "name": "afterSuite",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -877,7 +898,7 @@
     "longname": "dist/promise-bench.mjs~Suite#afterSuite",
     "access": "public",
     "description": "Teardown after execute all benchmarks.\n\nAt the time executing this method, `this` is the unique object for the suite.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call this method.\n\nIn default, do nothing.",
-    "lineNumber": 421,
+    "lineNumber": 430,
     "params": [
       {
         "nullable": null,
@@ -900,7 +921,7 @@
     }
   },
   {
-    "__docId__": 37,
+    "__docId__": 38,
     "kind": "method",
     "name": "addBenchmark",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -910,7 +931,7 @@
     "longname": "dist/promise-bench.mjs~Suite#addBenchmark",
     "access": "public",
     "description": "Adding {@link Benchmark} instance into this {@link Suite}.",
-    "lineNumber": 430,
+    "lineNumber": 439,
     "params": [
       {
         "nullable": null,
@@ -933,7 +954,7 @@
     }
   },
   {
-    "__docId__": 38,
+    "__docId__": 39,
     "kind": "method",
     "name": "add",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -943,7 +964,7 @@
     "longname": "dist/promise-bench.mjs~Suite#add",
     "access": "public",
     "description": "Make new benchmark and adding into this {@link Suite}.",
-    "lineNumber": 442,
+    "lineNumber": 451,
     "params": [
       {
         "nullable": null,
@@ -969,7 +990,7 @@
     }
   },
   {
-    "__docId__": 39,
+    "__docId__": 40,
     "kind": "method",
     "name": "run",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -979,7 +1000,7 @@
     "longname": "dist/promise-bench.mjs~Suite#run",
     "access": "public",
     "description": "Execute benchmarks in this suite.\n\nAll benchmarks will execute parallel if enabled {@link Suite#async} option.\nElse do execute sequentially by added order.",
-    "lineNumber": 461,
+    "lineNumber": 470,
     "params": [
       {
         "nullable": null,
@@ -1003,7 +1024,7 @@
   },
   {
     "kind": "index",
-    "content": "PromiseBench\n============\n\nA benchmarking library for javascript that supports Promise.\n\n[![license](https://img.shields.io/github/license/macrat/PromiseBench.svg)](https://github.com/macrat/PromiseBench/blob/master/LICENSE)\n[![document](https://macrat.github.io/PromiseBench/badge.svg)](https://macrat.github.io/PromiseBench/)\n\n## be simple\n``` javascript\nimport Benchmark from 'promise-bench';\n\n\nnew Benchmark({\n\tname: 'timeout',\n\tfun() {\n\t\treturn new Promise((resolve, reject) => {\n\t\t\tsetTimeout(resolve, 100);\n\t\t});\n\t},\n}).run().catch(console.error);\n```\n\n## be customizable\n``` javascript\nimport {Suite} from 'promise-bench';\n\n\nnew Suite({\n\tbeforeEach() {\n\t\tthis.text = 'hello world';\n\t},\n\tasync: true,\n})\n.add(function() {\n\t/o/.test(this.text);\n})\n.add({\n\tname: 'String#indexOf'\n\tbefore() {\n\t\tconsole.log('starting String#indexOf...');\n\t},\n\tfun() {\n\t\tthis.text.indexOf('o') > -1;\n\t},\n})\n.add({\n\tname: 'String#match'\n\tfun() {\n\t\t!!this.text.match(/o/);\n\t},\n\tafter(result) {\n\t\tconsole.log('String#match is done! ' + result);\n\t},\n})\n.run()\n```\n",
+    "content": "PromiseBench\n============\n\nA benchmarking library for javascript that supports Promise.\n\n[![license](https://img.shields.io/github/license/macrat/PromiseBench.svg)](https://github.com/macrat/PromiseBench/blob/master/LICENSE)\n[![document](https://macrat.github.io/PromiseBench/badge.svg)](https://macrat.github.io/PromiseBench/)\n\n## be simple\n``` javascript\nimport Benchmark from 'promise-bench';\n\n\nnew Benchmark({\n\tname: 'timeout',\n\tfun() {\n\t\treturn new Promise((resolve, reject) => {\n\t\t\tsetTimeout(resolve, 100);\n\t\t});\n\t},\n}).run().catch(console.error);\n```\n\n## be customizable\n``` javascript\nimport {Suite} from 'promise-bench';\n\n\nnew Suite({\n\tbeforeEach() {\n\t\tthis.text = 'hello world';\n\t},\n\tasync: true,\n})\n.add(function() {\n\t/o/.test(this.text);\n})\n.add({\n\tname: 'String#indexOf'\n\tbefore() {\n\t\tconsole.log('starting String#indexOf...');\n\t},\n\tfun() {\n\t\tthis.text.indexOf('o') > -1;\n\t},\n})\n.add({\n\tname: 'String#match'\n\tfun() {\n\t\t!!this.text.match(/o/);\n\t},\n\tafter(result) {\n\t\tconsole.log('String#match is done! ' + result);\n\t},\n})\n.run()\n```\n\n## installation\n``` shell\n$ npm install git+https://github.com/macrat/PromiseBench.git\n```\n\n### ES6\n``` javascript\nimport Benchmark, {Suite} from 'promise-bench';\n```\n\n### CommonJS\n``` javascript\nconst PromiseBench = require('promise-bench');\nconst Benchmark = PromiseBench.Benchmark;\nconst Suite = PromiseBench.Suite;\n```\n",
     "longname": "/home/ena/PromiseBench/README.md",
     "name": "./README.md",
     "static": true,

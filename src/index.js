@@ -1,4 +1,7 @@
-import now from 'performance-now';
+const now = (typeof performance !== 'undefined' && performance.now) ?  performance.now : function() {
+	const hr = process.hrtime();
+	return (hr[0] * 1e9 + hr[1]) / 1e6;
+};
 
 
 /**
@@ -315,6 +318,12 @@ export default class Benchmark {
 		return result;
 	}
 }
+
+
+/**
+ * Support for CommonJS
+ */
+export {Benchmark};
 
 
 /**

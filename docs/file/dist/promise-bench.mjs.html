@@ -37,7 +37,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">dist/promise-bench.mjs</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import now from &apos;performance-now&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const now = (typeof performance !== &apos;undefined&apos; &amp;&amp; performance.now) ?  performance.now : function() {
+	const hr = process.hrtime();
+	return (hr[0] * 1e9 + hr[1]) / 1e6;
+};
 
 
 /**
@@ -354,6 +357,12 @@ export default class Benchmark {
 		return result;
 	}
 }
+
+
+/**
+ * Support for CommonJS
+ */
+export {Benchmark};
 
 
 /**

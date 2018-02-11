@@ -3,21 +3,20 @@
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.Suite = exports.Result = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _performanceNow = require('performance-now');
-
-var _performanceNow2 = _interopRequireDefault(_performanceNow);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var now = typeof performance !== 'undefined' && performance.now ? performance.now : function () {
+	var hr = process.hrtime();
+	return (hr[0] * 1e9 + hr[1]) / 1e6;
+};
 
 /**
  * The result of benchmark.
  */
+
 var Result = exports.Result = function () {
 	/**
   * @param {String} name - name of benchmark.
@@ -371,9 +370,9 @@ var Benchmark = function () {
 
 				await this.beforeEach.call(ctx, i);
 
-				var start = (0, _performanceNow2.default)();
+				var start = now();
 				await this.fun.call(ctx);
-				var end = (0, _performanceNow2.default)();
+				var end = now();
 
 				await this.afterEach.call(ctx, i);
 				msecs.push(end - start);
@@ -394,6 +393,14 @@ var Benchmark = function () {
 
 	return Benchmark;
 }();
+
+/**
+ * Support for CommonJS
+ */
+
+
+exports.default = Benchmark;
+exports.Benchmark = Benchmark;
 
 /**
  * A set of {@link Benchmark}s for executing those sequential or parallel.
@@ -432,9 +439,6 @@ var Benchmark = function () {
  * })
  * .run()
  */
-
-
-exports.default = Benchmark;
 
 var Suite = exports.Suite = function () {
 	/**

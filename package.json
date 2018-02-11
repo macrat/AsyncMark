@@ -8,13 +8,10 @@
     "LICESNSE",
     "promise-bench.js"
   ],
-  "dependencies": {
-    "performance-now": "^2.1.0"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:dist && npm run build:docs",
-    "build:dist": "mkdir dist; ./node_modules/.bin/babel src/index.js -d dist && ln -sf ../src/index.js dist/promise-bench.mjs",
+    "build:dist": "mkdir dist; ./node_modules/.bin/babel src/index.js -o dist/promise-bench.js && ln -sf ../src/index.js dist/promise-bench.mjs",
     "build:docs": "./node_modules/.bin/esdoc"
   },
   "repository": {
@@ -38,7 +35,11 @@
     "esdoc": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0"
   },
-  "babel": {"presets": ["es2015"]},
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
   "esdoc": {
     "source": "./dist",
     "includes": [
