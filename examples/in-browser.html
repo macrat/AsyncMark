@@ -1,0 +1,19 @@
+please see console of devtools
+
+<script src="../dist/promise-bench.web.js"></script>
+<script>
+new PromiseBench.Benchmark({
+	before() {
+		console.log('start bench');
+	},
+	fun() {
+		return new Promise((resolve, reject) => {
+			setTimeout(resolve, 100);
+		});
+	},
+	after(result) {
+		console.log('bench done');
+		console.log(String(result));
+	},
+}).run().catch(console.error);
+</script>

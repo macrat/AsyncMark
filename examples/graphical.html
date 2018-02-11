@@ -1,0 +1,71 @@
+<script src="https://unpkg.com/d3"></script>
+<script src="https://unpkg.com/metrics-graphics/dist/metricsgraphics.min.js"></script>
+<link rel=stylesheet href="https://unpkg.com/metrics-graphics/dist/metricsgraphics.css">
+<script src="../dist/promise-bench.web.js"></script>
+
+<style>
+div {
+	display: inline-block;
+}
+table {
+	display: block;
+}
+th {
+	background-color: #ddd;
+}
+tr:nth-child(even) {
+	background-color: #eee;
+}
+</style>
+
+<div id=timeline></div>
+<div id=histogram></div>
+<table>
+	<thead><tr><th>times</th><th>duration [msec]</th></tr></thead>
+	<tbody></tbody>
+</table>
+
+<script>
+const canvas = document.querySelector('canvas');
+
+let plotting_data = [];
+
+new PromiseBench.Benchmark({
+	number: 100,
+	fun() {
+		return new Promise((resolve, reject) => {
+			setTimeout(resolve, 10);
+		});
+	},
+	afterEach(count, msec) {
+		document.querySelector('tbody').innerHTML += `<tr><td>${count + 1}</td><td>${msec}</td></tr>`;
+
+		plotting_data.push({count: count, time: msec});
+		document.querySelector('#timeline').innerHTML = '';
+		MG.data_graphic({
+			title: 'times of each test',
+			data: plotting_data,
+			width: 640,
+			height: 320,
+			x_accessor: 'count',
+			y_accessor: 'time',
+			y_label: 'time [msec]',
+			target: '#timeline',
+		});
+	},
+	after(result) {
+		console.log(String(result));
+
+		MG.data_graphic({
+			title: 'histogram of times',
+			chart_type: 'histogram',
+			data: plotting_data,
+			width: 640,
+			height: 320,
+			x_accessor: 'time',
+			x_label: 'time [msec]',
+			target: '#histogram',
+		});
+	},
+}).run().catch(console.error);
+</script>
