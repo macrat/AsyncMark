@@ -536,11 +536,11 @@ class Suite {
     await this.before.call(context);
 
     if (this.async) {
-      return await Promise.all(this.benchmarks.map(async x => {
+      return await Promise.all(this.benchmarks.map(async (x, i) => {
         const ctx = { __proto__: context };
-        await this.beforeEach.call(ctx, x);
+        await this.beforeEach.call(ctx, i, x);
         const result = await x.run(ctx);
-        await this.afterEach.call(ctx, x);
+        await this.afterEach.call(ctx, i, x);
         return result;
       })).then(async results => {
         await this.after.call(context, results);
@@ -549,11 +549,12 @@ class Suite {
     }
 
     const results = [];
-    for (let b of this.benchmarks) {
+    for (let i in this.benchmarks) {
+      const b = this.benchmarks[i];
       const ctx = { __proto__: context };
-      await this.beforeEach.call(ctx);
+      await this.beforeEach.call(ctx, i, b);
       results.push((await b.run(ctx)));
-      await this.afterEach.call(ctx);
+      await this.afterEach.call(ctx, i, b);
     }
 
     await this.after.call(context, results);
