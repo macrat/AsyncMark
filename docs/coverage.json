@@ -3,7 +3,7 @@
   "expectCount": 36,
   "actualCount": 36,
   "files": {
-    "promisebench/promise-bench.js": {
+    "dist/promise-bench.mjs": {
       "expectCount": 36,
       "actualCount": 36,
       "undocumentLines": []

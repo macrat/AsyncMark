@@ -1,548 +1,212 @@
 window.esdocSearchIndex = [
   [
-    "promise-bench/promisebench/promise-bench.js~benchmark",
-    "class/promisebench/promise-bench.js~Benchmark.html",
-    "<span>Benchmark</span> <span class=\"search-result-import-path\">promise-bench/promisebench/promise-bench.js</span>",
+    "promise-bench/dist/promise-bench.mjs~benchmark",
+    "class/dist/promise-bench.mjs~Benchmark.html",
+    "<span>Benchmark</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
     "class"
   ],
   [
-    "promise-bench/promisebench/promise-bench.js~result",
-    "class/promisebench/promise-bench.js~Result.html",
-    "<span>Result</span> <span class=\"search-result-import-path\">promise-bench/promisebench/promise-bench.js</span>",
+    "promise-bench/dist/promise-bench.mjs~result",
+    "class/dist/promise-bench.mjs~Result.html",
+    "<span>Result</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
     "class"
   ],
   [
-    "promise-bench/promisebench/promise-bench.js~suite",
-    "class/promisebench/promise-bench.js~Suite.html",
-    "<span>Suite</span> <span class=\"search-result-import-path\">promise-bench/promisebench/promise-bench.js</span>",
+    "promise-bench/dist/promise-bench.mjs~suite",
+    "class/dist/promise-bench.mjs~Suite.html",
+    "<span>Suite</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
     "class"
   ],
   [
-    "promisebench/.external-ecmascript.js~array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
-    "promisebench/.external-ecmascript.js~Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~arraybuffer",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
-    "promisebench/.external-ecmascript.js~ArrayBuffer",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~boolean",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "promisebench/.external-ecmascript.js~Boolean",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~dataview",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
-    "promisebench/.external-ecmascript.js~DataView",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~date",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
-    "promisebench/.external-ecmascript.js~Date",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~error",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
-    "promisebench/.external-ecmascript.js~Error",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~evalerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
-    "promisebench/.external-ecmascript.js~EvalError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~float32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
-    "promisebench/.external-ecmascript.js~Float32Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~float64array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
-    "promisebench/.external-ecmascript.js~Float64Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~function",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "promisebench/.external-ecmascript.js~Function",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~generator",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
-    "promisebench/.external-ecmascript.js~Generator",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~generatorfunction",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
-    "promisebench/.external-ecmascript.js~GeneratorFunction",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~infinity",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
-    "promisebench/.external-ecmascript.js~Infinity",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~int16array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
-    "promisebench/.external-ecmascript.js~Int16Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~int32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
-    "promisebench/.external-ecmascript.js~Int32Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~int8array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
-    "promisebench/.external-ecmascript.js~Int8Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~internalerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
-    "promisebench/.external-ecmascript.js~InternalError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~json",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
-    "promisebench/.external-ecmascript.js~JSON",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~map",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
-    "promisebench/.external-ecmascript.js~Map",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~nan",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
-    "promisebench/.external-ecmascript.js~NaN",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~number",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "promisebench/.external-ecmascript.js~Number",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~object",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "promisebench/.external-ecmascript.js~Object",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~promise",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
-    "promisebench/.external-ecmascript.js~Promise",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~proxy",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
-    "promisebench/.external-ecmascript.js~Proxy",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~rangeerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
-    "promisebench/.external-ecmascript.js~RangeError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~referenceerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
-    "promisebench/.external-ecmascript.js~ReferenceError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~reflect",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
-    "promisebench/.external-ecmascript.js~Reflect",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~regexp",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
-    "promisebench/.external-ecmascript.js~RegExp",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~set",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
-    "promisebench/.external-ecmascript.js~Set",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~string",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "promisebench/.external-ecmascript.js~String",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~symbol",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
-    "promisebench/.external-ecmascript.js~Symbol",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~syntaxerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
-    "promisebench/.external-ecmascript.js~SyntaxError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~typeerror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
-    "promisebench/.external-ecmascript.js~TypeError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~urierror",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
-    "promisebench/.external-ecmascript.js~URIError",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~uint16array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
-    "promisebench/.external-ecmascript.js~Uint16Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~uint32array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
-    "promisebench/.external-ecmascript.js~Uint32Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~uint8array",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
-    "promisebench/.external-ecmascript.js~Uint8Array",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~uint8clampedarray",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
-    "promisebench/.external-ecmascript.js~Uint8ClampedArray",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~weakmap",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
-    "promisebench/.external-ecmascript.js~WeakMap",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~weakset",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
-    "promisebench/.external-ecmascript.js~WeakSet",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~boolean",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
-    "promisebench/.external-ecmascript.js~boolean",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~function",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
-    "promisebench/.external-ecmascript.js~function",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~null",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
-    "promisebench/.external-ecmascript.js~null",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~number",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
-    "promisebench/.external-ecmascript.js~number",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~object",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
-    "promisebench/.external-ecmascript.js~object",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~string",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
-    "promisebench/.external-ecmascript.js~string",
-    "external"
-  ],
-  [
-    "promisebench/.external-ecmascript.js~undefined",
-    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
-    "promisebench/.external-ecmascript.js~undefined",
-    "external"
-  ],
-  [
-    "promisebench/docs/script/inherited-summary.js",
-    "file/promisebench/docs/script/inherited-summary.js.html",
-    "promisebench/docs/script/inherited-summary.js",
+    "dist/promise-bench.mjs",
+    "file/dist/promise-bench.mjs.html",
+    "dist/promise-bench.mjs",
     "file"
   ],
   [
-    "promisebench/docs/script/inner-link.js",
-    "file/promisebench/docs/script/inner-link.js.html",
-    "promisebench/docs/script/inner-link.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/manual.js",
-    "file/promisebench/docs/script/manual.js.html",
-    "promisebench/docs/script/manual.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/patch-for-local.js",
-    "file/promisebench/docs/script/patch-for-local.js.html",
-    "promisebench/docs/script/patch-for-local.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/prettify/prettify.js",
-    "file/promisebench/docs/script/prettify/prettify.js.html",
-    "promisebench/docs/script/prettify/prettify.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/pretty-print.js",
-    "file/promisebench/docs/script/pretty-print.js.html",
-    "promisebench/docs/script/pretty-print.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/search.js",
-    "file/promisebench/docs/script/search.js.html",
-    "promisebench/docs/script/search.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/search_index.js",
-    "file/promisebench/docs/script/search_index.js.html",
-    "promisebench/docs/script/search_index.js",
-    "file"
-  ],
-  [
-    "promisebench/docs/script/test-summary.js",
-    "file/promisebench/docs/script/test-summary.js.html",
-    "promisebench/docs/script/test-summary.js",
-    "file"
-  ],
-  [
-    "promisebench/promise-bench.js",
-    "file/promisebench/promise-bench.js.html",
-    "promisebench/promise-bench.js",
-    "file"
-  ],
-  [
-    "promisebench/promise-bench.js~benchmark#after",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-after",
-    "promisebench/promise-bench.js~Benchmark#after",
+    "dist/promise-bench.mjs~benchmark#after",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-after",
+    "dist/promise-bench.mjs~Benchmark#after",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#aftereach",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-afterEach",
-    "promisebench/promise-bench.js~Benchmark#afterEach",
+    "dist/promise-bench.mjs~benchmark#aftereach",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-afterEach",
+    "dist/promise-bench.mjs~Benchmark#afterEach",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#before",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-before",
-    "promisebench/promise-bench.js~Benchmark#before",
+    "dist/promise-bench.mjs~benchmark#before",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-before",
+    "dist/promise-bench.mjs~Benchmark#before",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#beforeeach",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-beforeEach",
-    "promisebench/promise-bench.js~Benchmark#beforeEach",
+    "dist/promise-bench.mjs~benchmark#beforeeach",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-beforeEach",
+    "dist/promise-bench.mjs~Benchmark#beforeEach",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#constructor",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-constructor-constructor",
-    "promisebench/promise-bench.js~Benchmark#constructor",
+    "dist/promise-bench.mjs~benchmark#constructor",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-constructor-constructor",
+    "dist/promise-bench.mjs~Benchmark#constructor",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#fun",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-fun",
-    "promisebench/promise-bench.js~Benchmark#fun",
+    "dist/promise-bench.mjs~benchmark#fun",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-fun",
+    "dist/promise-bench.mjs~Benchmark#fun",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#maxnumber",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-member-maxNumber",
-    "promisebench/promise-bench.js~Benchmark#maxNumber",
+    "dist/promise-bench.mjs~benchmark#maxnumber",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-maxNumber",
+    "dist/promise-bench.mjs~Benchmark#maxNumber",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#minnumber",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-member-minNumber",
-    "promisebench/promise-bench.js~Benchmark#minNumber",
+    "dist/promise-bench.mjs~benchmark#minnumber",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-minNumber",
+    "dist/promise-bench.mjs~Benchmark#minNumber",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#name",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-member-name",
-    "promisebench/promise-bench.js~Benchmark#name",
+    "dist/promise-bench.mjs~benchmark#name",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-name",
+    "dist/promise-bench.mjs~Benchmark#name",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#number",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-member-number",
-    "promisebench/promise-bench.js~Benchmark#number",
+    "dist/promise-bench.mjs~benchmark#number",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-number",
+    "dist/promise-bench.mjs~Benchmark#number",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#run",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-method-run",
-    "promisebench/promise-bench.js~Benchmark#run",
+    "dist/promise-bench.mjs~benchmark#run",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-run",
+    "dist/promise-bench.mjs~Benchmark#run",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~benchmark#targeterrorrate",
-    "class/promisebench/promise-bench.js~Benchmark.html#instance-member-targetErrorRate",
-    "promisebench/promise-bench.js~Benchmark#targetErrorRate",
+    "dist/promise-bench.mjs~benchmark#targeterrorrate",
+    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-targetErrorRate",
+    "dist/promise-bench.mjs~Benchmark#targetErrorRate",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#average",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-average",
-    "promisebench/promise-bench.js~Result#average",
+    "dist/promise-bench.mjs~result#average",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-average",
+    "dist/promise-bench.mjs~Result#average",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#error",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-error",
-    "promisebench/promise-bench.js~Result#error",
+    "dist/promise-bench.mjs~result#error",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-error",
+    "dist/promise-bench.mjs~Result#error",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#errorrate",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-errorRate",
-    "promisebench/promise-bench.js~Result#errorRate",
+    "dist/promise-bench.mjs~result#errorrate",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-errorRate",
+    "dist/promise-bench.mjs~Result#errorRate",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#msecs",
-    "class/promisebench/promise-bench.js~Result.html#instance-member-msecs",
-    "promisebench/promise-bench.js~Result#msecs",
+    "dist/promise-bench.mjs~result#msecs",
+    "class/dist/promise-bench.mjs~Result.html#instance-member-msecs",
+    "dist/promise-bench.mjs~Result#msecs",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#name",
-    "class/promisebench/promise-bench.js~Result.html#instance-member-name",
-    "promisebench/promise-bench.js~Result#name",
+    "dist/promise-bench.mjs~result#name",
+    "class/dist/promise-bench.mjs~Result.html#instance-member-name",
+    "dist/promise-bench.mjs~Result#name",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#sem",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-sem",
-    "promisebench/promise-bench.js~Result#sem",
+    "dist/promise-bench.mjs~result#sem",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-sem",
+    "dist/promise-bench.mjs~Result#sem",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#std",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-std",
-    "promisebench/promise-bench.js~Result#std",
+    "dist/promise-bench.mjs~result#std",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-std",
+    "dist/promise-bench.mjs~Result#std",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#tostring",
-    "class/promisebench/promise-bench.js~Result.html#instance-method-toString",
-    "promisebench/promise-bench.js~Result#toString",
+    "dist/promise-bench.mjs~result#tostring",
+    "class/dist/promise-bench.mjs~Result.html#instance-method-toString",
+    "dist/promise-bench.mjs~Result#toString",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~result#total",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-total",
-    "promisebench/promise-bench.js~Result#total",
+    "dist/promise-bench.mjs~result#total",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-total",
+    "dist/promise-bench.mjs~Result#total",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~result#variance",
-    "class/promisebench/promise-bench.js~Result.html#instance-get-variance",
-    "promisebench/promise-bench.js~Result#variance",
+    "dist/promise-bench.mjs~result#variance",
+    "class/dist/promise-bench.mjs~Result.html#instance-get-variance",
+    "dist/promise-bench.mjs~Result#variance",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~suite#add",
-    "class/promisebench/promise-bench.js~Suite.html#instance-method-add",
-    "promisebench/promise-bench.js~Suite#add",
+    "dist/promise-bench.mjs~suite#add",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-add",
+    "dist/promise-bench.mjs~Suite#add",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~suite#addbenchmark",
-    "class/promisebench/promise-bench.js~Suite.html#instance-method-addBenchmark",
-    "promisebench/promise-bench.js~Suite#addBenchmark",
+    "dist/promise-bench.mjs~suite#addbenchmark",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-addBenchmark",
+    "dist/promise-bench.mjs~Suite#addBenchmark",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~suite#aftersuite",
-    "class/promisebench/promise-bench.js~Suite.html#instance-method-afterSuite",
-    "promisebench/promise-bench.js~Suite#afterSuite",
+    "dist/promise-bench.mjs~suite#aftersuite",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-afterSuite",
+    "dist/promise-bench.mjs~Suite#afterSuite",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~suite#async",
-    "class/promisebench/promise-bench.js~Suite.html#instance-member-async",
-    "promisebench/promise-bench.js~Suite#async",
+    "dist/promise-bench.mjs~suite#async",
+    "class/dist/promise-bench.mjs~Suite.html#instance-member-async",
+    "dist/promise-bench.mjs~Suite#async",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~suite#beforesuite",
-    "class/promisebench/promise-bench.js~Suite.html#instance-method-beforeSuite",
-    "promisebench/promise-bench.js~Suite#beforeSuite",
+    "dist/promise-bench.mjs~suite#beforesuite",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-beforeSuite",
+    "dist/promise-bench.mjs~Suite#beforeSuite",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~suite#benchmarks",
-    "class/promisebench/promise-bench.js~Suite.html#instance-member-benchmarks",
-    "promisebench/promise-bench.js~Suite#benchmarks",
+    "dist/promise-bench.mjs~suite#benchmarks",
+    "class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarks",
+    "dist/promise-bench.mjs~Suite#benchmarks",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~suite#constructor",
-    "class/promisebench/promise-bench.js~Suite.html#instance-constructor-constructor",
-    "promisebench/promise-bench.js~Suite#constructor",
+    "dist/promise-bench.mjs~suite#constructor",
+    "class/dist/promise-bench.mjs~Suite.html#instance-constructor-constructor",
+    "dist/promise-bench.mjs~Suite#constructor",
     "method"
   ],
   [
-    "promisebench/promise-bench.js~suite#options",
-    "class/promisebench/promise-bench.js~Suite.html#instance-member-options",
-    "promisebench/promise-bench.js~Suite#options",
+    "dist/promise-bench.mjs~suite#options",
+    "class/dist/promise-bench.mjs~Suite.html#instance-member-options",
+    "dist/promise-bench.mjs~Suite#options",
     "member"
   ],
   [
-    "promisebench/promise-bench.js~suite#run",
-    "class/promisebench/promise-bench.js~Suite.html#instance-method-run",
-    "promisebench/promise-bench.js~Suite#run",
+    "dist/promise-bench.mjs~suite#run",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-run",
+    "dist/promise-bench.mjs~Suite#run",
     "method"
   ]
 ]

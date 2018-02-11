@@ -2,7 +2,7 @@
   "name": "promise-bench",
   "version": "0.0.0",
   "description": "A benchmarking library that supports Promise.",
-  "main": "promise-bench.js",
+  "main": "dist/promise-bench.js",
   "files": [
     "README.md",
     "LICESNSE",
@@ -13,7 +13,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs": "./node_modules/.bin/esdoc"
+    "build": "npm run build:dist && npm run build:docs",
+    "build:dist": "mkdir dist; ./node_modules/.bin/babel src/index.js -d dist && ln -sf ../src/index.js dist/promise-bench.mjs",
+    "build:docs": "./node_modules/.bin/esdoc"
   },
   "repository": {
     "type": "git",
@@ -32,15 +34,15 @@
   "homepage": "https://macrat.github.io/PromiseBench/",
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-es2015": "^6.24.1",
     "esdoc": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0"
   },
+  "babel": {"presets": ["es2015"]},
   "esdoc": {
-    "source": "./",
-    "excludes": [
-      "node_modules",
-      "example"
+    "source": "./dist",
+    "includes": [
+      "promise-bench\\.mjs"
     ],
     "destination": "./docs",
     "plugins": [
