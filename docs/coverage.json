@@ -1,0 +1,12 @@
+{
+  "coverage": "100%",
+  "expectCount": 36,
+  "actualCount": 36,
+  "files": {
+    "promisebench/promise-bench.js": {
+      "expectCount": 36,
+      "actualCount": 36,
+      "undocumentLines": []
+    }
+  }
+}
