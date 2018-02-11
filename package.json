@@ -11,7 +11,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:dist && npm run build:docs",
-    "build:dist": "mkdir dist; ./node_modules/.bin/babel src/index.js -o dist/promise-bench.js && ln -sf ../src/index.js dist/promise-bench.mjs",
+    "build:dist": "node build.js",
     "build:docs": "./node_modules/.bin/esdoc"
   },
   "repository": {
@@ -35,11 +35,6 @@
     "esdoc": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0"
   },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
   "esdoc": {
     "source": "./dist",
     "includes": [
@@ -51,5 +46,9 @@
         "name": "esdoc-standard-plugin"
       }
     ]
+  },
+  "dependencies": {
+    "rollup": "^0.55.5",
+    "rollup-plugin-babel": "^3.0.3"
   }
 }

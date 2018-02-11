@@ -83,13 +83,20 @@ new Suite({
 })
 .run()</code>
 </code></pre>
-<h2 id="installation">installation</h2><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install git+https://github.com/macrat/PromiseBench.git</code>
+<h2 id="installation">installation</h2><h3 id="node-js">Node.js</h3><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install git+https://github.com/macrat/PromiseBench.git</code>
 </code></pre>
-<h3 id="es6">ES6</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark, {Suite} from &apos;promise-bench&apos;;</code>
+<h4 id="es6">ES6</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark, {Suite} from &apos;promise-bench&apos;;</code>
 </code></pre>
-<h3 id="commonjs">CommonJS</h3><pre><code class="lang-javascript"><code class="source-code prettyprint">const PromiseBench = require(&apos;promise-bench&apos;);
+<h4 id="commonjs">CommonJS</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">const PromiseBench = require(&apos;promise-bench&apos;);
+
 const Benchmark = PromiseBench.Benchmark;
 const Suite = PromiseBench.Suite;</code>
+</code></pre>
+<h3 id="browser">Browser</h3><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://rawgit.com/macrat/PromiseBench/master/dist/promise-bench.web.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+const Benchmark = PromiseBench.Benchmark;
+const Suite = PromiseBench.Suite;
+&lt;/script&gt;</code>
 </code></pre>
 </div>
 </div>

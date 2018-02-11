@@ -57,18 +57,29 @@ new Suite({
 ```
 
 ## installation
+### Node.js
 ``` shell
 $ npm install git+https://github.com/macrat/PromiseBench.git
 ```
 
-### ES6
+#### ES6
 ``` javascript
 import Benchmark, {Suite} from 'promise-bench';
 ```
 
-### CommonJS
+#### CommonJS
 ``` javascript
 const PromiseBench = require('promise-bench');
+
 const Benchmark = PromiseBench.Benchmark;
 const Suite = PromiseBench.Suite;
+```
+
+### Browser
+``` html
+<script src="https://rawgit.com/macrat/PromiseBench/master/dist/promise-bench.web.js"></script>
+<script>
+const Benchmark = PromiseBench.Benchmark;
+const Suite = PromiseBench.Suite;
+</script>
 ```
