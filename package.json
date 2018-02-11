@@ -29,14 +29,12 @@
   "license": "MIT",
   "bugs": "https://github.com/macrat/PromiseBench/issues",
   "homepage": "https://macrat.github.io/PromiseBench/",
-  "dependencies": {
-    "rollup": "^0.55.5",
-    "rollup-plugin-babel": "^3.0.3"
-  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "esdoc": "^1.0.4",
-    "esdoc-standard-plugin": "^1.0.0"
+    "esdoc-standard-plugin": "^1.0.0",
+    "rollup": "^0.55.5",
+    "rollup-plugin-babel": "^3.0.3"
   },
   "esdoc": {
     "source": "./dist",
