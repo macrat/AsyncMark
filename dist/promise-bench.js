@@ -2,6 +2,11 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+/**
+ * milliseconds timer
+ *
+ * @ignore
+ */
 const now = typeof performance !== 'undefined' && performance.now ? function () {
   return performance.now();
 } : function () {
@@ -232,7 +237,7 @@ class Benchmark {
   async beforeEach(count) {}
 
   /**
-   * Setup before each tests.
+   * The target function for benchmarking.
    *
    * At the time executing this method, `this` is the unique object for the test.
    * So you can use `this` for storing testing data.
@@ -258,10 +263,11 @@ class Benchmark {
    * In default, do nothing.
    *
    * @param {Number} count - count of done tests in this benchmark.
+   * @param {Number} msec - duration of this execution.
    *
    * @return {?Promise}
    */
-  afterEach(count) {}
+  async afterEach(count, msec) {}
 
   /**
    * Teardown after execute benchmark.
@@ -283,14 +289,12 @@ class Benchmark {
   /**
    * Execute benchmark.
    *
-   * @param {Object} [context] - the `this` for each benchmarking functions.
+   * @param {Suite} [suite] - the `this.suite` for each benchmarking functions.
    *
    * @return {Promise<Result>}
    */
-  async run(context = undefined) {
-    if (!context) {
-      context = { __proto__: this };
-    }
+  async run(suite = undefined) {
+    const context = { __proto__: this, suite: suite };
 
     await this.before.call(context);
 
@@ -306,7 +310,7 @@ class Benchmark {
       await this.fun.call(ctx);
       const end = now();
 
-      await this.afterEach.call(ctx, i);
+      await this.afterEach.call(ctx, i, end - start);
       msecs.push(end - start);
 
       if (!this.number && i + 1 >= this.minNumber) {
@@ -325,6 +329,20 @@ class Benchmark {
 
 /**
  * A set of {@link Benchmark}s for executing those sequential or parallel.
+ *
+ * Suite will execute by flow like this.
+ *
+ *   - {@link Suite#before}
+ *   - {@link Suite#beforeEach}
+ *   - {@link Benchmark#before}
+ *   - {@link Benchmark#beforeEach}
+ *   - {@link Benchmark#fun}
+ *   - {@link Benchmark#afterEach}
+ *   - {@link Benchmark#after}
+ *   - {@link Suite#afterEach}
+ *   - {@link Suite#after}
+ *
+ * Each function can override with options of the constructor.
  *
  *
  * @example
@@ -362,10 +380,13 @@ class Benchmark {
  */
 class Suite {
   /**
-   * @param {Object} [options={}] - default options for benchmarks in this suite.
+   * @param {Object} [options={}] - options for this suite.
    * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.
-   * @param {function} [options.beforeSuite] - setup function. see {@link Suite#beforeSuite}.
-   * @param {function} [options.afterSuite] - setup function. see {@link Suite#afterSuite}.
+   * @param {function} [options.before] - setup function. see {@link Suite#before}.
+   * @param {function} [options.beforeEach] - setup function. see {@link Suite#before}.
+   * @param {function} [options.afterEach] - setup function. see {@link Suite#after}.
+   * @param {function} [options.after] - setup function. see {@link Suite#after}.
+   * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.
    */
   constructor(options = {}) {
     /**
@@ -373,7 +394,7 @@ class Suite {
      *
      * @type {Object}
      */
-    this.options = options;
+    this.options = options.benchmarkDefault || {};
 
     /**
      * A list of {@link Benchmark}.
@@ -389,13 +410,10 @@ class Suite {
      */
     this.async = options.async || false;
 
-    if (options.beforeSuite) {
-      this.beforeSuite = options.beforeSuite;
-    }
+    options.__proto__ = Suite.prototype;
 
-    if (options.afterSuite) {
-      this.afterSuite = options.afterSuite;
-    }
+    /** @ignore */
+    this.__proto__ = options;
   }
 
   /**
@@ -403,13 +421,45 @@ class Suite {
    *
    * At the time executing this method, `this` is the unique object for the suite.
    * So you can use `this` for storing testing data like a database.
-   * Data of `this` that set in this method will discard after call {@link Suite#afterSuite}
+   * Data of `this` that set in this method will discard after call {@link Suite#after}
    *
    * In default, do nothing.
    *
    * @return {?Promise}
    */
-  async beforeSuite() {}
+  async before() {}
+
+  /**
+   * Setup before execute each benchmark.
+   *
+   * At the time executing this method, `this` is the unique object for the test.
+   * So you can use `this` for storing testing data like a database.
+   * Data of `this` that set in this method will discard after call {@link Suite#afterEach}
+   *
+   * In default, do nothing.
+   *
+   * @param {Number} count - count of done benchmarks in this benchmark.
+   * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.
+   *
+   * @return {?Promise}
+   */
+  async beforeEach(count, benchmark) {}
+
+  /**
+   * Teardown after execute each benchmark.
+   *
+   * At the time executing this method, `this` is the unique object for the test.
+   * So you can use `this` for storing testing data like a database.
+   * Data of `this` that set in this method will discard after call this method.
+   *
+   * In default, do nothing.
+   *
+   * @param {Number} count - count of done benchmarks in this benchmark.
+   * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.
+   *
+   * @return {?Promise}
+   */
+  async afterEach(count, benchmark) {}
 
   /**
    * Teardown after execute all benchmarks.
@@ -424,7 +474,7 @@ class Suite {
    *
    * @return {?Promise}
    */
-  async afterSuite(results) {}
+  async after(results) {}
 
   /**
    * Adding {@link Benchmark} instance into this {@link Suite}.
@@ -439,17 +489,33 @@ class Suite {
   }
 
   /**
-   * Make new benchmark and adding into this {@link Suite}.
+   * Adding child {@link Suite} instance into this {@link Suite}.
    *
-   * @param {Object|function} [options={}] - arguments for {@link Benchmark#constructor}.
+   * @param {Suite} suite - the suite instance for adding.
    *
    * @return {Suite} returns this suite for method chain.
    */
-  add(options = {}) {
-    if (typeof options === 'function') {
-      this.addBenchmark(new Benchmark(Object.assign({ fun: options }, this.options)));
+  addSuite(suite) {
+    this.benchmarks.push(suite);
+    return this;
+  }
+
+  /**
+   * Make new benchmark or suite and adding into this {@link Suite}.
+   *
+   * @param {Benchmark|Suite|Object|function} [child={}] - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.
+   *
+   * @return {Suite} returns this suite for method chain.
+   */
+  add(child = {}) {
+    if (child instanceof Benchmark) {
+      this.addBenchmark(child);
+    } else if (child instanceof Suite) {
+      this.addSuite(child);
+    } else if (typeof child === 'function') {
+      this.addBenchmark(new Benchmark(Object.assign({ fun: child }, this.options)));
     } else {
-      this.addBenchmark(new Benchmark(Object.assign(Object.assign({}, options), this.options)));
+      this.addBenchmark(new Benchmark(Object.assign(Object.assign({}, child), this.options)));
     }
     return this;
   }
@@ -460,32 +526,39 @@ class Suite {
    * All benchmarks will execute parallel if enabled {@link Suite#async} option.
    * Else do execute sequentially by added order.
    *
-   * @param {Object} [context] - the `this` for each benchmarking functions.
+   * @param {Suite} [suite] - the parent suite instance. this value use as `this.suite` for each benchmarking functions.
    *
    * @return {Promise<Result[]>}
    */
-  async run(context = undefined) {
-    if (!context) {
-      context = { __proto__: this };
-    }
+  async run(suite = undefined) {
+    const context = { __proto__: this, suite: suite };
 
-    await this.beforeSuite.call(context);
+    await this.before.call(context);
 
     if (this.async) {
-      return await Promise.all(this.benchmarks.map(x => x.run(context))).then(async result => {
-        await this.afterSuite.call(context, result);
+      return await Promise.all(this.benchmarks.map(async x => {
+        const ctx = { __proto__: context };
+        await this.beforeEach.call(ctx, x);
+        const result = await x.run(ctx);
+        await this.afterEach.call(ctx, x);
         return result;
+      })).then(async results => {
+        await this.after.call(context, results);
+        return results;
       });
     }
 
-    const result = [];
+    const results = [];
     for (let b of this.benchmarks) {
-      result.push((await b.run(context)));
+      const ctx = { __proto__: context };
+      await this.beforeEach.call(ctx);
+      results.push((await b.run(ctx)));
+      await this.afterEach.call(ctx);
     }
 
-    await this.afterSuite.call(context, result);
+    await this.after.call(context, results);
 
-    return result;
+    return results;
   }
 }
 

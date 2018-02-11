@@ -168,9 +168,21 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#aftersuite",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-afterSuite",
-    "dist/promise-bench.mjs~Suite#afterSuite",
+    "dist/promise-bench.mjs~suite#addsuite",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-addSuite",
+    "dist/promise-bench.mjs~Suite#addSuite",
+    "method"
+  ],
+  [
+    "dist/promise-bench.mjs~suite#after",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-after",
+    "dist/promise-bench.mjs~Suite#after",
+    "method"
+  ],
+  [
+    "dist/promise-bench.mjs~suite#aftereach",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-afterEach",
+    "dist/promise-bench.mjs~Suite#afterEach",
     "method"
   ],
   [
@@ -180,9 +192,15 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#beforesuite",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-beforeSuite",
-    "dist/promise-bench.mjs~Suite#beforeSuite",
+    "dist/promise-bench.mjs~suite#before",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-before",
+    "dist/promise-bench.mjs~Suite#before",
+    "method"
+  ],
+  [
+    "dist/promise-bench.mjs~suite#beforeeach",
+    "class/dist/promise-bench.mjs~Suite.html#instance-method-beforeEach",
+    "dist/promise-bench.mjs~Suite#beforeEach",
     "method"
   ],
   [
