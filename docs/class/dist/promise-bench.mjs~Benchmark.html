@@ -454,7 +454,7 @@ new Benchmark({
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-run">run</a></span></span><span class="code" data-ice="signature">(suite: <span><a href="class/dist/promise-bench.mjs~Suite.html">Suite</a></span>): <span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt;</span>
+          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-run">run</a></span></span><span class="code" data-ice="signature">(context: <span>Object</span>): <span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt;</span>
         </p>
       </div>
       <div>
@@ -1210,7 +1210,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">run</span><span class="code" data-ice="signature">(suite: <span><a href="class/dist/promise-bench.mjs~Suite.html">Suite</a></span>): <span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt;</span>
+    <span class="code" data-ice="name">run</span><span class="code" data-ice="signature">(context: <span>Object</span>): <span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt;</span>
     <span class="right-info">
       
       
@@ -1235,10 +1235,11 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" class="code" data-depth="0">suite</td>
-      <td data-ice="type" class="code"><span><a href="class/dist/promise-bench.mjs~Suite.html">Suite</a></span></td>
-      <td data-ice="appendix"><ul><li>optional</li></ul></td>
-      <td data-ice="description"><p>the <code>this.suite</code> for each benchmarking functions.</p>
+      <td data-ice="name" class="code" data-depth="0">context</td>
+      <td data-ice="type" class="code"><span>Object</span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: {}</li></ul></td>
+      <td data-ice="description"><p>the <code>this</code> for each benchmarking functions. <code>__proto__</code> will override with this instance.</p>
 </td>
     </tr>
 </tbody>

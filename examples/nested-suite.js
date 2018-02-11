@@ -4,7 +4,7 @@ const PromiseBench = require('../dist/promise-bench.js');
 const benchmark = new PromiseBench.Benchmark({
 	number: 1,
 	before() {
-		this.token = this.suite.token + '[benchmark]';
+		this.token += '[benchmark]';
 		console.log('  5: Benchmark#before', this.token);
 	},
 	beforeEach() {
@@ -25,7 +25,7 @@ const benchmark = new PromiseBench.Benchmark({
 const child = new PromiseBench.Suite({
 	benchmarkDefault: {number: 1},
 	before() {
-		this.token = this.suite.token + '[child suite]';
+		this.token += '[child suite]';
 		console.log(' 3: Suite#before', this.token);
 	},
 	beforeEach() {

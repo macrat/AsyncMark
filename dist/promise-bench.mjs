@@ -285,12 +285,13 @@ class Benchmark {
   /**
    * Execute benchmark.
    *
-   * @param {Suite} [suite] - the `this.suite` for each benchmarking functions.
+   * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
    * @return {Promise<Result>}
    */
-  async run(suite = undefined) {
-    const context = { __proto__: this, suite: suite };
+  async run(context = {}) {
+    context = Object.assign({}, context);
+    context.__proto__ = this;
 
     await this.before.call(context);
 
@@ -298,7 +299,7 @@ class Benchmark {
 
     const msecs = [];
     for (let i = 0; i < loopNum; i++) {
-      const ctx = { __proto__: context };
+      const ctx = Object.assign({}, context);
 
       await this.beforeEach.call(ctx, i);
 
@@ -522,18 +523,19 @@ class Suite {
    * All benchmarks will execute parallel if enabled {@link Suite#async} option.
    * Else do execute sequentially by added order.
    *
-   * @param {Suite} [suite] - the parent suite instance. this value use as `this.suite` for each benchmarking functions.
+   * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
    * @return {Promise<Result[]>}
    */
-  async run(suite = undefined) {
-    const context = { __proto__: this, suite: suite };
+  async run(context = {}) {
+    context = Object.assign({}, context);
+    context.__proto__ = this;
 
     await this.before.call(context);
 
     if (this.async) {
       return await Promise.all(this.benchmarks.map(async (x, i) => {
-        const ctx = { __proto__: context };
+        const ctx = Object.assign({}, context);
         await this.beforeEach.call(ctx, i, x);
         const result = await x.run(ctx);
         await this.afterEach.call(ctx, i, x);
@@ -547,7 +549,7 @@ class Suite {
     const results = [];
     for (let i in this.benchmarks) {
       const b = this.benchmarks[i];
-      const ctx = { __proto__: context };
+      const ctx = Object.assign({}, context);
       await this.beforeEach.call(ctx, i, b);
       results.push((await b.run(ctx)));
       await this.afterEach.call(ctx, i, b);
