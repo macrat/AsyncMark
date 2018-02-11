@@ -5,6 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 /**
  * milliseconds timer
  *
+ * @return {Number} high resolution current time in milliseconds.
+ *
  * @ignore
  */
 const now = typeof performance !== 'undefined' && performance.now ? function () {
@@ -107,7 +109,7 @@ class Result {
   /**
    * Convert to string for printing.
    *
-   * @return {String}
+   * @return {String} human redable string
    */
   toString() {
     const avg = Math.round(this.average * 10000) / 10000;
@@ -151,12 +153,12 @@ class Benchmark {
    * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.
    * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.
    * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.
-   * @param {?Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.
-   * @param {function} [options.before] - setup function. see {@link Benchmark#before}.
-   * @param {function} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.
-   * @param {function} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.
-   * @param {function} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.
-   * @param {function} [options.after] - teardown function. see {@link Benchmark#after}.
+   * @param {Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.
+   * @param {function(): ?Promise} [options.before] - setup function. see {@link Benchmark#before}.
+   * @param {function(count: Number): ?Promise} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.
+   * @param {function(): ?Promise} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.
+   * @param {function(count: Number, msec: Number): ?Promise} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.
+   * @param {function(result: Result): ?Promise} [options.after] - teardown function. see {@link Benchmark#after}.
    */
   constructor(options = {}) {
     /**
@@ -217,7 +219,7 @@ class Benchmark {
    *
    * In default, do nothing.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async before() {}
 
@@ -232,7 +234,7 @@ class Benchmark {
    *
    * @param {Number} count - count of done tests in this benchmark.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async beforeEach(count) {}
 
@@ -243,14 +245,14 @@ class Benchmark {
    * So you can use `this` for storing testing data.
    * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
    *
-   * In default, couses error that `'target function is not defined'`.
+   * In default, couses error that `Error('target function is not defined')`.
    *
    * @abstract 
    *
-   * @return {?Promise}
+   * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
    */
   async fun() {
-    throw 'target function is not defined';
+    throw new Error('target function is not defined');
   }
 
   /**
@@ -265,7 +267,7 @@ class Benchmark {
    * @param {Number} count - count of done tests in this benchmark.
    * @param {Number} msec - duration of this execution.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async afterEach(count, msec) {}
 
@@ -280,9 +282,9 @@ class Benchmark {
    *
    * @param {Result} result - result of this benchmark.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  after(result) {
+  async after(result) {
     console.log(String(result));
   }
 
@@ -291,7 +293,7 @@ class Benchmark {
    *
    * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
-   * @return {Promise<Result>}
+   * @return {?Promise<Result>} A result of benchmark.
    */
   async run(context = {}) {
     context = Object.assign({}, context);
@@ -383,10 +385,10 @@ class Suite {
   /**
    * @param {Object} [options={}] - options for this suite.
    * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.
-   * @param {function} [options.before] - setup function. see {@link Suite#before}.
-   * @param {function} [options.beforeEach] - setup function. see {@link Suite#before}.
-   * @param {function} [options.afterEach] - setup function. see {@link Suite#after}.
-   * @param {function} [options.after] - setup function. see {@link Suite#after}.
+   * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.
+   * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.
+   * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - setup function. see {@link Suite#after}.
+   * @param {function(results: Result[]): ?Promise} [options.after] - setup function. see {@link Suite#after}.
    * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.
    */
   constructor(options = {}) {
@@ -426,7 +428,7 @@ class Suite {
    *
    * In default, do nothing.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async before() {}
 
@@ -442,7 +444,7 @@ class Suite {
    * @param {Number} count - count of done benchmarks in this benchmark.
    * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async beforeEach(count, benchmark) {}
 
@@ -458,7 +460,7 @@ class Suite {
    * @param {Number} count - count of done benchmarks in this benchmark.
    * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async afterEach(count, benchmark) {}
 
@@ -473,7 +475,7 @@ class Suite {
    *
    * @param {Result[]} results - a list of benchmark result.
    *
-   * @return {?Promise}
+   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async after(results) {}
 
@@ -529,7 +531,7 @@ class Suite {
    *
    * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
-   * @return {Promise<Result[]>}
+   * @return {Promise<Result[]>} An array of {@link Result}s.
    */
   async run(context = {}) {
     context = Object.assign({}, context);
@@ -551,7 +553,7 @@ class Suite {
     }
 
     const results = [];
-    for (let i in this.benchmarks) {
+    for (const i in this.benchmarks) {
       const b = this.benchmarks[i];
       const ctx = Object.assign({}, context);
       await this.beforeEach.call(ctx, i, b);
@@ -565,7 +567,7 @@ class Suite {
   }
 }
 
-exports.default = Benchmark;
 exports.Result = Result;
+exports.default = Benchmark;
 exports.Benchmark = Benchmark;
 exports.Suite = Suite;

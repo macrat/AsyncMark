@@ -37,13 +37,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Benchmark from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber143">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import Benchmark from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber145">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber143">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber145">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -307,7 +307,7 @@ new Benchmark({
       <div>
         <p>
           
-          
+          <span data-ice="async">async</span>
           
           <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-after">after</a></span></span><span class="code" data-ice="signature">(result: <span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>): <span>Promise</span></span>
         </p>
@@ -491,7 +491,7 @@ new Benchmark({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber157">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber159">source</a></span></span>
     </span>
   </h3>
 
@@ -552,42 +552,41 @@ new Benchmark({
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.number</td>
       <td data-ice="type" class="code"><span>Number</span></td>
-      <td data-ice="appendix"><ul><li>optional</li>
-<li>nullable: true</li></ul></td>
+      <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>the number of executing the test. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-member-number">Benchmark#number</a></span>.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.before</td>
-      <td data-ice="type" class="code"><span>function</span></td>
+      <td data-ice="type" class="code"><span><span>function</span><span>()</span>: ?<span>Promise</span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>setup function. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-before">Benchmark#before</a></span>.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.beforeEach</td>
-      <td data-ice="type" class="code"><span>function</span></td>
+      <td data-ice="type" class="code"><span><span>function</span><span>(count: <span>Number</span>)</span>: ?<span>Promise</span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>setup function. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-beforeEach">Benchmark#beforeEach</a></span>.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.fun</td>
-      <td data-ice="type" class="code"><span>function</span></td>
+      <td data-ice="type" class="code"><span><span>function</span><span>()</span>: ?<span>Promise</span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>target function for benchmarking. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-fun">Benchmark#fun</a></span>.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.afterEach</td>
-      <td data-ice="type" class="code"><span>function</span></td>
+      <td data-ice="type" class="code"><span><span>function</span><span>(count: <span>Number</span>, msec: <span>Number</span>)</span>: ?<span>Promise</span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>teardown function. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-afterEach">Benchmark#afterEach</a></span>.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
       <td data-ice="name" class="code" data-depth="1">options.after</td>
-      <td data-ice="type" class="code"><span>function</span></td>
+      <td data-ice="type" class="code"><span><span>function</span><span>(result: <span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>)</span>: ?<span>Promise</span></span></td>
       <td data-ice="appendix"><ul><li>optional</li></ul></td>
       <td data-ice="description"><p>teardown function. see <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-after">Benchmark#after</a></span>.</p>
 </td>
@@ -629,7 +628,7 @@ new Benchmark({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber179">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber181">source</a></span></span>
     </span>
   </h3>
 
@@ -674,7 +673,7 @@ This value will be ignore if set <span><a href="class/dist/promise-bench.mjs~Ben
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber187">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber189">source</a></span></span>
     </span>
   </h3>
 
@@ -719,7 +718,7 @@ This value will be ignore if set <span><a href="class/dist/promise-bench.mjs~Ben
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber163">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber165">source</a></span></span>
     </span>
   </h3>
 
@@ -763,7 +762,7 @@ This value will be ignore if set <span><a href="class/dist/promise-bench.mjs~Ben
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber195">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber197">source</a></span></span>
     </span>
   </h3>
 
@@ -808,7 +807,7 @@ Will decide automatically in between <span><a href="class/dist/promise-bench.mjs
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber171">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber173">source</a></span></span>
     </span>
   </h3>
 
@@ -850,13 +849,13 @@ This value will be ignore if set <span><a href="class/dist/promise-bench.mjs~Ben
     
     
     
-    
+    <span data-ice="async">async</span>
     
     <span class="code" data-ice="name">after</span><span class="code" data-ice="signature">(result: <span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>): <span>Promise</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber281">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber283">source</a></span></span>
     </span>
   </h3>
 
@@ -898,7 +897,8 @@ Data of <code>this</code> that set in this method will discard after call this m
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span>Promise</span> (nullable: true)</td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> will await if returns <span>Promise</span>. Resolved value never evaluation.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -933,7 +933,7 @@ Data of <code>this</code> that set in this method will discard after call this m
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber266">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber268">source</a></span></span>
     </span>
   </h3>
 
@@ -982,7 +982,8 @@ Data of <code>this</code> that set in this method will discard after call this m
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span>Promise</span> (nullable: true)</td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> will await if returns <span>Promise</span>. Resolved value never evaluation.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1017,7 +1018,7 @@ Data of <code>this</code> that set in this method will discard after call this m
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber218">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber220">source</a></span></span>
     </span>
   </h3>
 
@@ -1042,7 +1043,8 @@ Data of <code>this</code> that set in this method will discard after call <span>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span>Promise</span> (nullable: true)</td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> will await if returns <span>Promise</span>. Resolved value never evaluation.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1077,7 +1079,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber233">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber235">source</a></span></span>
     </span>
   </h3>
 
@@ -1119,7 +1121,8 @@ Data of <code>this</code> that set in this method will discard after call <span>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span>Promise</span> (nullable: true)</td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> will await if returns <span>Promise</span>. Resolved value never evaluation.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1154,7 +1157,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber248">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber250">source</a></span></span>
     </span>
   </h3>
 
@@ -1165,7 +1168,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
 <p>At the time executing this method, <code>this</code> is the unique object for the test.
 So you can use <code>this</code> for storing testing data.
 Data of <code>this</code> that set in this method will discard after call <span><a href="class/dist/promise-bench.mjs~Benchmark.html#instance-method-afterEach">Benchmark#afterEach</a></span></p>
-<p>In default, couses error that <code>&apos;target function is not defined&apos;</code>.</p>
+<p>In default, couses error that <code>Error(&apos;target function is not defined&apos;)</code>.</p>
 </div>
 
   
@@ -1179,7 +1182,8 @@ Data of <code>this</code> that set in this method will discard after call <span>
       <tbody>
         <tr>
           <td class="return-type code" data-ice="returnType"><span>Promise</span> (nullable: true)</td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p>If returns <span>Promise</span>, <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -1214,7 +1218,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber292">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber294">source</a></span></span>
     </span>
   </h3>
 
@@ -1252,8 +1256,9 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <table>
       <tbody>
         <tr>
-          <td class="return-type code" data-ice="returnType"><span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt;</td>
-          
+          <td class="return-type code" data-ice="returnType"><span>Promise</span>&lt;<span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>&gt; (nullable: true)</td>
+          <td class="return-desc" data-ice="returnDescription"><p>A result of benchmark.</p>
+</td>
         </tr>
       </tbody>
     </table>

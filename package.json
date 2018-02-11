@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/eslint src/*.js examples/*.js",
     "build": "npm run build:dist && npm run build:docs",
     "build:dist": "node build.js",
     "build:docs": "./node_modules/.bin/esdoc"
@@ -33,8 +33,49 @@
     "babel-core": "^6.26.0",
     "esdoc": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0",
+    "eslint": "^4.17.0",
     "rollup": "^0.55.5",
     "rollup-plugin-babel": "^3.0.3"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "rules": {
+      "no-unused-vars": "off",
+      "no-console": "off",
+      "quotes": ["warn", "single"],
+      "space-before-blocks": ["warn", {
+        "functions": "always",
+        "keywords": "always",
+        "classes": "always"
+      }],
+      "indent": ["warn", 4],
+      "no-template-curly-in-string": "warn",
+      "valid-jsdoc": "warn",
+      "eqeqeq": "error",
+      "no-floating-decimal": "error",
+      "no-implicit-coercion": "error",
+      "no-self-compare": "error",
+      "no-throw-literal": "error",
+      "prefer-promise-reject-errors": "error",
+      "yoda": "warn",
+      "init-declarations": ["error", "always"],
+      "no-catch-shadow": "warn",
+      "no-label-var": "error",
+      "no-shadow": "error",
+      "arrow-body-style": ["warn", "as-needed"],
+      "arrow-parens": ["warn", "as-needed"],
+      "no-var": "error",
+      "prefer-const": "warn"
+    },
+    "env": {
+      "es6": true,
+      "browser": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "sourceType": "module"
+    }
   },
   "esdoc": {
     "source": "./dist",
