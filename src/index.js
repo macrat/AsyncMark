@@ -58,13 +58,13 @@ export class Result {
     }
 
     /**
-     * Time variance of times.
+     * Time unbiased sample variance of times.
      *
      * @type {Number}
      */
     get variance() {
         const avg = this.average;
-        return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / this.msecs.length;
+        return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);
     }
 
     /**
@@ -90,7 +90,7 @@ export class Result {
      *
      * @type {Number}
      */
-    get error() {
+    get errorRange() {
         return this.sem * 1.96;
     }
 
@@ -100,7 +100,16 @@ export class Result {
      * @type {Number}
      */
     get errorRate() {
-        return this.error / this.average;
+        return this.errorRange / this.average;
+    }
+
+    /**
+     * Operations per seconds.
+     *
+     * @type {Number}
+     */
+    get opsPerSec() {
+        return 1000 / this.average;
     }
 
     /**
@@ -110,9 +119,10 @@ export class Result {
      */
     toString() {
         const avg = Math.round(this.average * 10000) / 10000;
-        const error = Math.round(this.error * 10000) / 10000;
+        const ops = Math.round(this.opsPerSec * 1000) / 1000;
+        const range = Math.round(this.errorRange * 10000) / 10000;
         const rate = Math.round(this.errorRate * 10000) / 100;
-        return `${this.name}: ${avg}msec +-${error}msec (${rate}%) / ${this.msecs.length} times tried`;
+        return `${this.name}: ${ops}ops/sec ${avg}msec/op +-${range}msec/op (${rate}%) / ${this.msecs.length} times tried`;
     }
 }
 
@@ -201,10 +211,21 @@ export default class Benchmark {
         if (typeof options === 'function') {
             this.fun = options;
         } else {
-            options.__proto__ = Benchmark.prototype;
-
-            /** @ignore */
-            this.__proto__ = options;
+            if (options.before) {
+                this.before = options.before;
+            }
+            if (options.beforeEach) {
+                this.beforeEach = options.beforeEach;
+            }
+            if (options.fun) {
+                this.fun = options.fun;
+            }
+            if (options.afterEach) {
+                this.afterEach = options.afterEach;
+            }
+            if (options.after) {
+                this.after = options.after;
+            }
         }
     }
 
@@ -386,6 +407,7 @@ export {Benchmark};
 export class Suite {
     /**
      * @param {Object} [options={}] - options for this suite.
+     * @param {Number} [options.name='unnamed'] - name of this suite.
      * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.
      * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.
      * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.
@@ -394,12 +416,19 @@ export class Suite {
      * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.
      */
     constructor(options = {}) {
-    /**
-     * Default options for benchmarks in this suite.
-     *
-     * @type {Object}
-     */
-        this.options = options.benchmarkDefault || {};
+        /**
+         * Name of this suite.
+         *
+         * @type {String}
+         */
+        this.name = options.name || 'unnamed';
+
+        /**
+         * Default options for benchmarks in this suite.
+         *
+         * @type {Object}
+         */
+        this.benchmarkDefault = options.benchmarkDefault || {};
 
         /**
          * A list of {@link Benchmark}.
@@ -415,10 +444,22 @@ export class Suite {
          */
         this.async = options.async || false;
 
-        options.__proto__ = Suite.prototype;
 
-        /** @ignore */
-        this.__proto__ = options;
+        if (options.before) {
+            this.before = options.before;
+        }
+        if (options.beforeEach) {
+            this.beforeEach = options.beforeEach;
+        }
+        if (options.beforeEach) {
+            this.beforeEach = options.beforeEach;
+        }
+        if (options.afterEach) {
+            this.afterEach = options.afterEach;
+        }
+        if (options.after) {
+            this.after = options.after;
+        }
     }
 
     /**
@@ -461,10 +502,11 @@ export class Suite {
      *
      * @param {Number} count - count of done benchmarks in this benchmark.
      * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.
+     * @param {Result} result - a result of this benchmark.
      *
      * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async afterEach(count, benchmark) {}
+    async afterEach(count, benchmark, result) {}
 
     /**
      * Teardown after execute all benchmarks.
@@ -518,9 +560,13 @@ export class Suite {
         } else if (child instanceof Suite) {
             this.addSuite(child);
         } else if (typeof child === 'function') {
-            this.addBenchmark(new Benchmark(Object.assign({ fun: child }, this.options)));
+            const options = {fun: child};
+            options.__proto__ = this.benchmarkDefault;
+            this.addBenchmark(new Benchmark(options));
         } else {
-            this.addBenchmark(new Benchmark(Object.assign(Object.assign({}, child), this.options)));
+            const options = Object.assign({}, child);
+            options.__proto__ = this.benchmarkDefault;
+            this.addBenchmark(new Benchmark(options));
         }
         return this;
     }
@@ -546,7 +592,7 @@ export class Suite {
                 const ctx = Object.assign({}, context);
                 await this.beforeEach.call(ctx, i, x);
                 const result = await x.run(ctx);
-                await this.afterEach.call(ctx, i, x);
+                await this.afterEach.call(ctx, i, x, result);
                 return result;
             })).then(async results => {
                 await this.after.call(context, results);
@@ -555,12 +601,13 @@ export class Suite {
         }
 
         const results = [];
-        for (const i in this.benchmarks) {
+        for (let i=0; i<this.benchmarks.length; i++) {
             const b = this.benchmarks[i];
             const ctx = Object.assign({}, context);
             await this.beforeEach.call(ctx, i, b);
-            results.push((await b.run(ctx)));
-            await this.afterEach.call(ctx, i, b);
+            const result = await b.run(ctx);
+            results.push(result);
+            await this.afterEach.call(ctx, i, b, result);
         }
 
         await this.after.call(context, results);
