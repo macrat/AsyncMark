@@ -16,7 +16,7 @@
   
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
-  
+  <a href="test.html" data-ice="testLink">Test</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -37,13 +37,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Suite} from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber380">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Suite} from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber401">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber380">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber401">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -121,7 +121,13 @@ new Suite({
     </div>
 </div>
 
-  
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/suite.js.html#lineNumber9">Suite</a></span></li>
+</ul>
+  </div>
 
   
 </div>
@@ -210,6 +216,35 @@ new Suite({
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarkDefault">benchmarkDefault</a></span></span><span class="code" data-ice="signature">: <span>Object</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Default options for benchmarks in this suite.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarks">benchmarks</a></span></span><span class="code" data-ice="signature">: <span><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span><span>[]</span></span></span>
         </p>
       </div>
@@ -239,13 +274,13 @@ new Suite({
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-options">options</a></span></span><span class="code" data-ice="signature">: <span>Object</span></span>
+          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-name">name</a></span></span><span class="code" data-ice="signature">: <span>String</span></span>
         </p>
       </div>
       <div>
         
         
-        <div data-ice="description"><p>Default options for benchmarks in this suite.</p>
+        <div data-ice="description"><p>Name of this suite.</p>
 </div>
       </div>
     </td>
@@ -391,7 +426,7 @@ new Suite({
           
           <span data-ice="async">async</span>
           
-          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-method-afterEach">afterEach</a></span></span><span class="code" data-ice="signature">(count: <span>Number</span>, benchmark: <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span>): <span>Promise</span></span>
+          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-method-afterEach">afterEach</a></span></span><span class="code" data-ice="signature">(count: <span>Number</span>, benchmark: <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span>, result: <span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>): <span>Promise</span></span>
         </p>
       </div>
       <div>
@@ -515,7 +550,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber390">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber412">source</a></span></span>
     </span>
   </h3>
 
@@ -540,6 +575,14 @@ new Suite({
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: {}</li></ul></td>
       <td data-ice="description"><p>options for this suite.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="1">
+      <td data-ice="name" class="code" data-depth="1">options.name</td>
+      <td data-ice="type" class="code"><span>Number</span></td>
+      <td data-ice="appendix"><ul><li>optional</li>
+<li>default: &apos;unnamed&apos;</li></ul></td>
+      <td data-ice="description"><p>name of this suite.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
@@ -623,7 +666,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber410">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber439">source</a></span></span>
     </span>
   </h3>
 
@@ -631,6 +674,50 @@ new Suite({
   
   
   <div data-ice="description"><p>Flag for executing each benchmark asynchronously.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-benchmarkDefault">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">benchmarkDefault</span><span class="code" data-ice="signature">: <span>Object</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber425">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Default options for benchmarks in this suite.</p>
 </div>
 
   
@@ -667,7 +754,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber403">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber432">source</a></span></span>
     </span>
   </h3>
 
@@ -700,25 +787,25 @@ new Suite({
   
 </div>
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-options">
+  <h3 data-ice="anchor" id="instance-member-name">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">options</span><span class="code" data-ice="signature">: <span>Object</span></span>
+    <span class="code" data-ice="name">name</span><span class="code" data-ice="signature">: <span>String</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber396">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber418">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Default options for benchmarks in this suite.</p>
+  <div data-ice="description"><p>Name of this suite.</p>
 </div>
 
   
@@ -758,7 +845,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber509">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber550">source</a></span></span>
     </span>
   </h3>
 
@@ -816,7 +903,13 @@ new Suite({
 
   
 
-  
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/suite.js.html#lineNumber117">Suite #add</a></span></li>
+</ul>
+  </div>
 
   
   
@@ -833,7 +926,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber485">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber526">source</a></span></span>
     </span>
   </h3>
 
@@ -890,7 +983,13 @@ new Suite({
 
   
 
-  
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/suite.js.html#lineNumber80">Suite #addBenchmark</a></span></li>
+</ul>
+  </div>
 
   
   
@@ -907,7 +1006,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber497">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber538">source</a></span></span>
     </span>
   </h3>
 
@@ -964,7 +1063,13 @@ new Suite({
 
   
 
-  
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/suite.js.html#lineNumber98">Suite #addSuite</a></span></li>
+</ul>
+  </div>
 
   
   
@@ -981,7 +1086,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber476">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber517">source</a></span></span>
     </span>
   </h3>
 
@@ -1055,11 +1160,11 @@ Data of <code>this</code> that set in this method will discard after call this m
     
     <span data-ice="async">async</span>
     
-    <span class="code" data-ice="name">afterEach</span><span class="code" data-ice="signature">(count: <span>Number</span>, benchmark: <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span>): <span>Promise</span></span>
+    <span class="code" data-ice="name">afterEach</span><span class="code" data-ice="signature">(count: <span>Number</span>, benchmark: <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span>, result: <span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span>): <span>Promise</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber461">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber502">source</a></span></span>
     </span>
   </h3>
 
@@ -1095,6 +1200,13 @@ Data of <code>this</code> that set in this method will discard after call this m
       <td data-ice="type" class="code"><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span></td>
       <td data-ice="appendix"></td>
       <td data-ice="description"><p>a <span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span> instance that executed.</p>
+</td>
+    </tr>
+<tr data-ice="property" data-depth="0">
+      <td data-ice="name" class="code" data-depth="0">result</td>
+      <td data-ice="type" class="code"><span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"><p>a result of this benchmark.</p>
 </td>
     </tr>
 </tbody>
@@ -1144,7 +1256,7 @@ Data of <code>this</code> that set in this method will discard after call this m
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber429">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber469">source</a></span></span>
     </span>
   </h3>
 
@@ -1205,7 +1317,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber445">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber485">source</a></span></span>
     </span>
   </h3>
 
@@ -1290,7 +1402,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber532">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber577">source</a></span></span>
     </span>
   </h3>
 
@@ -1350,7 +1462,13 @@ Else do execute sequentially by added order.</p>
 
   
 
-  
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/suite.js.html#lineNumber267">Suite #run</a></span></li>
+</ul>
+  </div>
 
   
   

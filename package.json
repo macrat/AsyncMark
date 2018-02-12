@@ -9,10 +9,12 @@
     "dist"
   ],
   "scripts": {
-    "test": "./node_modules/.bin/eslint src/*.js examples/*.js",
+    "test": "npm run test:eslint && npm run test:mocha",
+    "test:eslint": "./node_modules/.bin/eslint src/*.js examples/*.js && ./node_modules/.bin/eslint --global describe,it test/*.js",
+    "test:mocha": "NODE_ENV=development ./node_modules/.bin/nyc --require babel-core/register --reporter lcov --reporter text ./node_modules/.bin/mocha",
     "build": "npm run build:dist && npm run build:docs",
-    "build:dist": "node build.js",
-    "build:docs": "./node_modules/.bin/esdoc"
+    "build:dist": "NODE_ENV=production node build.js",
+    "build:docs": "NODE_ENV=production ./node_modules/.bin/esdoc"
   },
   "repository": {
     "type": "git",
@@ -31,24 +33,72 @@
   "homepage": "https://macrat.github.io/PromiseBench/",
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-power-assert": "^2.0.0",
     "esdoc": "^1.0.4",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^4.17.0",
+    "mocha": "^5.0.0",
+    "nyc": "^11.4.1",
+    "power-assert": "^1.4.4",
     "rollup": "^0.55.5",
     "rollup-plugin-babel": "^3.0.3"
+  },
+  "esdoc": {
+    "source": "./dist",
+    "includes": [
+      "promise-bench\\.mjs"
+    ],
+    "destination": "./docs",
+    "plugins": [
+      {
+        "name": "esdoc-standard-plugin",
+        "option": {
+          "test": {
+            "source": "./test/",
+            "includes": [
+              ".*\\.js$"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "babel": {
+    "env": {
+      "development": {
+        "presets": [
+          "env",
+          "power-assert"
+        ],
+        "plugins": [
+          "transform-runtime"
+        ]
+      }
+    }
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
     "rules": {
       "no-unused-vars": "off",
       "no-console": "off",
-      "quotes": ["warn", "single"],
-      "space-before-blocks": ["warn", {
-        "functions": "always",
-        "keywords": "always",
-        "classes": "always"
-      }],
-      "indent": ["warn", 4],
+      "quotes": [
+        "warn",
+        "single"
+      ],
+      "space-before-blocks": [
+        "warn",
+        {
+          "functions": "always",
+          "keywords": "always",
+          "classes": "always"
+        }
+      ],
+      "indent": [
+        "warn",
+        4
+      ],
       "no-template-curly-in-string": "warn",
       "valid-jsdoc": "warn",
       "eqeqeq": "error",
@@ -58,12 +108,21 @@
       "no-throw-literal": "error",
       "prefer-promise-reject-errors": "error",
       "yoda": "warn",
-      "init-declarations": ["error", "always"],
+      "init-declarations": [
+        "error",
+        "always"
+      ],
       "no-catch-shadow": "warn",
       "no-label-var": "error",
       "no-shadow": "error",
-      "arrow-body-style": ["warn", "as-needed"],
-      "arrow-parens": ["warn", "as-needed"],
+      "arrow-body-style": [
+        "warn",
+        "as-needed"
+      ],
+      "arrow-parens": [
+        "warn",
+        "as-needed"
+      ],
       "no-var": "error",
       "prefer-const": "warn"
     },
@@ -76,17 +135,5 @@
       "ecmaVersion": 2017,
       "sourceType": "module"
     }
-  },
-  "esdoc": {
-    "source": "./dist",
-    "includes": [
-      "promise-bench\\.mjs"
-    ],
-    "destination": "./docs",
-    "plugins": [
-      {
-        "name": "esdoc-standard-plugin"
-      }
-    ]
   }
 }

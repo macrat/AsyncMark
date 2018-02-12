@@ -8,8 +8,8 @@ rollup
 		plugins: [babel()],
 	})
 	.then(bundle => Promise.all([
-		bundle.write({format: 'es',  exports: 'named', file: `dist/promise-bench.mjs`}),
-		bundle.write({format: 'cjs', exports: 'named', file: `dist/promise-bench.js`}),
-		bundle.write({format: 'umd', exports: 'named', file: `dist/promise-bench.web.js`, name: 'PromiseBench'}),
+		bundle.write({format: 'es',  exports: 'named', file: 'dist/promise-bench.mjs'}),
+		bundle.write({format: 'cjs', exports: 'named', file: 'dist/promise-bench.js'}),
+		bundle.write({format: 'umd', exports: 'named', file: 'dist/promise-bench.web.js', name: 'PromiseBench'}),
 	]))
 	.catch(console.error);
