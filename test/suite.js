@@ -12,14 +12,14 @@ describe('Suite', function() {
             const s = new Suite();
 
             assert(s.name === 'unnamed');
-            assert(s.async === false);
+            assert(s.parallel === false);
             assert.deepStrictEqual(s.benchmarkDefault, {});
         });
 
         it('options', function() {
             const conf = {
                 name: 'foo',
-                async: true,
+                parallel: true,
                 benchmarkDefault: {
                     name: 'bar',
                 },
@@ -27,7 +27,7 @@ describe('Suite', function() {
             const s = new Suite(conf);
 
             assert(s.name === 'foo');
-            assert(s.async === true);
+            assert(s.parallel === true);
             assert.deepStrictEqual(s.benchmarkDefault, {name: 'bar'});
         });
 
@@ -294,7 +294,7 @@ describe('Suite', function() {
                 ]);
             });
 
-            it('empty tests (enabled async)', async function() {
+            it('empty tests (enabled parallel)', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -310,7 +310,7 @@ describe('Suite', function() {
                     after() {
                         callLog.push('after');
                     },
-                    async: true,
+                    parallel: true,
                 });
 
                 assert.deepStrictEqual(callLog, []);
@@ -377,7 +377,7 @@ describe('Suite', function() {
                 ]);
             });
 
-            it('with test (enabled async)', async function() {
+            it('with test (enabled parallel)', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -396,7 +396,7 @@ describe('Suite', function() {
                     benchmarkDefault: {
                         after() {},
                     },
-                    async: true,
+                    parallel: true,
                 });
 
                 s.add({
@@ -520,11 +520,11 @@ describe('Suite', function() {
         };
 
         it('context handling', function() {
-            return contextTest({async: false});
+            return contextTest({parallel: false});
         });
 
-        it('context handling (enabled async)', function() {
-            return contextTest({async: true});
+        it('context handling (enabled parallel)', function() {
+            return contextTest({parallel: true});
         });
 
         const argumentsTest = async function(options) {
@@ -587,11 +587,11 @@ describe('Suite', function() {
         };
 
         it('arguments for methods', function() {
-            return argumentsTest({async: false});
+            return argumentsTest({parallel: false});
         });
 
-        it('arguments for methods (enabled async)', function() {
-            return argumentsTest({async: true});
+        it('arguments for methods (enabled parallel)', function() {
+            return argumentsTest({parallel: true});
         });
     });
 });

@@ -1,11 +1,11 @@
 {
   "coverage": "100%",
-  "expectCount": 41,
-  "actualCount": 41,
+  "expectCount": 43,
+  "actualCount": 43,
   "files": {
     "dist/promise-bench.mjs": {
-      "expectCount": 41,
-      "actualCount": 41,
+      "expectCount": 43,
+      "actualCount": 43,
       "undocumentLines": []
     }
   }

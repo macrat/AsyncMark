@@ -211,21 +211,11 @@ export default class Benchmark {
         if (typeof options === 'function') {
             this.fun = options;
         } else {
-            if (options.before) {
-                this.before = options.before;
-            }
-            if (options.beforeEach) {
-                this.beforeEach = options.beforeEach;
-            }
-            if (options.fun) {
-                this.fun = options.fun;
-            }
-            if (options.afterEach) {
-                this.afterEach = options.afterEach;
-            }
-            if (options.after) {
-                this.after = options.after;
-            }
+            this.before = options.before || this.before;
+            this.beforeEach = options.beforeEach || this.beforeEach;
+            this.fun = options.fun || this.fun;
+            this.afterEach = options.afterEach || this.afterEach;
+            this.after = options.after || this.after;
         }
     }
 
@@ -335,11 +325,8 @@ export default class Benchmark {
             await this.afterEach.call(ctx, i, end - start);
             msecs.push(end - start);
 
-            if (!this.number && i + 1 >= this.minNumber) {
-                const result = new Result(this.name, msecs);
-                if (result.errorRate <= this.targetErrorRate) {
-                    break;
-                }
+            if (!this.number && i + 1 >= this.minNumber && (new Result(this.name, msecs)).errorRate <= this.targetErrorRate) {
+                break;
             }
         }
 
@@ -379,7 +366,7 @@ export {Benchmark};
  *     beforeEach() {
  *         this.text = 'hello world';
  *     },
- *     async: true,
+ *     parallel: true,
  * })
  * .add(function() {
  *     /o/.test(this.text);
@@ -408,7 +395,7 @@ export class Suite {
     /**
      * @param {Object} [options={}] - options for this suite.
      * @param {Number} [options.name='unnamed'] - name of this suite.
-     * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.
+     * @param {Boolean} [options.parallel=false] - flag for executing each benchmark parallelly.
      * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.
      * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.
      * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - setup function. see {@link Suite#after}.
@@ -438,28 +425,16 @@ export class Suite {
         this.benchmarks = [];
 
         /**
-         * Flag for executing each benchmark asynchronously.
+         * Flag for executing each benchmark parallelly.
          *
          * @type {Boolean}
          */
-        this.async = options.async || false;
+        this.parallel = options.parallel || false;
 
-
-        if (options.before) {
-            this.before = options.before;
-        }
-        if (options.beforeEach) {
-            this.beforeEach = options.beforeEach;
-        }
-        if (options.beforeEach) {
-            this.beforeEach = options.beforeEach;
-        }
-        if (options.afterEach) {
-            this.afterEach = options.afterEach;
-        }
-        if (options.after) {
-            this.after = options.after;
-        }
+        this.before = options.before || this.before;
+        this.beforeEach = options.beforeEach || this.beforeEach;
+        this.afterEach = options.afterEach || this.afterEach;
+        this.after = options.after || this.after;
     }
 
     /**
@@ -572,33 +547,41 @@ export class Suite {
     }
 
     /**
-     * Execute benchmarks in this suite.
+     * Execute benchmarks parallelly.
      *
-     * All benchmarks will execute parallel if enabled {@link Suite#async} option.
-     * Else do execute sequentially by added order.
+     * @param {object} context - the context for execute.
      *
-     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
+     * @return {Promise<Result[]>} result of benchmarks.
      *
-     * @return {Promise<Result[]>} An array of {@link Result}s.
+     * @ignore
      */
-    async run(context = {}) {
-        context = Object.assign({}, context);
-        context.__proto__ = this;
-
+    async _runParallel(context) {
         await this.before.call(context);
 
-        if (this.async) {
-            return await Promise.all(this.benchmarks.map(async (x, i) => {
-                const ctx = Object.assign({}, context);
-                await this.beforeEach.call(ctx, i, x);
-                const result = await x.run(ctx);
-                await this.afterEach.call(ctx, i, x, result);
-                return result;
-            })).then(async results => {
-                await this.after.call(context, results);
-                return results;
-            });
-        }
+        const results = await Promise.all(this.benchmarks.map(async (x, i) => {
+            const ctx = Object.assign({}, context);
+            await this.beforeEach.call(ctx, i, x);
+            const result = await x.run(ctx);
+            await this.afterEach.call(ctx, i, x, result);
+            return result;
+        }));
+        
+        await this.after.call(context, results);
+
+        return results;
+    }
+
+    /**
+     * Execute benchmarks sequential.
+     *
+     * @param {object} context - the context for execute.
+     *
+     * @return {Promise<Result[]>} result of benchmarks.
+     *
+     * @ignore
+     */
+    async _runSequential(context) {
+        await this.before.call(context);
 
         const results = [];
         for (let i=0; i<this.benchmarks.length; i++) {
@@ -613,5 +596,26 @@ export class Suite {
         await this.after.call(context, results);
 
         return results;
+    }
+
+    /**
+     * Execute benchmarks in this suite.
+     *
+     * All benchmarks will execute parallel if enabled {@link Suite#parallel} option.
+     * Else do execute sequentially by added order.
+     *
+     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
+     *
+     * @return {Promise<Result[]>} An array of {@link Result}s.
+     */
+    async run(context = {}) {
+        context = Object.assign({}, context);
+        context.__proto__ = this;
+
+        if (this.parallel) {
+            return await this._runParallel(context);
+        } else {
+            return await this._runSequential(context);
+        }
     }
 }

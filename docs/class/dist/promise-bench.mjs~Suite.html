@@ -37,13 +37,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Suite} from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber401">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Suite} from &apos;<span><a href="file/dist/promise-bench.mjs.html#lineNumber388">promise-bench/dist/promise-bench.mjs</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber401">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/dist/promise-bench.mjs.html#lineNumber388">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -94,7 +94,7 @@ new Suite({
     beforeEach() {
         this.text = &apos;hello world&apos;;
     },
-    async: true,
+    parallel: true,
 })
 .add(function() {
     /o/.test(this.text);
@@ -187,35 +187,6 @@ new Suite({
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-async">async</a></span></span><span class="code" data-ice="signature">: <span>Boolean</span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        <div data-ice="description"><p>Flag for executing each benchmark asynchronously.</p>
-</div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
           <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarkDefault">benchmarkDefault</a></span></span><span class="code" data-ice="signature">: <span>Object</span></span>
         </p>
       </div>
@@ -281,6 +252,35 @@ new Suite({
         
         
         <div data-ice="description"><p>Name of this suite.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-parallel">parallel</a></span></span><span class="code" data-ice="signature">: <span>Boolean</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>Flag for executing each benchmark parallelly.</p>
 </div>
       </div>
     </td>
@@ -550,7 +550,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber412">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber399">source</a></span></span>
     </span>
   </h3>
 
@@ -586,11 +586,11 @@ new Suite({
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
-      <td data-ice="name" class="code" data-depth="1">options.async</td>
+      <td data-ice="name" class="code" data-depth="1">options.parallel</td>
       <td data-ice="type" class="code"><span>Boolean</span></td>
       <td data-ice="appendix"><ul><li>optional</li>
 <li>default: false</li></ul></td>
-      <td data-ice="description"><p>flag for executing each benchmark asynchronously.</p>
+      <td data-ice="description"><p>flag for executing each benchmark parallelly.</p>
 </td>
     </tr>
 <tr data-ice="property" data-depth="1">
@@ -655,50 +655,6 @@ new Suite({
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-async">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">async</span><span class="code" data-ice="signature">: <span>Boolean</span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber439">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  <div data-ice="description"><p>Flag for executing each benchmark asynchronously.</p>
-</div>
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-member-benchmarkDefault">
     <span class="access" data-ice="access">public</span>
     
@@ -710,7 +666,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber425">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber412">source</a></span></span>
     </span>
   </h3>
 
@@ -754,7 +710,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber432">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber419">source</a></span></span>
     </span>
   </h3>
 
@@ -798,7 +754,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber418">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber405">source</a></span></span>
     </span>
   </h3>
 
@@ -806,6 +762,50 @@ new Suite({
   
   
   <div data-ice="description"><p>Name of this suite.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-parallel">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">parallel</span><span class="code" data-ice="signature">: <span>Boolean</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber426">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Flag for executing each benchmark parallelly.</p>
 </div>
 
   
@@ -845,7 +845,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber550">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber526">source</a></span></span>
     </span>
   </h3>
 
@@ -926,7 +926,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber526">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber502">source</a></span></span>
     </span>
   </h3>
 
@@ -1006,7 +1006,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber538">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber514">source</a></span></span>
     </span>
   </h3>
 
@@ -1086,7 +1086,7 @@ new Suite({
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber517">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber493">source</a></span></span>
     </span>
   </h3>
 
@@ -1164,7 +1164,7 @@ Data of <code>this</code> that set in this method will discard after call this m
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber502">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber478">source</a></span></span>
     </span>
   </h3>
 
@@ -1256,7 +1256,7 @@ Data of <code>this</code> that set in this method will discard after call this m
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber469">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber445">source</a></span></span>
     </span>
   </h3>
 
@@ -1317,7 +1317,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber485">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber461">source</a></span></span>
     </span>
   </h3>
 
@@ -1402,7 +1402,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber577">source</a></span></span>
+      <span data-ice="source"><span><a href="file/dist/promise-bench.mjs.html#lineNumber605">source</a></span></span>
     </span>
   </h3>
 
@@ -1410,7 +1410,7 @@ Data of <code>this</code> that set in this method will discard after call <span>
   
   
   <div data-ice="description"><p>Execute benchmarks in this suite.</p>
-<p>All benchmarks will execute parallel if enabled <span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-async">Suite#async</a></span> option.
+<p>All benchmarks will execute parallel if enabled <span><a href="class/dist/promise-bench.mjs~Suite.html#instance-member-parallel">Suite#parallel</a></span> option.
 Else do execute sequentially by added order.</p>
 </div>
 

@@ -51,14 +51,14 @@ describe(&apos;Suite&apos;, function() {
             const s = new Suite();
 
             assert(s.name === &apos;unnamed&apos;);
-            assert(s.async === false);
+            assert(s.parallel === false);
             assert.deepStrictEqual(s.benchmarkDefault, {});
         });
 
         it(&apos;options&apos;, function() {
             const conf = {
                 name: &apos;foo&apos;,
-                async: true,
+                parallel: true,
                 benchmarkDefault: {
                     name: &apos;bar&apos;,
                 },
@@ -66,7 +66,7 @@ describe(&apos;Suite&apos;, function() {
             const s = new Suite(conf);
 
             assert(s.name === &apos;foo&apos;);
-            assert(s.async === true);
+            assert(s.parallel === true);
             assert.deepStrictEqual(s.benchmarkDefault, {name: &apos;bar&apos;});
         });
 
@@ -333,7 +333,7 @@ describe(&apos;Suite&apos;, function() {
                 ]);
             });
 
-            it(&apos;empty tests (enabled async)&apos;, async function() {
+            it(&apos;empty tests (enabled parallel)&apos;, async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -349,7 +349,7 @@ describe(&apos;Suite&apos;, function() {
                     after() {
                         callLog.push(&apos;after&apos;);
                     },
-                    async: true,
+                    parallel: true,
                 });
 
                 assert.deepStrictEqual(callLog, []);
@@ -416,7 +416,7 @@ describe(&apos;Suite&apos;, function() {
                 ]);
             });
 
-            it(&apos;with test (enabled async)&apos;, async function() {
+            it(&apos;with test (enabled parallel)&apos;, async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -435,7 +435,7 @@ describe(&apos;Suite&apos;, function() {
                     benchmarkDefault: {
                         after() {},
                     },
-                    async: true,
+                    parallel: true,
                 });
 
                 s.add({
@@ -559,11 +559,11 @@ describe(&apos;Suite&apos;, function() {
         };
 
         it(&apos;context handling&apos;, function() {
-            return contextTest({async: false});
+            return contextTest({parallel: false});
         });
 
-        it(&apos;context handling (enabled async)&apos;, function() {
-            return contextTest({async: true});
+        it(&apos;context handling (enabled parallel)&apos;, function() {
+            return contextTest({parallel: true});
         });
 
         const argumentsTest = async function(options) {
@@ -626,11 +626,11 @@ describe(&apos;Suite&apos;, function() {
         };
 
         it(&apos;arguments for methods&apos;, function() {
-            return argumentsTest({async: false});
+            return argumentsTest({parallel: false});
         });
 
-        it(&apos;arguments for methods (enabled async)&apos;, function() {
-            return argumentsTest({async: true});
+        it(&apos;arguments for methods (enabled parallel)&apos;, function() {
+            return argumentsTest({parallel: true});
         });
     });
 });

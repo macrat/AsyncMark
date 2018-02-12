@@ -284,7 +284,7 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/suite.js.html#lineNumber593",
-    "Suite #run arguments for methods (enabled async)",
+    "Suite #run arguments for methods (enabled parallel)",
     "test"
   ],
   [
@@ -302,7 +302,7 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/suite.js.html#lineNumber297",
-    "Suite #run call methods order empty tests (enabled async)",
+    "Suite #run call methods order empty tests (enabled parallel)",
     "test"
   ],
   [
@@ -314,7 +314,7 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/suite.js.html#lineNumber380",
-    "Suite #run call methods order with test (enabled async)",
+    "Suite #run call methods order with test (enabled parallel)",
     "test"
   ],
   [
@@ -326,7 +326,7 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/suite.js.html#lineNumber526",
-    "Suite #run context handling (enabled async)",
+    "Suite #run context handling (enabled parallel)",
     "test"
   ],
   [
@@ -504,12 +504,6 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#async",
-    "class/dist/promise-bench.mjs~Suite.html#instance-member-async",
-    "dist/promise-bench.mjs~Suite#async",
-    "member"
-  ],
-  [
     "dist/promise-bench.mjs~suite#before",
     "class/dist/promise-bench.mjs~Suite.html#instance-method-before",
     "dist/promise-bench.mjs~Suite#before",
@@ -543,6 +537,12 @@ window.esdocSearchIndex = [
     "dist/promise-bench.mjs~suite#name",
     "class/dist/promise-bench.mjs~Suite.html#instance-member-name",
     "dist/promise-bench.mjs~Suite#name",
+    "member"
+  ],
+  [
+    "dist/promise-bench.mjs~suite#parallel",
+    "class/dist/promise-bench.mjs~Suite.html#instance-member-parallel",
+    "dist/promise-bench.mjs~Suite#parallel",
     "member"
   ],
   [

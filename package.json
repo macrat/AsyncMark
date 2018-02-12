@@ -96,7 +96,7 @@
         }
       ],
       "indent": [
-        "warn",
+        "error",
         4
       ],
       "no-template-curly-in-string": "warn",

@@ -3,7 +3,7 @@
     "__docId__": 0,
     "kind": "file",
     "name": "dist/promise-bench.mjs",
-    "content": "/**\n * milliseconds timer\n *\n * @return {Number} high resolution current time in milliseconds.\n *\n * @ignore\n */\nconst now = typeof performance !== 'undefined' && performance.now ? function () {\n    return performance.now();\n} : function () {\n    const hr = process.hrtime();\n    return (hr[0] * 1e9 + hr[1]) / 1e6;\n};\n\n/**\n * The result of benchmark.\n */\nclass Result {\n    /**\n     * @param {String} name - name of benchmark.\n     * @param {Number[]} msecs - times of benchmark result.\n     *\n     * @ignore\n     */\n    constructor(name, msecs) {\n        /**\n         * Name of this test.\n         *\n         * @type {String}\n         */\n        this.name = name;\n\n        /**\n         * Times of benchmark result in milliseconds.\n         *\n         * @type {Number[]}\n         */\n        this.msecs = msecs;\n    }\n\n    /**\n     * Total milliseconds of this benchmark.\n     *\n     * @type {Number}\n     */\n    get total() {\n        return this.msecs.reduce((x, y) => x + y);\n    }\n\n    /**\n     * Average time of this benchmark in milliseconds.\n     *\n     * @type {Number}\n     */\n    get average() {\n        return this.total / this.msecs.length;\n    }\n\n    /**\n     * Time unbiased sample variance of times.\n     *\n     * @type {Number}\n     */\n    get variance() {\n        const avg = this.average;\n        return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);\n    }\n\n    /**\n     * Standard division of times.\n     *\n     * @type {Number}\n     */\n    get std() {\n        return Math.sqrt(this.variance);\n    }\n\n    /**\n     * Standard error of the mean of times.\n     *\n     * @type {Number}\n     */\n    get sem() {\n        return this.std / Math.sqrt(this.msecs.length);\n    }\n\n    /**\n     * Guessed error range of this benchmark.\n     *\n     * @type {Number}\n     */\n    get errorRange() {\n        return this.sem * 1.96;\n    }\n\n    /**\n     * Error range per average time.\n     *\n     * @type {Number}\n     */\n    get errorRate() {\n        return this.errorRange / this.average;\n    }\n\n    /**\n     * Operations per seconds.\n     *\n     * @type {Number}\n     */\n    get opsPerSec() {\n        return 1000 / this.average;\n    }\n\n    /**\n     * Convert to string for printing.\n     *\n     * @return {String} human redable string\n     */\n    toString() {\n        const avg = Math.round(this.average * 10000) / 10000;\n        const ops = Math.round(this.opsPerSec * 1000) / 1000;\n        const range = Math.round(this.errorRange * 10000) / 10000;\n        const rate = Math.round(this.errorRate * 10000) / 100;\n        return `${this.name}: ${ops}ops/sec ${avg}msec/op +-${range}msec/op (${rate}%) / ${this.msecs.length} times tried`;\n    }\n}\n\n/**\n * Class for benchmarking.\n *\n * Benchmark will execute by flow like this.\n *\n *   - before\n *   - beforeEach\n *   - fun\n *   - afterEach\n *   - after\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import Benchmark from 'promise-bench';\n * \n * \n * new Benchmark({\n *     name: 'timeout',\n *     fun() {\n *         return new Promise((resolve, reject) => {\n *             setTimeout(resolve, 100);\n *         });\n *     },\n * }).run().catch(console.error);\n */\nclass Benchmark {\n    /**\n     * @param {Object|function} [options] - options for this benchmark or benchmarking function.\n     * @param {Number} [options.name='unnamed'] - name of this benchmark.\n     * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.\n     * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.\n     * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.\n     * @param {Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.\n     * @param {function(): ?Promise} [options.before] - setup function. see {@link Benchmark#before}.\n     * @param {function(count: Number): ?Promise} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.\n     * @param {function(): ?Promise} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.\n     * @param {function(count: Number, msec: Number): ?Promise} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.\n     * @param {function(result: Result): ?Promise} [options.after] - teardown function. see {@link Benchmark#after}.\n     */\n    constructor(options = {}) {\n        /**\n         * Name of this benchmark.\n         *\n         * @type {String}\n         */\n        this.name = options.name || 'unnamed';\n\n        /**\n         * Wanted maximum error rate.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.targetErrorRate = options.targetErrorRate || 0.1;\n\n        /**\n         * Maximum number of executing test.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.maxNumber = options.maxNumber || 10000;\n\n        /**\n         * Minimal number of executing test.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.minNumber = options.minNumber || 30;\n\n        /**\n         * The number of executing the test.\n         * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.\n         *\n         * @type {Number|null}\n         */\n        this.number = options.number || null;\n\n        if (typeof options === 'function') {\n            this.fun = options;\n        } else {\n            if (options.before) {\n                this.before = options.before;\n            }\n            if (options.beforeEach) {\n                this.beforeEach = options.beforeEach;\n            }\n            if (options.fun) {\n                this.fun = options.fun;\n            }\n            if (options.afterEach) {\n                this.afterEach = options.afterEach;\n            }\n            if (options.after) {\n                this.after = options.after;\n            }\n        }\n    }\n\n    /**\n     * Setup before execute benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#after}\n     *\n     * In default, do nothing.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async before() {}\n\n    /**\n     * Setup before each tests.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done tests in this benchmark.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async beforeEach(count) {}\n\n    /**\n     * The target function for benchmarking.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n     *\n     * In default, couses error that `Error('target function is not defined')`.\n     *\n     * @abstract \n     *\n     * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.\n     */\n    async fun() {\n        throw new Error('target function is not defined');\n    }\n\n    /**\n     * Teardown after each tests.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done tests in this benchmark.\n     * @param {Number} msec - duration of this execution.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async afterEach(count, msec) {}\n\n    /**\n     * Teardown after execute benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, shows test result.\n     *\n     * @param {Result} result - result of this benchmark.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async after(result) {\n        console.log(String(result));\n    }\n\n    /**\n     * Execute benchmark.\n     *\n     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n     *\n     * @return {?Promise<Result>} A result of benchmark.\n     */\n    async run(context = {}) {\n        context = Object.assign({}, context);\n        context.__proto__ = this;\n\n        await this.before.call(context);\n\n        const loopNum = this.number || this.maxNumber;\n\n        const msecs = [];\n        for (let i = 0; i < loopNum; i++) {\n            const ctx = Object.assign({}, context);\n\n            await this.beforeEach.call(ctx, i);\n\n            const start = now();\n            await this.fun.call(ctx);\n            const end = now();\n\n            await this.afterEach.call(ctx, i, end - start);\n            msecs.push(end - start);\n\n            if (!this.number && i + 1 >= this.minNumber) {\n                const result = new Result(this.name, msecs);\n                if (result.errorRate <= this.targetErrorRate) {\n                    break;\n                }\n            }\n        }\n\n        const result = new Result(this.name, msecs);\n        await this.after.call(context, result);\n        return result;\n    }\n}\n\n/**\n * A set of {@link Benchmark}s for executing those sequential or parallel.\n *\n * Suite will execute by flow like this.\n *\n *   - {@link Suite#before}\n *   - {@link Suite#beforeEach}\n *   - {@link Benchmark#before}\n *   - {@link Benchmark#beforeEach}\n *   - {@link Benchmark#fun}\n *   - {@link Benchmark#afterEach}\n *   - {@link Benchmark#after}\n *   - {@link Suite#afterEach}\n *   - {@link Suite#after}\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import {Suite} from 'promise-bench';\n * \n * \n * new Suite({\n *     beforeEach() {\n *         this.text = 'hello world';\n *     },\n *     async: true,\n * })\n * .add(function() {\n *     /o/.test(this.text);\n * })\n * .add({\n *     name: 'String#indexOf'\n *     before() {\n *         console.log('starting String#indexOf...');\n *     },\n *     fun() {\n *         this.text.indexOf('o') > -1;\n *     },\n * })\n * .add({\n *     name: 'String#match'\n *     fun() {\n *         !!this.text.match(/o/);\n *     },\n *     after(result) {\n *         console.log('String#match is done! ' + result);\n *     },\n * })\n * .run()\n */\nclass Suite {\n    /**\n     * @param {Object} [options={}] - options for this suite.\n     * @param {Number} [options.name='unnamed'] - name of this suite.\n     * @param {Boolean} [options.async=false] - flag for executing each benchmark asynchronously.\n     * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.\n     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.\n     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - setup function. see {@link Suite#after}.\n     * @param {function(results: Result[]): ?Promise} [options.after] - setup function. see {@link Suite#after}.\n     * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.\n     */\n    constructor(options = {}) {\n        /**\n         * Name of this suite.\n         *\n         * @type {String}\n         */\n        this.name = options.name || 'unnamed';\n\n        /**\n         * Default options for benchmarks in this suite.\n         *\n         * @type {Object}\n         */\n        this.benchmarkDefault = options.benchmarkDefault || {};\n\n        /**\n         * A list of {@link Benchmark}.\n         *\n         * @type {Benchmark[]}\n         */\n        this.benchmarks = [];\n\n        /**\n         * Flag for executing each benchmark asynchronously.\n         *\n         * @type {Boolean}\n         */\n        this.async = options.async || false;\n\n        if (options.before) {\n            this.before = options.before;\n        }\n        if (options.beforeEach) {\n            this.beforeEach = options.beforeEach;\n        }\n        if (options.beforeEach) {\n            this.beforeEach = options.beforeEach;\n        }\n        if (options.afterEach) {\n            this.afterEach = options.afterEach;\n        }\n        if (options.after) {\n            this.after = options.after;\n        }\n    }\n\n    /**\n     * Setup before execute all benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the suite.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Suite#after}\n     *\n     * In default, do nothing.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async before() {}\n\n    /**\n     * Setup before execute each benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Suite#afterEach}\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done benchmarks in this benchmark.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async beforeEach(count, benchmark) {}\n\n    /**\n     * Teardown after execute each benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done benchmarks in this benchmark.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.\n     * @param {Result} result - a result of this benchmark.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async afterEach(count, benchmark, result) {}\n\n    /**\n     * Teardown after execute all benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the suite.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Result[]} results - a list of benchmark result.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async after(results) {}\n\n    /**\n     * Adding {@link Benchmark} instance into this {@link Suite}.\n     *\n     * @param {Benchmark} benchmark - the benchmark instance for adding.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    addBenchmark(benchmark) {\n        this.benchmarks.push(benchmark);\n        return this;\n    }\n\n    /**\n     * Adding child {@link Suite} instance into this {@link Suite}.\n     *\n     * @param {Suite} suite - the suite instance for adding.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    addSuite(suite) {\n        this.benchmarks.push(suite);\n        return this;\n    }\n\n    /**\n     * Make new benchmark or suite and adding into this {@link Suite}.\n     *\n     * @param {Benchmark|Suite|Object|function} [child={}] - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    add(child = {}) {\n        if (child instanceof Benchmark) {\n            this.addBenchmark(child);\n        } else if (child instanceof Suite) {\n            this.addSuite(child);\n        } else if (typeof child === 'function') {\n            const options = { fun: child };\n            options.__proto__ = this.benchmarkDefault;\n            this.addBenchmark(new Benchmark(options));\n        } else {\n            const options = Object.assign({}, child);\n            options.__proto__ = this.benchmarkDefault;\n            this.addBenchmark(new Benchmark(options));\n        }\n        return this;\n    }\n\n    /**\n     * Execute benchmarks in this suite.\n     *\n     * All benchmarks will execute parallel if enabled {@link Suite#async} option.\n     * Else do execute sequentially by added order.\n     *\n     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n     *\n     * @return {Promise<Result[]>} An array of {@link Result}s.\n     */\n    async run(context = {}) {\n        context = Object.assign({}, context);\n        context.__proto__ = this;\n\n        await this.before.call(context);\n\n        if (this.async) {\n            return await Promise.all(this.benchmarks.map(async (x, i) => {\n                const ctx = Object.assign({}, context);\n                await this.beforeEach.call(ctx, i, x);\n                const result = await x.run(ctx);\n                await this.afterEach.call(ctx, i, x, result);\n                return result;\n            })).then(async results => {\n                await this.after.call(context, results);\n                return results;\n            });\n        }\n\n        const results = [];\n        for (let i = 0; i < this.benchmarks.length; i++) {\n            const b = this.benchmarks[i];\n            const ctx = Object.assign({}, context);\n            await this.beforeEach.call(ctx, i, b);\n            const result = await b.run(ctx);\n            results.push(result);\n            await this.afterEach.call(ctx, i, b, result);\n        }\n\n        await this.after.call(context, results);\n\n        return results;\n    }\n}\n\nexport default Benchmark;\nexport { Result, Benchmark, Suite };\n",
+    "content": "/**\n * milliseconds timer\n *\n * @return {Number} high resolution current time in milliseconds.\n *\n * @ignore\n */\nconst now = typeof performance !== 'undefined' && performance.now ? function () {\n  return performance.now();\n} : function () {\n  const hr = process.hrtime();\n  return (hr[0] * 1e9 + hr[1]) / 1e6;\n};\n\n/**\n * The result of benchmark.\n */\nclass Result {\n  /**\n   * @param {String} name - name of benchmark.\n   * @param {Number[]} msecs - times of benchmark result.\n   *\n   * @ignore\n   */\n  constructor(name, msecs) {\n    /**\n     * Name of this test.\n     *\n     * @type {String}\n     */\n    this.name = name;\n\n    /**\n     * Times of benchmark result in milliseconds.\n     *\n     * @type {Number[]}\n     */\n    this.msecs = msecs;\n  }\n\n  /**\n   * Total milliseconds of this benchmark.\n   *\n   * @type {Number}\n   */\n  get total() {\n    return this.msecs.reduce((x, y) => x + y);\n  }\n\n  /**\n   * Average time of this benchmark in milliseconds.\n   *\n   * @type {Number}\n   */\n  get average() {\n    return this.total / this.msecs.length;\n  }\n\n  /**\n   * Time unbiased sample variance of times.\n   *\n   * @type {Number}\n   */\n  get variance() {\n    const avg = this.average;\n    return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);\n  }\n\n  /**\n   * Standard division of times.\n   *\n   * @type {Number}\n   */\n  get std() {\n    return Math.sqrt(this.variance);\n  }\n\n  /**\n   * Standard error of the mean of times.\n   *\n   * @type {Number}\n   */\n  get sem() {\n    return this.std / Math.sqrt(this.msecs.length);\n  }\n\n  /**\n   * Guessed error range of this benchmark.\n   *\n   * @type {Number}\n   */\n  get errorRange() {\n    return this.sem * 1.96;\n  }\n\n  /**\n   * Error range per average time.\n   *\n   * @type {Number}\n   */\n  get errorRate() {\n    return this.errorRange / this.average;\n  }\n\n  /**\n   * Operations per seconds.\n   *\n   * @type {Number}\n   */\n  get opsPerSec() {\n    return 1000 / this.average;\n  }\n\n  /**\n   * Convert to string for printing.\n   *\n   * @return {String} human redable string\n   */\n  toString() {\n    const avg = Math.round(this.average * 10000) / 10000;\n    const ops = Math.round(this.opsPerSec * 1000) / 1000;\n    const range = Math.round(this.errorRange * 10000) / 10000;\n    const rate = Math.round(this.errorRate * 10000) / 100;\n    return `${this.name}: ${ops}ops/sec ${avg}msec/op +-${range}msec/op (${rate}%) / ${this.msecs.length} times tried`;\n  }\n}\n\n/**\n * Class for benchmarking.\n *\n * Benchmark will execute by flow like this.\n *\n *   - before\n *   - beforeEach\n *   - fun\n *   - afterEach\n *   - after\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import Benchmark from 'promise-bench';\n * \n * \n * new Benchmark({\n *     name: 'timeout',\n *     fun() {\n *         return new Promise((resolve, reject) => {\n *             setTimeout(resolve, 100);\n *         });\n *     },\n * }).run().catch(console.error);\n */\nclass Benchmark {\n  /**\n   * @param {Object|function} [options] - options for this benchmark or benchmarking function.\n   * @param {Number} [options.name='unnamed'] - name of this benchmark.\n   * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.\n   * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.\n   * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.\n   * @param {Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.\n   * @param {function(): ?Promise} [options.before] - setup function. see {@link Benchmark#before}.\n   * @param {function(count: Number): ?Promise} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.\n   * @param {function(): ?Promise} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.\n   * @param {function(count: Number, msec: Number): ?Promise} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.\n   * @param {function(result: Result): ?Promise} [options.after] - teardown function. see {@link Benchmark#after}.\n   */\n  constructor(options = {}) {\n    /**\n     * Name of this benchmark.\n     *\n     * @type {String}\n     */\n    this.name = options.name || 'unnamed';\n\n    /**\n     * Wanted maximum error rate.\n     * This value will be ignore if set {@link Benchmark#number}.\n     *\n     * @type {Number}\n     */\n    this.targetErrorRate = options.targetErrorRate || 0.1;\n\n    /**\n     * Maximum number of executing test.\n     * This value will be ignore if set {@link Benchmark#number}.\n     *\n     * @type {Number}\n     */\n    this.maxNumber = options.maxNumber || 10000;\n\n    /**\n     * Minimal number of executing test.\n     * This value will be ignore if set {@link Benchmark#number}.\n     *\n     * @type {Number}\n     */\n    this.minNumber = options.minNumber || 30;\n\n    /**\n     * The number of executing the test.\n     * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.\n     *\n     * @type {Number|null}\n     */\n    this.number = options.number || null;\n\n    if (typeof options === 'function') {\n      this.fun = options;\n    } else {\n      this.before = options.before || this.before;\n      this.beforeEach = options.beforeEach || this.beforeEach;\n      this.fun = options.fun || this.fun;\n      this.afterEach = options.afterEach || this.afterEach;\n      this.after = options.after || this.after;\n    }\n  }\n\n  /**\n   * Setup before execute benchmark.\n   *\n   * At the time executing this method, `this` is the unique object for the benchmark.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call {@link Benchmark#after}\n   *\n   * In default, do nothing.\n   *\n   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async before() {}\n\n  /**\n   * Setup before each tests.\n   *\n   * At the time executing this method, `this` is the unique object for the test.\n   * So you can use `this` for storing testing data.\n   * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n   *\n   * In default, do nothing.\n   *\n   * @param {Number} count - count of done tests in this benchmark.\n   *\n   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async beforeEach(count) {}\n\n  /**\n   * The target function for benchmarking.\n   *\n   * At the time executing this method, `this` is the unique object for the test.\n   * So you can use `this` for storing testing data.\n   * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n   *\n   * In default, couses error that `Error('target function is not defined')`.\n   *\n   * @abstract \n   *\n   * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.\n   */\n  async fun() {\n    throw new Error('target function is not defined');\n  }\n\n  /**\n   * Teardown after each tests.\n   *\n   * At the time executing this method, `this` is the unique object for the test.\n   * So you can use `this` for storing testing data.\n   * Data of `this` that set in this method will discard after call this method.\n   *\n   * In default, do nothing.\n   *\n   * @param {Number} count - count of done tests in this benchmark.\n   * @param {Number} msec - duration of this execution.\n   *\n   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async afterEach(count, msec) {}\n\n  /**\n   * Teardown after execute benchmark.\n   *\n   * At the time executing this method, `this` is the unique object for the benchmark.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call this method.\n   *\n   * In default, shows test result.\n   *\n   * @param {Result} result - result of this benchmark.\n   *\n   * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async after(result) {\n    console.log(String(result));\n  }\n\n  /**\n   * Execute benchmark.\n   *\n   * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n   *\n   * @return {?Promise<Result>} A result of benchmark.\n   */\n  async run(context = {}) {\n    context = Object.assign({}, context);\n    context.__proto__ = this;\n\n    await this.before.call(context);\n\n    const loopNum = this.number || this.maxNumber;\n\n    const msecs = [];\n    for (let i = 0; i < loopNum; i++) {\n      const ctx = Object.assign({}, context);\n\n      await this.beforeEach.call(ctx, i);\n\n      const start = now();\n      await this.fun.call(ctx);\n      const end = now();\n\n      await this.afterEach.call(ctx, i, end - start);\n      msecs.push(end - start);\n\n      if (!this.number && i + 1 >= this.minNumber && new Result(this.name, msecs).errorRate <= this.targetErrorRate) {\n        break;\n      }\n    }\n\n    const result = new Result(this.name, msecs);\n    await this.after.call(context, result);\n    return result;\n  }\n}\n\n/**\n * A set of {@link Benchmark}s for executing those sequential or parallel.\n *\n * Suite will execute by flow like this.\n *\n *   - {@link Suite#before}\n *   - {@link Suite#beforeEach}\n *   - {@link Benchmark#before}\n *   - {@link Benchmark#beforeEach}\n *   - {@link Benchmark#fun}\n *   - {@link Benchmark#afterEach}\n *   - {@link Benchmark#after}\n *   - {@link Suite#afterEach}\n *   - {@link Suite#after}\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import {Suite} from 'promise-bench';\n * \n * \n * new Suite({\n *     beforeEach() {\n *         this.text = 'hello world';\n *     },\n *     parallel: true,\n * })\n * .add(function() {\n *     /o/.test(this.text);\n * })\n * .add({\n *     name: 'String#indexOf'\n *     before() {\n *         console.log('starting String#indexOf...');\n *     },\n *     fun() {\n *         this.text.indexOf('o') > -1;\n *     },\n * })\n * .add({\n *     name: 'String#match'\n *     fun() {\n *         !!this.text.match(/o/);\n *     },\n *     after(result) {\n *         console.log('String#match is done! ' + result);\n *     },\n * })\n * .run()\n */\nclass Suite {\n  /**\n   * @param {Object} [options={}] - options for this suite.\n   * @param {Number} [options.name='unnamed'] - name of this suite.\n   * @param {Boolean} [options.parallel=false] - flag for executing each benchmark parallelly.\n   * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.\n   * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.\n   * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - setup function. see {@link Suite#after}.\n   * @param {function(results: Result[]): ?Promise} [options.after] - setup function. see {@link Suite#after}.\n   * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.\n   */\n  constructor(options = {}) {\n    /**\n     * Name of this suite.\n     *\n     * @type {String}\n     */\n    this.name = options.name || 'unnamed';\n\n    /**\n     * Default options for benchmarks in this suite.\n     *\n     * @type {Object}\n     */\n    this.benchmarkDefault = options.benchmarkDefault || {};\n\n    /**\n     * A list of {@link Benchmark}.\n     *\n     * @type {Benchmark[]}\n     */\n    this.benchmarks = [];\n\n    /**\n     * Flag for executing each benchmark parallelly.\n     *\n     * @type {Boolean}\n     */\n    this.parallel = options.parallel || false;\n\n    this.before = options.before || this.before;\n    this.beforeEach = options.beforeEach || this.beforeEach;\n    this.afterEach = options.afterEach || this.afterEach;\n    this.after = options.after || this.after;\n  }\n\n  /**\n   * Setup before execute all benchmarks.\n   *\n   * At the time executing this method, `this` is the unique object for the suite.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call {@link Suite#after}\n   *\n   * In default, do nothing.\n   *\n   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async before() {}\n\n  /**\n   * Setup before execute each benchmark.\n   *\n   * At the time executing this method, `this` is the unique object for the test.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call {@link Suite#afterEach}\n   *\n   * In default, do nothing.\n   *\n   * @param {Number} count - count of done benchmarks in this benchmark.\n   * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.\n   *\n   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async beforeEach(count, benchmark) {}\n\n  /**\n   * Teardown after execute each benchmark.\n   *\n   * At the time executing this method, `this` is the unique object for the test.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call this method.\n   *\n   * In default, do nothing.\n   *\n   * @param {Number} count - count of done benchmarks in this benchmark.\n   * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.\n   * @param {Result} result - a result of this benchmark.\n   *\n   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async afterEach(count, benchmark, result) {}\n\n  /**\n   * Teardown after execute all benchmarks.\n   *\n   * At the time executing this method, `this` is the unique object for the suite.\n   * So you can use `this` for storing testing data like a database.\n   * Data of `this` that set in this method will discard after call this method.\n   *\n   * In default, do nothing.\n   *\n   * @param {Result[]} results - a list of benchmark result.\n   *\n   * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n   */\n  async after(results) {}\n\n  /**\n   * Adding {@link Benchmark} instance into this {@link Suite}.\n   *\n   * @param {Benchmark} benchmark - the benchmark instance for adding.\n   *\n   * @return {Suite} returns this suite for method chain.\n   */\n  addBenchmark(benchmark) {\n    this.benchmarks.push(benchmark);\n    return this;\n  }\n\n  /**\n   * Adding child {@link Suite} instance into this {@link Suite}.\n   *\n   * @param {Suite} suite - the suite instance for adding.\n   *\n   * @return {Suite} returns this suite for method chain.\n   */\n  addSuite(suite) {\n    this.benchmarks.push(suite);\n    return this;\n  }\n\n  /**\n   * Make new benchmark or suite and adding into this {@link Suite}.\n   *\n   * @param {Benchmark|Suite|Object|function} [child={}] - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.\n   *\n   * @return {Suite} returns this suite for method chain.\n   */\n  add(child = {}) {\n    if (child instanceof Benchmark) {\n      this.addBenchmark(child);\n    } else if (child instanceof Suite) {\n      this.addSuite(child);\n    } else if (typeof child === 'function') {\n      const options = { fun: child };\n      options.__proto__ = this.benchmarkDefault;\n      this.addBenchmark(new Benchmark(options));\n    } else {\n      const options = Object.assign({}, child);\n      options.__proto__ = this.benchmarkDefault;\n      this.addBenchmark(new Benchmark(options));\n    }\n    return this;\n  }\n\n  /**\n   * Execute benchmarks parallelly.\n   *\n   * @param {object} context - the context for execute.\n   *\n   * @return {Promise<Result[]>} result of benchmarks.\n   *\n   * @ignore\n   */\n  async _runParallel(context) {\n    await this.before.call(context);\n\n    const results = await Promise.all(this.benchmarks.map(async (x, i) => {\n      const ctx = Object.assign({}, context);\n      await this.beforeEach.call(ctx, i, x);\n      const result = await x.run(ctx);\n      await this.afterEach.call(ctx, i, x, result);\n      return result;\n    }));\n\n    await this.after.call(context, results);\n\n    return results;\n  }\n\n  /**\n   * Execute benchmarks sequential.\n   *\n   * @param {object} context - the context for execute.\n   *\n   * @return {Promise<Result[]>} result of benchmarks.\n   *\n   * @ignore\n   */\n  async _runSequential(context) {\n    await this.before.call(context);\n\n    const results = [];\n    for (let i = 0; i < this.benchmarks.length; i++) {\n      const b = this.benchmarks[i];\n      const ctx = Object.assign({}, context);\n      await this.beforeEach.call(ctx, i, b);\n      const result = await b.run(ctx);\n      results.push(result);\n      await this.afterEach.call(ctx, i, b, result);\n    }\n\n    await this.after.call(context, results);\n\n    return results;\n  }\n\n  /**\n   * Execute benchmarks in this suite.\n   *\n   * All benchmarks will execute parallel if enabled {@link Suite#parallel} option.\n   * Else do execute sequentially by added order.\n   *\n   * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n   *\n   * @return {Promise<Result[]>} An array of {@link Result}s.\n   */\n  async run(context = {}) {\n    context = Object.assign({}, context);\n    context.__proto__ = this;\n\n    if (this.parallel) {\n      return await this._runParallel(context);\n    } else {\n      return await this._runSequential(context);\n    }\n  }\n}\n\nexport default Benchmark;\nexport { Result, Benchmark, Suite };\n",
     "static": true,
     "longname": "/home/ena/PromiseBench/dist/promise-bench.mjs",
     "access": "public",
@@ -297,7 +297,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#before",
     "access": "public",
     "description": "Setup before execute benchmark.\n\nAt the time executing this method, `this` is the unique object for the benchmark.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call {@link Benchmark#after}\n\nIn default, do nothing.",
-    "lineNumber": 241,
+    "lineNumber": 231,
     "return": {
       "nullable": true,
       "types": [
@@ -319,7 +319,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#beforeEach",
     "access": "public",
     "description": "Setup before each tests.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\nIn default, do nothing.",
-    "lineNumber": 256,
+    "lineNumber": 246,
     "params": [
       {
         "nullable": null,
@@ -352,7 +352,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#fun",
     "access": "public",
     "description": "The target function for benchmarking.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n\nIn default, couses error that `Error('target function is not defined')`.",
-    "lineNumber": 271,
+    "lineNumber": 261,
     "return": {
       "nullable": true,
       "types": [
@@ -375,7 +375,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#afterEach",
     "access": "public",
     "description": "Teardown after each tests.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data.\nData of `this` that set in this method will discard after call this method.\n\nIn default, do nothing.",
-    "lineNumber": 289,
+    "lineNumber": 279,
     "params": [
       {
         "nullable": null,
@@ -418,7 +418,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#after",
     "access": "public",
     "description": "Teardown after execute benchmark.\n\nAt the time executing this method, `this` is the unique object for the benchmark.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call this method.\n\nIn default, shows test result.",
-    "lineNumber": 304,
+    "lineNumber": 294,
     "params": [
       {
         "nullable": null,
@@ -451,7 +451,7 @@
     "longname": "dist/promise-bench.mjs~Benchmark#run",
     "access": "public",
     "description": "Execute benchmark.",
-    "lineNumber": 315,
+    "lineNumber": 305,
     "params": [
       {
         "nullable": null,
@@ -767,9 +767,9 @@
     "importStyle": "{Suite}",
     "description": "A set of {@link Benchmark}s for executing those sequential or parallel.\n\nSuite will execute by flow like this.\n\n  - {@link Suite#before}\n  - {@link Suite#beforeEach}\n  - {@link Benchmark#before}\n  - {@link Benchmark#beforeEach}\n  - {@link Benchmark#fun}\n  - {@link Benchmark#afterEach}\n  - {@link Benchmark#after}\n  - {@link Suite#afterEach}\n  - {@link Suite#after}\n\nEach function can override with options of the constructor.",
     "examples": [
-      "import {Suite} from 'promise-bench';\n\n\nnew Suite({\n    beforeEach() {\n        this.text = 'hello world';\n    },\n    async: true,\n})\n.add(function() {\n    /o/.test(this.text);\n})\n.add({\n    name: 'String#indexOf'\n    before() {\n        console.log('starting String#indexOf...');\n    },\n    fun() {\n        this.text.indexOf('o') > -1;\n    },\n})\n.add({\n    name: 'String#match'\n    fun() {\n        !!this.text.match(/o/);\n    },\n    after(result) {\n        console.log('String#match is done! ' + result);\n    },\n})\n.run()"
+      "import {Suite} from 'promise-bench';\n\n\nnew Suite({\n    beforeEach() {\n        this.text = 'hello world';\n    },\n    parallel: true,\n})\n.add(function() {\n    /o/.test(this.text);\n})\n.add({\n    name: 'String#indexOf'\n    before() {\n        console.log('starting String#indexOf...');\n    },\n    fun() {\n        this.text.indexOf('o') > -1;\n    },\n})\n.add({\n    name: 'String#match'\n    fun() {\n        !!this.text.match(/o/);\n    },\n    after(result) {\n        console.log('String#match is done! ' + result);\n    },\n})\n.run()"
     ],
-    "lineNumber": 401,
+    "lineNumber": 388,
     "interface": false
   },
   {
@@ -783,7 +783,7 @@
     "longname": "dist/promise-bench.mjs~Suite#constructor",
     "access": "public",
     "description": "",
-    "lineNumber": 412,
+    "lineNumber": 399,
     "params": [
       {
         "nullable": null,
@@ -818,8 +818,8 @@
         "optional": true,
         "defaultValue": "false",
         "defaultRaw": false,
-        "name": "options.async",
-        "description": "flag for executing each benchmark asynchronously."
+        "name": "options.parallel",
+        "description": "flag for executing each benchmark parallelly."
       },
       {
         "nullable": null,
@@ -884,7 +884,7 @@
     "longname": "dist/promise-bench.mjs~Suite#name",
     "access": "public",
     "description": "Name of this suite.",
-    "lineNumber": 418,
+    "lineNumber": 405,
     "type": {
       "nullable": null,
       "types": [
@@ -903,7 +903,7 @@
     "longname": "dist/promise-bench.mjs~Suite#benchmarkDefault",
     "access": "public",
     "description": "Default options for benchmarks in this suite.",
-    "lineNumber": 425,
+    "lineNumber": 412,
     "type": {
       "nullable": null,
       "types": [
@@ -922,7 +922,7 @@
     "longname": "dist/promise-bench.mjs~Suite#benchmarks",
     "access": "public",
     "description": "A list of {@link Benchmark}.",
-    "lineNumber": 432,
+    "lineNumber": 419,
     "type": {
       "nullable": null,
       "types": [
@@ -935,13 +935,13 @@
   {
     "__docId__": 39,
     "kind": "member",
-    "name": "async",
+    "name": "parallel",
     "memberof": "dist/promise-bench.mjs~Suite",
     "static": false,
-    "longname": "dist/promise-bench.mjs~Suite#async",
+    "longname": "dist/promise-bench.mjs~Suite#parallel",
     "access": "public",
-    "description": "Flag for executing each benchmark asynchronously.",
-    "lineNumber": 439,
+    "description": "Flag for executing each benchmark parallelly.",
+    "lineNumber": 426,
     "type": {
       "nullable": null,
       "types": [
@@ -952,7 +952,7 @@
     }
   },
   {
-    "__docId__": 45,
+    "__docId__": 44,
     "kind": "method",
     "name": "before",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -962,7 +962,7 @@
     "longname": "dist/promise-bench.mjs~Suite#before",
     "access": "public",
     "description": "Setup before execute all benchmarks.\n\nAt the time executing this method, `this` is the unique object for the suite.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call {@link Suite#after}\n\nIn default, do nothing.",
-    "lineNumber": 469,
+    "lineNumber": 445,
     "return": {
       "nullable": true,
       "types": [
@@ -974,7 +974,7 @@
     "params": []
   },
   {
-    "__docId__": 46,
+    "__docId__": 45,
     "kind": "method",
     "name": "beforeEach",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -984,7 +984,7 @@
     "longname": "dist/promise-bench.mjs~Suite#beforeEach",
     "access": "public",
     "description": "Setup before execute each benchmark.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call {@link Suite#afterEach}\n\nIn default, do nothing.",
-    "lineNumber": 485,
+    "lineNumber": 461,
     "params": [
       {
         "nullable": null,
@@ -1017,7 +1017,7 @@
     }
   },
   {
-    "__docId__": 47,
+    "__docId__": 46,
     "kind": "method",
     "name": "afterEach",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1027,7 +1027,7 @@
     "longname": "dist/promise-bench.mjs~Suite#afterEach",
     "access": "public",
     "description": "Teardown after execute each benchmark.\n\nAt the time executing this method, `this` is the unique object for the test.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call this method.\n\nIn default, do nothing.",
-    "lineNumber": 502,
+    "lineNumber": 478,
     "params": [
       {
         "nullable": null,
@@ -1070,7 +1070,7 @@
     }
   },
   {
-    "__docId__": 48,
+    "__docId__": 47,
     "kind": "method",
     "name": "after",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1080,7 +1080,7 @@
     "longname": "dist/promise-bench.mjs~Suite#after",
     "access": "public",
     "description": "Teardown after execute all benchmarks.\n\nAt the time executing this method, `this` is the unique object for the suite.\nSo you can use `this` for storing testing data like a database.\nData of `this` that set in this method will discard after call this method.\n\nIn default, do nothing.",
-    "lineNumber": 517,
+    "lineNumber": 493,
     "params": [
       {
         "nullable": null,
@@ -1103,7 +1103,7 @@
     }
   },
   {
-    "__docId__": 49,
+    "__docId__": 48,
     "kind": "method",
     "name": "addBenchmark",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1113,7 +1113,7 @@
     "longname": "dist/promise-bench.mjs~Suite#addBenchmark",
     "access": "public",
     "description": "Adding {@link Benchmark} instance into this {@link Suite}.",
-    "lineNumber": 526,
+    "lineNumber": 502,
     "params": [
       {
         "nullable": null,
@@ -1136,7 +1136,7 @@
     }
   },
   {
-    "__docId__": 50,
+    "__docId__": 49,
     "kind": "method",
     "name": "addSuite",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1146,7 +1146,7 @@
     "longname": "dist/promise-bench.mjs~Suite#addSuite",
     "access": "public",
     "description": "Adding child {@link Suite} instance into this {@link Suite}.",
-    "lineNumber": 538,
+    "lineNumber": 514,
     "params": [
       {
         "nullable": null,
@@ -1169,7 +1169,7 @@
     }
   },
   {
-    "__docId__": 51,
+    "__docId__": 50,
     "kind": "method",
     "name": "add",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1179,7 +1179,7 @@
     "longname": "dist/promise-bench.mjs~Suite#add",
     "access": "public",
     "description": "Make new benchmark or suite and adding into this {@link Suite}.",
-    "lineNumber": 550,
+    "lineNumber": 526,
     "params": [
       {
         "nullable": null,
@@ -1207,7 +1207,75 @@
     }
   },
   {
+    "__docId__": 51,
+    "kind": "method",
+    "name": "_runParallel",
+    "memberof": "dist/promise-bench.mjs~Suite",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "dist/promise-bench.mjs~Suite#_runParallel",
+    "access": "private",
+    "description": "Execute benchmarks parallelly.",
+    "lineNumber": 552,
+    "ignore": true,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "context",
+        "description": "the context for execute."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<Result[]>"
+      ],
+      "spread": false,
+      "description": "result of benchmarks."
+    }
+  },
+  {
     "__docId__": 52,
+    "kind": "method",
+    "name": "_runSequential",
+    "memberof": "dist/promise-bench.mjs~Suite",
+    "generator": false,
+    "async": true,
+    "static": false,
+    "longname": "dist/promise-bench.mjs~Suite#_runSequential",
+    "access": "private",
+    "description": "Execute benchmarks sequential.",
+    "lineNumber": 577,
+    "ignore": true,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "object"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "context",
+        "description": "the context for execute."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Promise<Result[]>"
+      ],
+      "spread": false,
+      "description": "result of benchmarks."
+    }
+  },
+  {
+    "__docId__": 53,
     "kind": "method",
     "name": "run",
     "memberof": "dist/promise-bench.mjs~Suite",
@@ -1216,8 +1284,8 @@
     "static": false,
     "longname": "dist/promise-bench.mjs~Suite#run",
     "access": "public",
-    "description": "Execute benchmarks in this suite.\n\nAll benchmarks will execute parallel if enabled {@link Suite#async} option.\nElse do execute sequentially by added order.",
-    "lineNumber": 577,
+    "description": "Execute benchmarks in this suite.\n\nAll benchmarks will execute parallel if enabled {@link Suite#parallel} option.\nElse do execute sequentially by added order.",
+    "lineNumber": 605,
     "params": [
       {
         "nullable": null,
@@ -1250,7 +1318,7 @@
     "access": "public"
   },
   {
-    "__docId__": 53,
+    "__docId__": 54,
     "kind": "testFile",
     "name": "test/benchmark.js",
     "content": "import assert from 'power-assert';\n\nimport Benchmark, {Benchmark as Bench2, Result} from '../src';\n\n\n/**\n * @test {Benchmark}\n */\ndescribe('Benchmark', function() {\n    it('module exports', function() {\n        assert(Benchmark === Bench2);\n    });\n\n    /**\n     * @test {Benchmark#constructor}\n     */\n    describe('#constructor', function() {\n        it('default values', function() {\n            const b = new Benchmark();\n\n            assert(b.name === 'unnamed');\n            assert(b.targetErrorRate === 0.1);\n            assert(b.maxNumber === 10000);\n            assert(b.minNumber === 30);\n            assert(b.number === null);\n        });\n\n        it('function argument', function() {\n            let called = false;\n            const f = function() {\n                called = true;\n            }\n            const b = new Benchmark(f);\n\n            assert(b.fun === f);\n\n            assert(called === false);\n            b.fun();\n            assert(called === true);\n        });\n\n        describe('object argument', function() {\n            it('with auto number', function() {\n                const conf = {\n                    name: 'test name',\n                    targetErrorRate: 0.2,\n                    maxNumber: 100,\n                    minNumber: 10,\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.targetErrorRate === conf.targetErrorRate);\n                assert(b.maxNumber === conf.maxNumber);\n                assert(b.minNumber === conf.minNumber);\n            });\n\n            it('with specify number', function() {\n                const conf = {\n                    name: 'test name',\n                    number: 42,\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.number === conf.number);\n            });\n\n            it('functions', function() {\n                const called = {\n                    before: false,\n                    beforeEach: false,\n                    fun: false,\n                    afterEach: false,\n                    after: false,\n                };\n                const conf = {\n                    name: 'test name',\n                    number: 42,\n                    before() {\n                        called.before = true;\n                    },\n                    beforeEach() {\n                        called.beforeEach = true;\n                    },\n                    fun() {\n                        called.fun = true;\n                    },\n                    afterEach() {\n                        called.afterEach = true;\n                    },\n                    after() {\n                        called.after = true;\n                    },\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.number === conf.number);\n\n                assert(called.before === false);\n                b.before();\n                assert(called.before === true);\n\n                assert(called.beforeEach === false);\n                b.beforeEach();\n                assert(called.beforeEach === true);\n\n                assert(called.fun === false);\n                b.fun();\n                assert(called.fun === true);\n\n                assert(called.afterEach === false);\n                b.afterEach();\n                assert(called.afterEach === true);\n\n                assert(called.after === false);\n                b.after();\n                assert(called.after === true);\n            });\n        });\n    });\n\n    /**\n     * @test {Benchmark#fun}\n     */\n    describe('#fun', function() {\n        it('default behavior', async function() {\n            const b = new Benchmark();\n\n            const err = await b.fun().then(() => null).catch(e => e);\n            assert(err !== null, 'excepted error but not throwed');\n            assert(err.message === 'target function is not defined');\n        });\n    });\n\n    /**\n     * @test {Benchmark#after}\n     */\n    describe('#after', function() {\n        it('default behavior', async function() {\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                const b = new Benchmark();\n                const r = new Result('after_test', [1, 2, 3])\n\n                await b.after(r);\n\n                assert.deepStrictEqual(messages, [r.toString()]);\n            } finally {\n                console.log = l;\n            }\n        });\n    });\n\n    /**\n     * @test {Benchmark#run}\n     */\n    describe('#run', function() {\n        it('call methods order', async function() {\n            const callLog = [];\n\n            const conf = {\n                number: 2,\n                before() {\n                    callLog.push('before');\n                },\n                beforeEach() {\n                    callLog.push('beforeEach');\n                },\n                fun() {\n                    callLog.push('fun');\n                },\n                afterEach() {\n                    callLog.push('afterEach');\n                },\n                after() {\n                    callLog.push('after');\n                },\n            };\n            const b = new Benchmark(conf);\n\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                await b.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'after',\n                ]);\n                assert.deepStrictEqual(messages, []);\n            } finally {\n                console.log = l;\n            }\n        });\n\n        it('context handling', async function() {\n            const conf = {\n                number: 2,\n                before() {\n                    assert(this.inOuter === undefined);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inOuter = 123;\n                },\n                beforeEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inInner = 'abc';\n                },\n                fun() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inFunc = true;\n                },\n                afterEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inFunc === true);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outInner = 'cba';\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outOuter = 321;\n                },\n            };\n            const b = new Benchmark(conf);\n\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                await b.run();\n                assert.deepStrictEqual(messages, []);\n            } finally {\n                console.log = l;\n            }\n        });\n\n        it('arguments for methods', async function() {\n            const beforeCounts = [];\n            const afterCounts = [];\n\n            const b = new Benchmark({\n                number: 2,\n                before() {\n                    assert(arguments.length === 0);\n                },\n                beforeEach(count) {\n                    assert(arguments.length === 1);\n\n                    assert(typeof count === 'number');\n                    beforeCounts.push(count);\n                },\n                fun() {\n                    assert(arguments.length === 0);\n                },\n                afterEach(count, msec) {\n                    assert(arguments.length === 2);\n\n                    assert(typeof msec === 'number');\n                    assert(msec < 1);\n\n                    assert(typeof count === 'number');\n                    afterCounts.push(count);\n                },\n                after(result) {\n                    assert(arguments.length === 1);\n\n                    assert(result instanceof Result);\n                    assert(result.msecs.length === 2)\n                },\n            });\n\n            const result = await b.run();\n            assert(result instanceof Result);\n            assert(result.msecs.length === 2);\n\n            assert.deepStrictEqual(beforeCounts, [0, 1]);\n            assert.deepStrictEqual(afterCounts, [0, 1]);\n        });\n\n        it('timer', async function() {\n            const r10 = await new Benchmark({\n                number: 3,\n                fun() {\n                    return new Promise((resolve, reject) => setTimeout(resolve, 10));\n                },\n                after() {}\n            }).run();\n            assert(Math.abs(r10.average - 10) <= 1);\n\n            const r42 = await new Benchmark({\n                number: 3,\n                fun() {\n                    return new Promise((resolve, reject) => setTimeout(resolve, 42));\n                },\n                after() {}\n            }).run();\n            assert(Math.abs(r42.average - 42) <= 1);\n        });\n    });\n});\n",
@@ -1261,7 +1329,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 54,
+    "__docId__": 55,
     "kind": "test",
     "name": "describe0",
     "testId": 0,
@@ -1277,7 +1345,7 @@
     ]
   },
   {
-    "__docId__": 55,
+    "__docId__": 56,
     "kind": "test",
     "name": "it1",
     "testId": 1,
@@ -1290,7 +1358,7 @@
     "lineNumber": 10
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
     "kind": "test",
     "name": "describe2",
     "testId": 2,
@@ -1306,7 +1374,7 @@
     ]
   },
   {
-    "__docId__": 57,
+    "__docId__": 58,
     "kind": "test",
     "name": "it3",
     "testId": 3,
@@ -1319,7 +1387,7 @@
     "lineNumber": 18
   },
   {
-    "__docId__": 58,
+    "__docId__": 59,
     "kind": "test",
     "name": "it4",
     "testId": 4,
@@ -1332,7 +1400,7 @@
     "lineNumber": 28
   },
   {
-    "__docId__": 59,
+    "__docId__": 60,
     "kind": "test",
     "name": "describe5",
     "testId": 5,
@@ -1345,7 +1413,7 @@
     "lineNumber": 42
   },
   {
-    "__docId__": 60,
+    "__docId__": 61,
     "kind": "test",
     "name": "it6",
     "testId": 6,
@@ -1358,7 +1426,7 @@
     "lineNumber": 43
   },
   {
-    "__docId__": 61,
+    "__docId__": 62,
     "kind": "test",
     "name": "it7",
     "testId": 7,
@@ -1371,7 +1439,7 @@
     "lineNumber": 58
   },
   {
-    "__docId__": 62,
+    "__docId__": 63,
     "kind": "test",
     "name": "it8",
     "testId": 8,
@@ -1384,7 +1452,7 @@
     "lineNumber": 69
   },
   {
-    "__docId__": 63,
+    "__docId__": 64,
     "kind": "test",
     "name": "describe9",
     "testId": 9,
@@ -1400,7 +1468,7 @@
     ]
   },
   {
-    "__docId__": 64,
+    "__docId__": 65,
     "kind": "test",
     "name": "it10",
     "testId": 10,
@@ -1413,7 +1481,7 @@
     "lineNumber": 128
   },
   {
-    "__docId__": 65,
+    "__docId__": 66,
     "kind": "test",
     "name": "describe11",
     "testId": 11,
@@ -1429,7 +1497,7 @@
     ]
   },
   {
-    "__docId__": 66,
+    "__docId__": 67,
     "kind": "test",
     "name": "it12",
     "testId": 12,
@@ -1442,7 +1510,7 @@
     "lineNumber": 141
   },
   {
-    "__docId__": 67,
+    "__docId__": 68,
     "kind": "test",
     "name": "describe13",
     "testId": 13,
@@ -1458,7 +1526,7 @@
     ]
   },
   {
-    "__docId__": 68,
+    "__docId__": 69,
     "kind": "test",
     "name": "it14",
     "testId": 14,
@@ -1471,7 +1539,7 @@
     "lineNumber": 165
   },
   {
-    "__docId__": 69,
+    "__docId__": 70,
     "kind": "test",
     "name": "it15",
     "testId": 15,
@@ -1484,7 +1552,7 @@
     "lineNumber": 213
   },
   {
-    "__docId__": 70,
+    "__docId__": 71,
     "kind": "test",
     "name": "it16",
     "testId": 16,
@@ -1497,7 +1565,7 @@
     "lineNumber": 278
   },
   {
-    "__docId__": 71,
+    "__docId__": 72,
     "kind": "test",
     "name": "it17",
     "testId": 17,
@@ -1510,7 +1578,7 @@
     "lineNumber": 321
   },
   {
-    "__docId__": 72,
+    "__docId__": 73,
     "kind": "testFile",
     "name": "test/result.js",
     "content": "import assert from 'power-assert';\n\nimport {Result} from '../src';\n\n\n/**\n * @test {Result}\n */\ndescribe('Result', function() {\n    /**\n     * @test {Result#total}\n     */\n    it('#total', function() {\n        assert(new Result('test', [10, 20, 30]).total === 60);\n        assert(new Result('test', [11, 22, 33]).total === 66);\n    });\n\n    /**\n     * @test {Result#average}\n     */\n    it('#average', function() {\n        assert(new Result('test', [10, 20, 30]).average === 20);\n        assert(new Result('test', [11, 22, 33]).average === 22);\n    });\n\n    /**\n     * @test {Result#variance}\n     */\n    it('#variance', function() {\n        assert(new Result('test', [10, 20, 30]).variance === 100);\n        assert(new Result('test', [11, 22, 33]).variance === 121);\n    });\n\n    /**\n     * @test {Result#std}\n     */\n    it('#std', function() {\n        assert(new Result('test', [10, 20, 30]).std === 10);\n        assert(new Result('test', [11, 22, 33]).std === 11);\n    });\n\n    /**\n     * @test {Result#std}\n     */\n    it('#sem', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).sem - 5.7735) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).sem - 6.3509) < 0.001);\n    });\n\n    /**\n     * @test {Result#errorRange}\n     */\n    it('#errorRange', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).errorRange - 11.3161) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).errorRange - 12.4477) < 0.001);\n    });\n\n    /**\n     * @test {Result#errorRate}\n     */\n    it('#errorRate', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).errorRate - 0.5658) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).errorRate - 0.5658) < 0.001);\n    });\n\n    /**\n     * @test {Result#opsPerSec}\n     */\n    it('#opsPerSec', function() {\n        assert(new Result('test', [1]).opsPerSec === 1000);\n        assert(new Result('test', [200]).opsPerSec === 5);\n    });\n\n    /**\n     * @test {Result#toString}\n     */\n    it('#toString', function() {\n        assert(String(new Result('test', [10, 20, 30])) === 'test: 50ops/sec 20msec/op +-11.3161msec/op (56.58%) / 3 times tried');\n        assert(String(new Result('test', [1.234567, 2.345678])) === 'test: 558.621ops/sec 1.7901msec/op +-1.0889msec/op (60.83%) / 2 times tried');\n    });\n});\n",
@@ -1521,7 +1589,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 73,
+    "__docId__": 74,
     "kind": "test",
     "name": "describe18",
     "testId": 18,
@@ -1537,7 +1605,7 @@
     ]
   },
   {
-    "__docId__": 74,
+    "__docId__": 75,
     "kind": "test",
     "name": "it19",
     "testId": 19,
@@ -1553,7 +1621,7 @@
     ]
   },
   {
-    "__docId__": 75,
+    "__docId__": 76,
     "kind": "test",
     "name": "it20",
     "testId": 20,
@@ -1569,7 +1637,7 @@
     ]
   },
   {
-    "__docId__": 76,
+    "__docId__": 77,
     "kind": "test",
     "name": "it21",
     "testId": 21,
@@ -1585,7 +1653,7 @@
     ]
   },
   {
-    "__docId__": 77,
+    "__docId__": 78,
     "kind": "test",
     "name": "it22",
     "testId": 22,
@@ -1601,7 +1669,7 @@
     ]
   },
   {
-    "__docId__": 78,
+    "__docId__": 79,
     "kind": "test",
     "name": "it23",
     "testId": 23,
@@ -1617,7 +1685,7 @@
     ]
   },
   {
-    "__docId__": 79,
+    "__docId__": 80,
     "kind": "test",
     "name": "it24",
     "testId": 24,
@@ -1633,7 +1701,7 @@
     ]
   },
   {
-    "__docId__": 80,
+    "__docId__": 81,
     "kind": "test",
     "name": "it25",
     "testId": 25,
@@ -1649,7 +1717,7 @@
     ]
   },
   {
-    "__docId__": 81,
+    "__docId__": 82,
     "kind": "test",
     "name": "it26",
     "testId": 26,
@@ -1665,7 +1733,7 @@
     ]
   },
   {
-    "__docId__": 82,
+    "__docId__": 83,
     "kind": "test",
     "name": "it27",
     "testId": 27,
@@ -1681,10 +1749,10 @@
     ]
   },
   {
-    "__docId__": 83,
+    "__docId__": 84,
     "kind": "testFile",
     "name": "test/suite.js",
-    "content": "import assert from 'power-assert';\n\nimport Benchmark, {Suite, Result} from '../src';\n\n\n/**\n * @test {Suite}\n */\ndescribe('Suite', function() {\n    describe('#constructor', function() {\n        it('default values', function() {\n            const s = new Suite();\n\n            assert(s.name === 'unnamed');\n            assert(s.async === false);\n            assert.deepStrictEqual(s.benchmarkDefault, {});\n        });\n\n        it('options', function() {\n            const conf = {\n                name: 'foo',\n                async: true,\n                benchmarkDefault: {\n                    name: 'bar',\n                },\n            };\n            const s = new Suite(conf);\n\n            assert(s.name === 'foo');\n            assert(s.async === true);\n            assert.deepStrictEqual(s.benchmarkDefault, {name: 'bar'});\n        });\n\n        it('functions', function() {\n            const called = {\n                before: false,\n                beforeEach: false,\n                afterEach: false,\n                after: false,\n            };\n            const s = new Suite({\n                before() {\n                    called.before = true;\n                },\n                beforeEach() {\n                    called.beforeEach = true;\n                },\n                fun() {\n                    called.fun = true;\n                },\n                afterEach() {\n                    called.afterEach = true;\n                },\n                after() {\n                    called.after = true;\n                },\n            });\n\n            assert(called.before === false);\n            s.before();\n            assert(called.before === true);\n\n            assert(called.beforeEach === false);\n            s.beforeEach();\n            assert(called.beforeEach === true);\n\n            assert(called.afterEach === false);\n            s.afterEach();\n            assert(called.afterEach === true);\n\n            assert(called.after === false);\n            s.after();\n            assert(called.after === true);\n        });\n    });\n\n    /**\n     * @test {Suite#addBenchmark}\n     */\n    it('#addBenchmark', function() {\n        const s = new Suite();\n        const b1 = new Benchmark({name: 'a'});\n        const b2 = new Benchmark({name: 'b'});\n\n        assert.deepStrictEqual(s.benchmarks, []);\n        s.addBenchmark(b1);\n        assert.deepStrictEqual(s.benchmarks, [b1]);\n        s.addBenchmark(b2);\n        assert.deepStrictEqual(s.benchmarks, [b1, b2]);\n\n        assert(s.benchmarks[0].name === 'a');\n        assert(s.benchmarks[1].name === 'b');\n    });\n\n    /**\n     * @test {Suite#addSuite}\n     */\n    it('#addSuite', function() {\n        const p = new Suite();\n        const c1 = new Suite();\n        const c2 = new Suite();\n\n        assert(p !== c1);\n        assert(p !== c2);\n        assert(c1 !== c2);\n\n        assert.deepStrictEqual(p.benchmarks, []);\n        p.addBenchmark(c1);\n        assert.deepStrictEqual(p.benchmarks, [c1]);\n        p.addBenchmark(c2);\n        assert.deepStrictEqual(p.benchmarks, [c1, c2]);\n    });\n\n    /**\n     * @test {Suite#add}\n     */\n    describe('#add', function() {\n        it('Benchmark', function() {\n            const s = new Suite();\n            const b = new Benchmark({name: 'foobar'});\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(b);\n\n            assert.deepStrictEqual(s.benchmarks, [b]);\n            assert(s.benchmarks[0].name === 'foobar');\n        });\n\n        it('Suite', function() {\n            const p = new Suite();\n            const c = new Suite();\n\n            assert(p !== c);\n            assert.deepStrictEqual(p.benchmarks, []);\n\n            p.add(c);\n\n            assert.deepStrictEqual(p.benchmarks, [c]);\n            assert.deepStrictEqual(c.benchmarks, []);\n        });\n\n        it('function', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const fun = function() {\n                called.fun = true;\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(fun);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('function with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    fun() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].fun();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n\n        it('object', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.fun = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('object with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                after() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].after();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n    });\n\n    /**\n     * @test {Suite#run}\n     */\n    describe('#run', function() {\n        describe('call methods order', function() {\n            it('empty tests', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('empty tests (enabled async)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    async: true,\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('with test', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'beforeEach',\n                    'bench1',\n                    'bench1',\n                    'afterEach',\n                    'beforeEach',\n                    'bench2',\n                    'bench2',\n                    'bench2',\n                    'afterEach',\n                    'after',\n                ]);\n            });\n\n            it('with test (enabled async)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                    async: true,\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert(callLog.length === 11);\n\n                assert(callLog[0] === 'before');\n                assert(callLog[1] === 'beforeEach');\n                assert(callLog[callLog.length - 2] === 'afterEach');\n                assert(callLog[callLog.length - 1] === 'after');\n\n                assert(callLog.filter(x => x === 'bench1').length === 2);\n                assert(callLog.filter(x => x === 'bench2').length === 3);\n                assert(callLog.filter(x => x === 'beforeEach').length === 2);\n                assert(callLog.filter(x => x === 'afterEach').length === 2);\n            });\n        });\n\n        const contextTest = async function(options) {\n            options.__proto__ = {\n                before() {\n                    assert(this.inOuter === undefined);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inOuter = 123;\n                },\n                beforeEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inInner = 'abc';\n                },\n                afterEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outInner = 'cba';\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outOuter = 321;\n                },\n                benchmarkDefault: {\n                    fun() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({\n                number: 2,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 42;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 42);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            s.add({\n                number: 3,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 24;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 24);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            await s.run();\n        };\n\n        it('context handling', function() {\n            return contextTest({async: false});\n        });\n\n        it('context handling (enabled async)', function() {\n            return contextTest({async: true});\n        });\n\n        const argumentsTest = async function(options) {\n            const beforeCounts = [];\n            const afterCounts = [];\n\n            options.__proto__ = {\n                before() {\n                    assert(arguments.length === 0);\n                },\n                beforeEach(count, benchmark) {\n                    assert(arguments.length === 2);\n\n                    assert(typeof count === 'number');\n                    beforeCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n                },\n                fun() {\n                    assert(arguments.length === 0);\n                },\n                afterEach(count, benchmark, result) {\n                    assert(arguments.length === 3);\n\n                    assert(typeof count === 'number');\n                    afterCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n                    assert(result instanceof Result);\n                    assert(result.msecs.length === 3);\n                },\n                after(results) {\n                    assert(arguments.length === 1);\n\n                    results.forEach(x => {\n                        assert(x instanceof Result);\n                        assert(x.msecs.length === 3);\n                    });\n                },\n                benchmarkDefault: {\n                    number: 3,\n                    fun() {},\n                    after() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({});\n            s.add({});\n\n            const results = await s.run();\n            results.forEach(x => {\n                assert(x instanceof Result);\n                assert(x.msecs.length === 3);\n            });\n\n            assert.deepStrictEqual(beforeCounts, [0, 1]);\n            assert.deepStrictEqual(afterCounts, [0, 1]);\n        };\n\n        it('arguments for methods', function() {\n            return argumentsTest({async: false});\n        });\n\n        it('arguments for methods (enabled async)', function() {\n            return argumentsTest({async: true});\n        });\n    });\n});\n",
+    "content": "import assert from 'power-assert';\n\nimport Benchmark, {Suite, Result} from '../src';\n\n\n/**\n * @test {Suite}\n */\ndescribe('Suite', function() {\n    describe('#constructor', function() {\n        it('default values', function() {\n            const s = new Suite();\n\n            assert(s.name === 'unnamed');\n            assert(s.parallel === false);\n            assert.deepStrictEqual(s.benchmarkDefault, {});\n        });\n\n        it('options', function() {\n            const conf = {\n                name: 'foo',\n                parallel: true,\n                benchmarkDefault: {\n                    name: 'bar',\n                },\n            };\n            const s = new Suite(conf);\n\n            assert(s.name === 'foo');\n            assert(s.parallel === true);\n            assert.deepStrictEqual(s.benchmarkDefault, {name: 'bar'});\n        });\n\n        it('functions', function() {\n            const called = {\n                before: false,\n                beforeEach: false,\n                afterEach: false,\n                after: false,\n            };\n            const s = new Suite({\n                before() {\n                    called.before = true;\n                },\n                beforeEach() {\n                    called.beforeEach = true;\n                },\n                fun() {\n                    called.fun = true;\n                },\n                afterEach() {\n                    called.afterEach = true;\n                },\n                after() {\n                    called.after = true;\n                },\n            });\n\n            assert(called.before === false);\n            s.before();\n            assert(called.before === true);\n\n            assert(called.beforeEach === false);\n            s.beforeEach();\n            assert(called.beforeEach === true);\n\n            assert(called.afterEach === false);\n            s.afterEach();\n            assert(called.afterEach === true);\n\n            assert(called.after === false);\n            s.after();\n            assert(called.after === true);\n        });\n    });\n\n    /**\n     * @test {Suite#addBenchmark}\n     */\n    it('#addBenchmark', function() {\n        const s = new Suite();\n        const b1 = new Benchmark({name: 'a'});\n        const b2 = new Benchmark({name: 'b'});\n\n        assert.deepStrictEqual(s.benchmarks, []);\n        s.addBenchmark(b1);\n        assert.deepStrictEqual(s.benchmarks, [b1]);\n        s.addBenchmark(b2);\n        assert.deepStrictEqual(s.benchmarks, [b1, b2]);\n\n        assert(s.benchmarks[0].name === 'a');\n        assert(s.benchmarks[1].name === 'b');\n    });\n\n    /**\n     * @test {Suite#addSuite}\n     */\n    it('#addSuite', function() {\n        const p = new Suite();\n        const c1 = new Suite();\n        const c2 = new Suite();\n\n        assert(p !== c1);\n        assert(p !== c2);\n        assert(c1 !== c2);\n\n        assert.deepStrictEqual(p.benchmarks, []);\n        p.addBenchmark(c1);\n        assert.deepStrictEqual(p.benchmarks, [c1]);\n        p.addBenchmark(c2);\n        assert.deepStrictEqual(p.benchmarks, [c1, c2]);\n    });\n\n    /**\n     * @test {Suite#add}\n     */\n    describe('#add', function() {\n        it('Benchmark', function() {\n            const s = new Suite();\n            const b = new Benchmark({name: 'foobar'});\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(b);\n\n            assert.deepStrictEqual(s.benchmarks, [b]);\n            assert(s.benchmarks[0].name === 'foobar');\n        });\n\n        it('Suite', function() {\n            const p = new Suite();\n            const c = new Suite();\n\n            assert(p !== c);\n            assert.deepStrictEqual(p.benchmarks, []);\n\n            p.add(c);\n\n            assert.deepStrictEqual(p.benchmarks, [c]);\n            assert.deepStrictEqual(c.benchmarks, []);\n        });\n\n        it('function', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const fun = function() {\n                called.fun = true;\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(fun);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('function with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    fun() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].fun();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n\n        it('object', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.fun = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('object with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                after() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].after();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n    });\n\n    /**\n     * @test {Suite#run}\n     */\n    describe('#run', function() {\n        describe('call methods order', function() {\n            it('empty tests', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('empty tests (enabled parallel)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    parallel: true,\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('with test', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'beforeEach',\n                    'bench1',\n                    'bench1',\n                    'afterEach',\n                    'beforeEach',\n                    'bench2',\n                    'bench2',\n                    'bench2',\n                    'afterEach',\n                    'after',\n                ]);\n            });\n\n            it('with test (enabled parallel)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                    parallel: true,\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert(callLog.length === 11);\n\n                assert(callLog[0] === 'before');\n                assert(callLog[1] === 'beforeEach');\n                assert(callLog[callLog.length - 2] === 'afterEach');\n                assert(callLog[callLog.length - 1] === 'after');\n\n                assert(callLog.filter(x => x === 'bench1').length === 2);\n                assert(callLog.filter(x => x === 'bench2').length === 3);\n                assert(callLog.filter(x => x === 'beforeEach').length === 2);\n                assert(callLog.filter(x => x === 'afterEach').length === 2);\n            });\n        });\n\n        const contextTest = async function(options) {\n            options.__proto__ = {\n                before() {\n                    assert(this.inOuter === undefined);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inOuter = 123;\n                },\n                beforeEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inInner = 'abc';\n                },\n                afterEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outInner = 'cba';\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outOuter = 321;\n                },\n                benchmarkDefault: {\n                    fun() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({\n                number: 2,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 42;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 42);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            s.add({\n                number: 3,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 24;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 24);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            await s.run();\n        };\n\n        it('context handling', function() {\n            return contextTest({parallel: false});\n        });\n\n        it('context handling (enabled parallel)', function() {\n            return contextTest({parallel: true});\n        });\n\n        const argumentsTest = async function(options) {\n            const beforeCounts = [];\n            const afterCounts = [];\n\n            options.__proto__ = {\n                before() {\n                    assert(arguments.length === 0);\n                },\n                beforeEach(count, benchmark) {\n                    assert(arguments.length === 2);\n\n                    assert(typeof count === 'number');\n                    beforeCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n                },\n                fun() {\n                    assert(arguments.length === 0);\n                },\n                afterEach(count, benchmark, result) {\n                    assert(arguments.length === 3);\n\n                    assert(typeof count === 'number');\n                    afterCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n                    assert(result instanceof Result);\n                    assert(result.msecs.length === 3);\n                },\n                after(results) {\n                    assert(arguments.length === 1);\n\n                    results.forEach(x => {\n                        assert(x instanceof Result);\n                        assert(x.msecs.length === 3);\n                    });\n                },\n                benchmarkDefault: {\n                    number: 3,\n                    fun() {},\n                    after() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({});\n            s.add({});\n\n            const results = await s.run();\n            results.forEach(x => {\n                assert(x instanceof Result);\n                assert(x.msecs.length === 3);\n            });\n\n            assert.deepStrictEqual(beforeCounts, [0, 1]);\n            assert.deepStrictEqual(afterCounts, [0, 1]);\n        };\n\n        it('arguments for methods', function() {\n            return argumentsTest({parallel: false});\n        });\n\n        it('arguments for methods (enabled parallel)', function() {\n            return argumentsTest({parallel: true});\n        });\n    });\n});\n",
     "static": true,
     "longname": "/home/ena/PromiseBench/test/suite.js",
     "access": null,
@@ -1692,7 +1760,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 84,
+    "__docId__": 85,
     "kind": "test",
     "name": "describe28",
     "testId": 28,
@@ -1708,7 +1776,7 @@
     ]
   },
   {
-    "__docId__": 85,
+    "__docId__": 86,
     "kind": "test",
     "name": "describe29",
     "testId": 29,
@@ -1721,7 +1789,7 @@
     "lineNumber": 10
   },
   {
-    "__docId__": 86,
+    "__docId__": 87,
     "kind": "test",
     "name": "it30",
     "testId": 30,
@@ -1734,7 +1802,7 @@
     "lineNumber": 11
   },
   {
-    "__docId__": 87,
+    "__docId__": 88,
     "kind": "test",
     "name": "it31",
     "testId": 31,
@@ -1747,7 +1815,7 @@
     "lineNumber": 19
   },
   {
-    "__docId__": 88,
+    "__docId__": 89,
     "kind": "test",
     "name": "it32",
     "testId": 32,
@@ -1760,7 +1828,7 @@
     "lineNumber": 34
   },
   {
-    "__docId__": 89,
+    "__docId__": 90,
     "kind": "test",
     "name": "it33",
     "testId": 33,
@@ -1776,7 +1844,7 @@
     ]
   },
   {
-    "__docId__": 90,
+    "__docId__": 91,
     "kind": "test",
     "name": "it34",
     "testId": 34,
@@ -1792,7 +1860,7 @@
     ]
   },
   {
-    "__docId__": 91,
+    "__docId__": 92,
     "kind": "test",
     "name": "describe35",
     "testId": 35,
@@ -1808,7 +1876,7 @@
     ]
   },
   {
-    "__docId__": 92,
+    "__docId__": 93,
     "kind": "test",
     "name": "it36",
     "testId": 36,
@@ -1821,7 +1889,7 @@
     "lineNumber": 118
   },
   {
-    "__docId__": 93,
+    "__docId__": 94,
     "kind": "test",
     "name": "it37",
     "testId": 37,
@@ -1834,7 +1902,7 @@
     "lineNumber": 129
   },
   {
-    "__docId__": 94,
+    "__docId__": 95,
     "kind": "test",
     "name": "it38",
     "testId": 38,
@@ -1847,7 +1915,7 @@
     "lineNumber": 142
   },
   {
-    "__docId__": 95,
+    "__docId__": 96,
     "kind": "test",
     "name": "it39",
     "testId": 39,
@@ -1860,7 +1928,7 @@
     "lineNumber": 171
   },
   {
-    "__docId__": 96,
+    "__docId__": 97,
     "kind": "test",
     "name": "it40",
     "testId": 40,
@@ -1873,7 +1941,7 @@
     "lineNumber": 201
   },
   {
-    "__docId__": 97,
+    "__docId__": 98,
     "kind": "test",
     "name": "it41",
     "testId": 41,
@@ -1886,7 +1954,7 @@
     "lineNumber": 233
   },
   {
-    "__docId__": 98,
+    "__docId__": 99,
     "kind": "test",
     "name": "describe42",
     "testId": 42,
@@ -1902,7 +1970,7 @@
     ]
   },
   {
-    "__docId__": 99,
+    "__docId__": 100,
     "kind": "test",
     "name": "describe43",
     "testId": 43,
@@ -1915,7 +1983,7 @@
     "lineNumber": 268
   },
   {
-    "__docId__": 100,
+    "__docId__": 101,
     "kind": "test",
     "name": "it44",
     "testId": 44,
@@ -1928,7 +1996,7 @@
     "lineNumber": 269
   },
   {
-    "__docId__": 101,
+    "__docId__": 102,
     "kind": "test",
     "name": "it45",
     "testId": 45,
@@ -1937,11 +2005,11 @@
     "static": true,
     "longname": "test/suite.js~describe28.describe42.describe43.it45",
     "access": null,
-    "description": "empty tests (enabled async)",
+    "description": "empty tests (enabled parallel)",
     "lineNumber": 297
   },
   {
-    "__docId__": 102,
+    "__docId__": 103,
     "kind": "test",
     "name": "it46",
     "testId": 46,
@@ -1954,7 +2022,7 @@
     "lineNumber": 326
   },
   {
-    "__docId__": 103,
+    "__docId__": 104,
     "kind": "test",
     "name": "it47",
     "testId": 47,
@@ -1963,11 +2031,11 @@
     "static": true,
     "longname": "test/suite.js~describe28.describe42.describe43.it47",
     "access": null,
-    "description": "with test (enabled async)",
+    "description": "with test (enabled parallel)",
     "lineNumber": 380
   },
   {
-    "__docId__": 104,
+    "__docId__": 105,
     "kind": "test",
     "name": "it48",
     "testId": 48,
@@ -1980,7 +2048,7 @@
     "lineNumber": 522
   },
   {
-    "__docId__": 105,
+    "__docId__": 106,
     "kind": "test",
     "name": "it49",
     "testId": 49,
@@ -1989,11 +2057,11 @@
     "static": true,
     "longname": "test/suite.js~describe28.describe42.it49",
     "access": null,
-    "description": "context handling (enabled async)",
+    "description": "context handling (enabled parallel)",
     "lineNumber": 526
   },
   {
-    "__docId__": 106,
+    "__docId__": 107,
     "kind": "test",
     "name": "it50",
     "testId": 50,
@@ -2006,7 +2074,7 @@
     "lineNumber": 589
   },
   {
-    "__docId__": 107,
+    "__docId__": 108,
     "kind": "test",
     "name": "it51",
     "testId": 51,
@@ -2015,7 +2083,7 @@
     "static": true,
     "longname": "test/suite.js~describe28.describe42.it51",
     "access": null,
-    "description": "arguments for methods (enabled async)",
+    "description": "arguments for methods (enabled parallel)",
     "lineNumber": 593
   }
 ]
