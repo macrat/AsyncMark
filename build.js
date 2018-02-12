@@ -9,8 +9,8 @@ rollup
         plugins: [babel()],
     })
     .then(bundle => Promise.all([
-        bundle.write({format: 'es',  exports: 'named', file: 'dist/promise-bench.mjs'}),
-        bundle.write({format: 'umd', exports: 'named', file: 'dist/promise-bench.js', name: 'PromiseBench'}),
+        bundle.write({format: 'es',  exports: 'named', file: 'dist/asyncmark.mjs'}),
+        bundle.write({format: 'umd', exports: 'named', file: 'dist/asyncmark.js', name: 'AsyncMark'}),
     ]))
     .catch(console.error);
 
@@ -21,7 +21,7 @@ rollup
         plugins: [babel(), uglify()],
     })
     .then(bundle => Promise.all([
-        bundle.write({format: 'es',  exports: 'named', file: 'dist/promise-bench.min.mjs'}),
-        bundle.write({format: 'umd', exports: 'named', file: 'dist/promise-bench.min.js', name: 'PromiseBench'}),
+        bundle.write({format: 'es',  exports: 'named', file: 'dist/asyncmark.min.mjs'}),
+        bundle.write({format: 'umd', exports: 'named', file: 'dist/asyncmark.min.js', name: 'AsyncMark'}),
     ]))
     .catch(console.error);

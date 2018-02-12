@@ -3,7 +3,7 @@
   "expectCount": 43,
   "actualCount": 43,
   "files": {
-    "dist/promise-bench.mjs": {
+    "dist/asyncmark.mjs": {
       "expectCount": 43,
       "actualCount": 43,
       "undocumentLines": []

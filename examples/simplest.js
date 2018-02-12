@@ -1,7 +1,7 @@
-const PromiseBench = require('../dist/promise-bench.js');
+const AsyncMark = require('../dist/asyncmark.js');
 
 
-new PromiseBench.Benchmark(function() {
+new AsyncMark.Benchmark(function() {
     return new Promise((resolve, reject) => {
         setTimeout(resolve, 100)
     });

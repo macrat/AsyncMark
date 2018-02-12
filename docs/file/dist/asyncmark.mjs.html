@@ -1,17 +1,50 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.PromiseBench = {})));
-}(this, (function (exports) { 'use strict';
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">dist/asyncmark.mjs | asyncmark</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<body class="layout-container" data-ice="rootContainer">
 
-/**
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Suite.html">Suite</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">dist/asyncmark.mjs</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
  * milliseconds timer
  *
  * @return {Number} high resolution current time in milliseconds.
  *
  * @ignore
  */
-const now = typeof performance !== 'undefined' && performance.now ? function () {
+const now = typeof performance !== &apos;undefined&apos; &amp;&amp; performance.now ? function () {
   return performance.now();
 } : function () {
   const hr = process.hrtime();
@@ -50,7 +83,7 @@ class Result {
    * @type {Number}
    */
   get total() {
-    return this.msecs.reduce((x, y) => x + y);
+    return this.msecs.reduce((x, y) =&gt; x + y);
   }
 
   /**
@@ -69,7 +102,7 @@ class Result {
    */
   get variance() {
     const avg = this.average;
-    return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);
+    return this.msecs.map(x =&gt; Math.pow(x - avg, 2)).reduce((x, y) =&gt; x + y) / (this.msecs.length - 1);
   }
 
   /**
@@ -146,13 +179,13 @@ class Result {
  *
  *
  * @example
- * import Benchmark from 'promise-bench';
- * 
- * 
+ * import Benchmark from &apos;asyncmark&apos;;
+ *
+ *
  * new Benchmark({
- *     name: 'timeout',
+ *     name: &apos;timeout&apos;,
  *     fun() {
- *         return new Promise((resolve, reject) => {
+ *         return new Promise((resolve, reject) =&gt; {
  *             setTimeout(resolve, 100);
  *         });
  *     },
@@ -161,7 +194,7 @@ class Result {
 class Benchmark {
   /**
    * @param {Object|function} [options] - options for this benchmark or benchmarking function.
-   * @param {Number} [options.name='unnamed'] - name of this benchmark.
+   * @param {Number} [options.name=&apos;unnamed&apos;] - name of this benchmark.
    * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.
    * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.
    * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.
@@ -178,7 +211,7 @@ class Benchmark {
      *
      * @type {String}
      */
-    this.name = options.name || 'unnamed';
+    this.name = options.name || &apos;unnamed&apos;;
 
     /**
      * Wanted maximum error rate.
@@ -212,7 +245,7 @@ class Benchmark {
      */
     this.number = options.number || null;
 
-    if (typeof options === 'function') {
+    if (typeof options === &apos;function&apos;) {
       this.fun = options;
     } else {
       this.before = options.before || this.before;
@@ -258,14 +291,14 @@ class Benchmark {
    * So you can use `this` for storing testing data.
    * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
    *
-   * In default, couses error that `Error('target function is not defined')`.
+   * In default, couses error that `Error(&apos;target function is not defined&apos;)`.
    *
-   * @abstract 
+   * @abstract
    *
    * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
    */
   async fun() {
-    throw new Error('target function is not defined');
+    throw new Error(&apos;target function is not defined&apos;);
   }
 
   /**
@@ -306,7 +339,7 @@ class Benchmark {
    *
    * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
-   * @return {?Promise<Result>} A result of benchmark.
+   * @return {?Promise&lt;Result&gt;} A result of benchmark.
    */
   async run(context = {}) {
     context = Object.assign({}, context);
@@ -317,7 +350,7 @@ class Benchmark {
     const loopNum = this.number || this.maxNumber;
 
     const msecs = [];
-    for (let i = 0; i < loopNum; i++) {
+    for (let i = 0; i &lt; loopNum; i++) {
       const ctx = Object.assign({}, context);
 
       await this.beforeEach.call(ctx, i);
@@ -329,7 +362,7 @@ class Benchmark {
       await this.afterEach.call(ctx, i, end - start);
       msecs.push(end - start);
 
-      if (!this.number && i + 1 >= this.minNumber && new Result(this.name, msecs).errorRate <= this.targetErrorRate) {
+      if (!this.number &amp;&amp; i + 1 &gt;= this.minNumber &amp;&amp; new Result(this.name, msecs).errorRate &lt;= this.targetErrorRate) {
         break;
       }
     }
@@ -359,42 +392,57 @@ class Benchmark {
  *
  *
  * @example
- * import {Suite} from 'promise-bench';
- * 
- * 
- * new Suite({
+ * import {Suite} from &apos;asyncmark&apos;;
+ *
+ *
+ * const suite = new Suite({
+ *     name: &apos;ways to find a character&apos;,
  *     beforeEach() {
- *         this.text = 'hello world';
+ *         this.text = &apos;hello world&apos;;
  *     },
  *     parallel: true,
- * })
- * .add(function() {
+ * });
+ *
+ * suite.add(function() {
  *     /o/.test(this.text);
- * })
- * .add({
- *     name: 'String#indexOf'
+ * });
+ *
+ * suite.add({
+ *     name: &apos;String#indexOf&apos;,
  *     before() {
- *         console.log('starting String#indexOf...');
+ *         console.log(&apos;starting String#indexOf...&apos;);
  *     },
  *     fun() {
- *         this.text.indexOf('o') > -1;
+ *         this.text.indexOf(&apos;o&apos;) &gt; -1;
  *     },
- * })
- * .add({
- *     name: 'String#match'
+ * });
+ *
+ * suite.add(new Benchmark({
+ *     name: &apos;String#match&apos;,
  *     fun() {
- *         !!this.text.match(/o/);
+ *         Boolean(this.text.match(/o/));
  *     },
  *     after(result) {
- *         console.log('String#match is done! ' + result);
+ *         console.log(&apos;String#match is done! &apos; + result);
  *     },
- * })
- * .run()
+ * }));
+ *
+ * suite.run()
+ *     .then(results =&gt; {
+ *         let min = results[0];
+ *         results.forEach(x =&gt; {
+ *             if (min.average &gt; x.average) {
+ *                 min = x;
+ *             }
+ *         });
+ *         console.log(min.name + &apos; is best way!&apos;);
+ *     }).
+ *     catch(err =&gt; console.error(err));
  */
 class Suite {
   /**
    * @param {Object} [options={}] - options for this suite.
-   * @param {Number} [options.name='unnamed'] - name of this suite.
+   * @param {Number} [options.name=&apos;unnamed&apos;] - name of this suite.
    * @param {Boolean} [options.parallel=false] - flag for executing each benchmark parallelly.
    * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.
    * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.
@@ -408,7 +456,7 @@ class Suite {
      *
      * @type {String}
      */
-    this.name = options.name || 'unnamed';
+    this.name = options.name || &apos;unnamed&apos;;
 
     /**
      * Default options for benchmarks in this suite.
@@ -534,7 +582,7 @@ class Suite {
       this.addBenchmark(child);
     } else if (child instanceof Suite) {
       this.addSuite(child);
-    } else if (typeof child === 'function') {
+    } else if (typeof child === &apos;function&apos;) {
       const options = { fun: child };
       options.__proto__ = this.benchmarkDefault;
       this.addBenchmark(new Benchmark(options));
@@ -551,14 +599,14 @@ class Suite {
    *
    * @param {object} context - the context for execute.
    *
-   * @return {Promise<Result[]>} result of benchmarks.
+   * @return {Promise&lt;Result[]&gt;} result of benchmarks.
    *
    * @ignore
    */
   async _runParallel(context) {
     await this.before.call(context);
 
-    const results = await Promise.all(this.benchmarks.map(async (x, i) => {
+    const results = await Promise.all(this.benchmarks.map(async (x, i) =&gt; {
       const ctx = Object.assign({}, context);
       await this.beforeEach.call(ctx, i, x);
       const result = await x.run(ctx);
@@ -576,7 +624,7 @@ class Suite {
    *
    * @param {object} context - the context for execute.
    *
-   * @return {Promise<Result[]>} result of benchmarks.
+   * @return {Promise&lt;Result[]&gt;} result of benchmarks.
    *
    * @ignore
    */
@@ -584,7 +632,7 @@ class Suite {
     await this.before.call(context);
 
     const results = [];
-    for (let i = 0; i < this.benchmarks.length; i++) {
+    for (let i = 0; i &lt; this.benchmarks.length; i++) {
       const b = this.benchmarks[i];
       const ctx = Object.assign({}, context);
       await this.beforeEach.call(ctx, i, b);
@@ -606,7 +654,7 @@ class Suite {
    *
    * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
    *
-   * @return {Promise<Result[]>} An array of {@link Result}s.
+   * @return {Promise&lt;Result[]&gt;} An array of {@link Result}s.
    */
   async run(context = {}) {
     context = Object.assign({}, context);
@@ -620,11 +668,22 @@ class Suite {
   }
 }
 
-exports.Result = Result;
-exports.default = Benchmark;
-exports.Benchmark = Benchmark;
-exports.Suite = Suite;
+export default Benchmark;
+export { Result, Benchmark, Suite };
+</code></pre>
 
-Object.defineProperty(exports, '__esModule', { value: true });
+</div>
 
-})));
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

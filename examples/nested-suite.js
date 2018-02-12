@@ -1,7 +1,7 @@
-const PromiseBench = require('../dist/promise-bench.js');
+const AsyncMark = require('../dist/asyncmark.js');
 
 
-const benchmark = new PromiseBench.Benchmark({
+const benchmark = new AsyncMark.Benchmark({
     number: 1,
     before() {
         this.token += '[benchmark]';
@@ -22,7 +22,7 @@ const benchmark = new PromiseBench.Benchmark({
 });
 
 
-const child = new PromiseBench.Suite({
+const child = new AsyncMark.Suite({
     benchmarkDefault: {number: 1},
     before() {
         this.token += '[child suite]';
@@ -40,7 +40,7 @@ const child = new PromiseBench.Suite({
 });
 
 
-const parent_ = new PromiseBench.Suite({
+const parent_ = new AsyncMark.Suite({
     before() {
         this.token = '[parent suite]';
         console.log('1: Suite#before', this.token);

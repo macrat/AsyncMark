@@ -1,30 +1,30 @@
 window.esdocSearchIndex = [
   [
-    "promise-bench/dist/promise-bench.mjs~benchmark",
-    "class/dist/promise-bench.mjs~Benchmark.html",
-    "<span>Benchmark</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
+    "asyncmark/dist/asyncmark.mjs~benchmark",
+    "class/dist/asyncmark.mjs~Benchmark.html",
+    "<span>Benchmark</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
-    "promise-bench/dist/promise-bench.mjs~result",
-    "class/dist/promise-bench.mjs~Result.html",
-    "<span>Result</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
+    "asyncmark/dist/asyncmark.mjs~result",
+    "class/dist/asyncmark.mjs~Result.html",
+    "<span>Result</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
-    "promise-bench/dist/promise-bench.mjs~suite",
-    "class/dist/promise-bench.mjs~Suite.html",
-    "<span>Suite</span> <span class=\"search-result-import-path\">promise-bench/dist/promise-bench.mjs</span>",
+    "asyncmark/dist/asyncmark.mjs~suite",
+    "class/dist/asyncmark.mjs~Suite.html",
+    "<span>Suite</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
-    "benchmark dist/promise-bench.mjs~benchmark,benchmark",
+    "benchmark dist/asyncmark.mjs~benchmark,benchmark",
     "test-file/test/benchmark.js.html#lineNumber9",
     "Benchmark",
     "test"
   ],
   [
-    "benchmark#after dist/promise-bench.mjs~benchmark#after,benchmark#after",
+    "benchmark#after dist/asyncmark.mjs~benchmark#after,benchmark#after",
     "test-file/test/benchmark.js.html#lineNumber140",
     "Benchmark #after",
     "test"
@@ -36,7 +36,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#constructor dist/promise-bench.mjs~benchmark#constructor,benchmark#constructor",
+    "benchmark#constructor dist/asyncmark.mjs~benchmark#constructor,benchmark#constructor",
     "test-file/test/benchmark.js.html#lineNumber17",
     "Benchmark #constructor",
     "test"
@@ -78,7 +78,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#fun dist/promise-bench.mjs~benchmark#fun,benchmark#fun",
+    "benchmark#fun dist/asyncmark.mjs~benchmark#fun,benchmark#fun",
     "test-file/test/benchmark.js.html#lineNumber127",
     "Benchmark #fun",
     "test"
@@ -90,7 +90,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#run dist/promise-bench.mjs~benchmark#run,benchmark#run",
+    "benchmark#run dist/asyncmark.mjs~benchmark#run,benchmark#run",
     "test-file/test/benchmark.js.html#lineNumber164",
     "Benchmark #run",
     "test"
@@ -126,73 +126,73 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "result dist/promise-bench.mjs~result,result",
+    "result dist/asyncmark.mjs~result,result",
     "test-file/test/result.js.html#lineNumber9",
     "Result",
     "test"
   ],
   [
-    "result#average dist/promise-bench.mjs~result#average,result#average",
+    "result#average dist/asyncmark.mjs~result#average,result#average",
     "test-file/test/result.js.html#lineNumber21",
     "Result #average",
     "test"
   ],
   [
-    "result#errorrange dist/promise-bench.mjs~result#errorrange,result#errorrange",
+    "result#errorrange dist/asyncmark.mjs~result#errorrange,result#errorrange",
     "test-file/test/result.js.html#lineNumber53",
     "Result #errorRange",
     "test"
   ],
   [
-    "result#errorrate dist/promise-bench.mjs~result#errorrate,result#errorrate",
+    "result#errorrate dist/asyncmark.mjs~result#errorrate,result#errorrate",
     "test-file/test/result.js.html#lineNumber61",
     "Result #errorRate",
     "test"
   ],
   [
-    "result#opspersec dist/promise-bench.mjs~result#opspersec,result#opspersec",
+    "result#opspersec dist/asyncmark.mjs~result#opspersec,result#opspersec",
     "test-file/test/result.js.html#lineNumber69",
     "Result #opsPerSec",
     "test"
   ],
   [
-    "result#std dist/promise-bench.mjs~result#std,result#std",
+    "result#std dist/asyncmark.mjs~result#std,result#std",
     "test-file/test/result.js.html#lineNumber45",
     "Result #sem",
     "test"
   ],
   [
-    "result#std dist/promise-bench.mjs~result#std,result#std",
+    "result#std dist/asyncmark.mjs~result#std,result#std",
     "test-file/test/result.js.html#lineNumber37",
     "Result #std",
     "test"
   ],
   [
-    "result#tostring dist/promise-bench.mjs~result#tostring,result#tostring",
+    "result#tostring dist/asyncmark.mjs~result#tostring,result#tostring",
     "test-file/test/result.js.html#lineNumber77",
     "Result #toString",
     "test"
   ],
   [
-    "result#total dist/promise-bench.mjs~result#total,result#total",
+    "result#total dist/asyncmark.mjs~result#total,result#total",
     "test-file/test/result.js.html#lineNumber13",
     "Result #total",
     "test"
   ],
   [
-    "result#variance dist/promise-bench.mjs~result#variance,result#variance",
+    "result#variance dist/asyncmark.mjs~result#variance,result#variance",
     "test-file/test/result.js.html#lineNumber29",
     "Result #variance",
     "test"
   ],
   [
-    "suite dist/promise-bench.mjs~suite,suite",
+    "suite dist/asyncmark.mjs~suite,suite",
     "test-file/test/suite.js.html#lineNumber9",
     "Suite",
     "test"
   ],
   [
-    "suite#add dist/promise-bench.mjs~suite#add,suite#add",
+    "suite#add dist/asyncmark.mjs~suite#add,suite#add",
     "test-file/test/suite.js.html#lineNumber117",
     "Suite #add",
     "test"
@@ -234,13 +234,13 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#addbenchmark dist/promise-bench.mjs~suite#addbenchmark,suite#addbenchmark",
+    "suite#addbenchmark dist/asyncmark.mjs~suite#addbenchmark,suite#addbenchmark",
     "test-file/test/suite.js.html#lineNumber80",
     "Suite #addBenchmark",
     "test"
   ],
   [
-    "suite#addsuite dist/promise-bench.mjs~suite#addsuite,suite#addsuite",
+    "suite#addsuite dist/asyncmark.mjs~suite#addsuite,suite#addsuite",
     "test-file/test/suite.js.html#lineNumber98",
     "Suite #addSuite",
     "test"
@@ -270,7 +270,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#run dist/promise-bench.mjs~suite#run,suite#run",
+    "suite#run dist/asyncmark.mjs~suite#run,suite#run",
     "test-file/test/suite.js.html#lineNumber267",
     "Suite #run",
     "test"
@@ -330,225 +330,225 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "dist/promise-bench.mjs",
-    "file/dist/promise-bench.mjs.html",
-    "dist/promise-bench.mjs",
+    "dist/asyncmark.mjs",
+    "file/dist/asyncmark.mjs.html",
+    "dist/asyncmark.mjs",
     "file"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#after",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-after",
-    "dist/promise-bench.mjs~Benchmark#after",
+    "dist/asyncmark.mjs~benchmark#after",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-after",
+    "dist/asyncmark.mjs~Benchmark#after",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#aftereach",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-afterEach",
-    "dist/promise-bench.mjs~Benchmark#afterEach",
+    "dist/asyncmark.mjs~benchmark#aftereach",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-afterEach",
+    "dist/asyncmark.mjs~Benchmark#afterEach",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#before",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-before",
-    "dist/promise-bench.mjs~Benchmark#before",
+    "dist/asyncmark.mjs~benchmark#before",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-before",
+    "dist/asyncmark.mjs~Benchmark#before",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#beforeeach",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-beforeEach",
-    "dist/promise-bench.mjs~Benchmark#beforeEach",
+    "dist/asyncmark.mjs~benchmark#beforeeach",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-beforeEach",
+    "dist/asyncmark.mjs~Benchmark#beforeEach",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#constructor",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-constructor-constructor",
-    "dist/promise-bench.mjs~Benchmark#constructor",
+    "dist/asyncmark.mjs~benchmark#constructor",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-constructor-constructor",
+    "dist/asyncmark.mjs~Benchmark#constructor",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#fun",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-fun",
-    "dist/promise-bench.mjs~Benchmark#fun",
+    "dist/asyncmark.mjs~benchmark#fun",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-fun",
+    "dist/asyncmark.mjs~Benchmark#fun",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#maxnumber",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-maxNumber",
-    "dist/promise-bench.mjs~Benchmark#maxNumber",
+    "dist/asyncmark.mjs~benchmark#maxnumber",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-maxNumber",
+    "dist/asyncmark.mjs~Benchmark#maxNumber",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#minnumber",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-minNumber",
-    "dist/promise-bench.mjs~Benchmark#minNumber",
+    "dist/asyncmark.mjs~benchmark#minnumber",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-minNumber",
+    "dist/asyncmark.mjs~Benchmark#minNumber",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#name",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-name",
-    "dist/promise-bench.mjs~Benchmark#name",
+    "dist/asyncmark.mjs~benchmark#name",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-name",
+    "dist/asyncmark.mjs~Benchmark#name",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#number",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-number",
-    "dist/promise-bench.mjs~Benchmark#number",
+    "dist/asyncmark.mjs~benchmark#number",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-number",
+    "dist/asyncmark.mjs~Benchmark#number",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#run",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-method-run",
-    "dist/promise-bench.mjs~Benchmark#run",
+    "dist/asyncmark.mjs~benchmark#run",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-run",
+    "dist/asyncmark.mjs~Benchmark#run",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~benchmark#targeterrorrate",
-    "class/dist/promise-bench.mjs~Benchmark.html#instance-member-targetErrorRate",
-    "dist/promise-bench.mjs~Benchmark#targetErrorRate",
+    "dist/asyncmark.mjs~benchmark#targeterrorrate",
+    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-targetErrorRate",
+    "dist/asyncmark.mjs~Benchmark#targetErrorRate",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#average",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-average",
-    "dist/promise-bench.mjs~Result#average",
+    "dist/asyncmark.mjs~result#average",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-average",
+    "dist/asyncmark.mjs~Result#average",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#errorrange",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-errorRange",
-    "dist/promise-bench.mjs~Result#errorRange",
+    "dist/asyncmark.mjs~result#errorrange",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-errorRange",
+    "dist/asyncmark.mjs~Result#errorRange",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#errorrate",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-errorRate",
-    "dist/promise-bench.mjs~Result#errorRate",
+    "dist/asyncmark.mjs~result#errorrate",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-errorRate",
+    "dist/asyncmark.mjs~Result#errorRate",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#msecs",
-    "class/dist/promise-bench.mjs~Result.html#instance-member-msecs",
-    "dist/promise-bench.mjs~Result#msecs",
+    "dist/asyncmark.mjs~result#msecs",
+    "class/dist/asyncmark.mjs~Result.html#instance-member-msecs",
+    "dist/asyncmark.mjs~Result#msecs",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#name",
-    "class/dist/promise-bench.mjs~Result.html#instance-member-name",
-    "dist/promise-bench.mjs~Result#name",
+    "dist/asyncmark.mjs~result#name",
+    "class/dist/asyncmark.mjs~Result.html#instance-member-name",
+    "dist/asyncmark.mjs~Result#name",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#opspersec",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-opsPerSec",
-    "dist/promise-bench.mjs~Result#opsPerSec",
+    "dist/asyncmark.mjs~result#opspersec",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-opsPerSec",
+    "dist/asyncmark.mjs~Result#opsPerSec",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#sem",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-sem",
-    "dist/promise-bench.mjs~Result#sem",
+    "dist/asyncmark.mjs~result#sem",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-sem",
+    "dist/asyncmark.mjs~Result#sem",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#std",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-std",
-    "dist/promise-bench.mjs~Result#std",
+    "dist/asyncmark.mjs~result#std",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-std",
+    "dist/asyncmark.mjs~Result#std",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#tostring",
-    "class/dist/promise-bench.mjs~Result.html#instance-method-toString",
-    "dist/promise-bench.mjs~Result#toString",
+    "dist/asyncmark.mjs~result#tostring",
+    "class/dist/asyncmark.mjs~Result.html#instance-method-toString",
+    "dist/asyncmark.mjs~Result#toString",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~result#total",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-total",
-    "dist/promise-bench.mjs~Result#total",
+    "dist/asyncmark.mjs~result#total",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-total",
+    "dist/asyncmark.mjs~Result#total",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~result#variance",
-    "class/dist/promise-bench.mjs~Result.html#instance-get-variance",
-    "dist/promise-bench.mjs~Result#variance",
+    "dist/asyncmark.mjs~result#variance",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-variance",
+    "dist/asyncmark.mjs~Result#variance",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#add",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-add",
-    "dist/promise-bench.mjs~Suite#add",
+    "dist/asyncmark.mjs~suite#add",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-add",
+    "dist/asyncmark.mjs~Suite#add",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#addbenchmark",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-addBenchmark",
-    "dist/promise-bench.mjs~Suite#addBenchmark",
+    "dist/asyncmark.mjs~suite#addbenchmark",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-addBenchmark",
+    "dist/asyncmark.mjs~Suite#addBenchmark",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#addsuite",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-addSuite",
-    "dist/promise-bench.mjs~Suite#addSuite",
+    "dist/asyncmark.mjs~suite#addsuite",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-addSuite",
+    "dist/asyncmark.mjs~Suite#addSuite",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#after",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-after",
-    "dist/promise-bench.mjs~Suite#after",
+    "dist/asyncmark.mjs~suite#after",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-after",
+    "dist/asyncmark.mjs~Suite#after",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#aftereach",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-afterEach",
-    "dist/promise-bench.mjs~Suite#afterEach",
+    "dist/asyncmark.mjs~suite#aftereach",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-afterEach",
+    "dist/asyncmark.mjs~Suite#afterEach",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#before",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-before",
-    "dist/promise-bench.mjs~Suite#before",
+    "dist/asyncmark.mjs~suite#before",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-before",
+    "dist/asyncmark.mjs~Suite#before",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#beforeeach",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-beforeEach",
-    "dist/promise-bench.mjs~Suite#beforeEach",
+    "dist/asyncmark.mjs~suite#beforeeach",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-beforeEach",
+    "dist/asyncmark.mjs~Suite#beforeEach",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#benchmarkdefault",
-    "class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarkDefault",
-    "dist/promise-bench.mjs~Suite#benchmarkDefault",
+    "dist/asyncmark.mjs~suite#benchmarkdefault",
+    "class/dist/asyncmark.mjs~Suite.html#instance-member-benchmarkDefault",
+    "dist/asyncmark.mjs~Suite#benchmarkDefault",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#benchmarks",
-    "class/dist/promise-bench.mjs~Suite.html#instance-member-benchmarks",
-    "dist/promise-bench.mjs~Suite#benchmarks",
+    "dist/asyncmark.mjs~suite#benchmarks",
+    "class/dist/asyncmark.mjs~Suite.html#instance-member-benchmarks",
+    "dist/asyncmark.mjs~Suite#benchmarks",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#constructor",
-    "class/dist/promise-bench.mjs~Suite.html#instance-constructor-constructor",
-    "dist/promise-bench.mjs~Suite#constructor",
+    "dist/asyncmark.mjs~suite#constructor",
+    "class/dist/asyncmark.mjs~Suite.html#instance-constructor-constructor",
+    "dist/asyncmark.mjs~Suite#constructor",
     "method"
   ],
   [
-    "dist/promise-bench.mjs~suite#name",
-    "class/dist/promise-bench.mjs~Suite.html#instance-member-name",
-    "dist/promise-bench.mjs~Suite#name",
+    "dist/asyncmark.mjs~suite#name",
+    "class/dist/asyncmark.mjs~Suite.html#instance-member-name",
+    "dist/asyncmark.mjs~Suite#name",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#parallel",
-    "class/dist/promise-bench.mjs~Suite.html#instance-member-parallel",
-    "dist/promise-bench.mjs~Suite#parallel",
+    "dist/asyncmark.mjs~suite#parallel",
+    "class/dist/asyncmark.mjs~Suite.html#instance-member-parallel",
+    "dist/asyncmark.mjs~Suite#parallel",
     "member"
   ],
   [
-    "dist/promise-bench.mjs~suite#run",
-    "class/dist/promise-bench.mjs~Suite.html#instance-method-run",
-    "dist/promise-bench.mjs~Suite#run",
+    "dist/asyncmark.mjs~suite#run",
+    "class/dist/asyncmark.mjs~Suite.html#instance-method-run",
+    "dist/asyncmark.mjs~Suite#run",
     "method"
   ],
   [

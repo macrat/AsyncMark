@@ -1,7 +1,7 @@
 <script src="https://unpkg.com/d3"></script>
 <script src="https://unpkg.com/metrics-graphics/dist/metricsgraphics.min.js"></script>
 <link rel=stylesheet href="https://unpkg.com/metrics-graphics/dist/metricsgraphics.css">
-<script src="../dist/promise-bench.web.js"></script>
+<script src="https://unpkg.com/asyncmark"></script>
 
 <style>
 div {
@@ -30,7 +30,7 @@ const canvas = document.querySelector('canvas');
 
 let plotting_data = [];
 
-new PromiseBench.Benchmark({
+new AsyncMark.Benchmark({
 	number: 100,
 	fun() {
 		return new Promise((resolve, reject) => {

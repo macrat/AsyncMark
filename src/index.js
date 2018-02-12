@@ -142,9 +142,9 @@ export class Result {
  *
  *
  * @example
- * import Benchmark from 'promise-bench';
- * 
- * 
+ * import Benchmark from 'asyncmark';
+ *
+ *
  * new Benchmark({
  *     name: 'timeout',
  *     fun() {
@@ -256,7 +256,7 @@ export default class Benchmark {
      *
      * In default, couses error that `Error('target function is not defined')`.
      *
-     * @abstract 
+     * @abstract
      *
      * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
      */
@@ -359,37 +359,52 @@ export {Benchmark};
  *
  *
  * @example
- * import {Suite} from 'promise-bench';
- * 
- * 
- * new Suite({
+ * import {Suite} from 'asyncmark';
+ *
+ *
+ * const suite = new Suite({
+ *     name: 'ways to find a character',
  *     beforeEach() {
  *         this.text = 'hello world';
  *     },
  *     parallel: true,
- * })
- * .add(function() {
+ * });
+ *
+ * suite.add(function() {
  *     /o/.test(this.text);
- * })
- * .add({
- *     name: 'String#indexOf'
+ * });
+ *
+ * suite.add({
+ *     name: 'String#indexOf',
  *     before() {
  *         console.log('starting String#indexOf...');
  *     },
  *     fun() {
  *         this.text.indexOf('o') > -1;
  *     },
- * })
- * .add({
- *     name: 'String#match'
+ * });
+ *
+ * suite.add(new Benchmark({
+ *     name: 'String#match',
  *     fun() {
- *         !!this.text.match(/o/);
+ *         Boolean(this.text.match(/o/));
  *     },
  *     after(result) {
  *         console.log('String#match is done! ' + result);
  *     },
- * })
- * .run()
+ * }));
+ *
+ * suite.run()
+ *     .then(results => {
+ *         let min = results[0];
+ *         results.forEach(x => {
+ *             if (min.average > x.average) {
+ *                 min = x;
+ *             }
+ *         });
+ *         console.log(min.name + ' is best way!');
+ *     }).
+ *     catch(err => console.error(err));
  */
 export class Suite {
     /**
@@ -565,7 +580,7 @@ export class Suite {
             await this.afterEach.call(ctx, i, x, result);
             return result;
         }));
-        
+
         await this.after.call(context, results);
 
         return results;

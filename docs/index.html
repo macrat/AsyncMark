@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <base data-ice="baseUrl">
-  <title data-ice="title">Home | promise-bench</title>
+  <title data-ice="title">Home | asyncmark</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="promise-bench"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -24,81 +24,94 @@
   </span>
     <ul class="search-result"></ul>
   </div>
-<a style="position:relative; top:3px;" href="https://github.com/macrat/PromiseBench"><img width="20px" src="./image/github.png"></a></header>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
 
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/promise-bench.mjs~Benchmark.html">Benchmark</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/promise-bench.mjs~Result.html">Result</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/promise-bench.mjs~Suite.html">Suite</a></span></span></li>
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/dist/asyncmark.mjs~Suite.html">Suite</a></span></span></li>
 </ul>
 </div>
 </nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="promisebench">PromiseBench</h1><p>A benchmarking library for javascript that supports Promise.</p>
-<p><a href="https://travis-ci.org/macrat/PromiseBench"><img src="https://travis-ci.org/macrat/PromiseBench.svg?branch=master" alt="Build Status"></a>
-<a href="https://codeclimate.com/github/macrat/PromiseBench/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/test_coverage" alt="Test Coverage"></a>
-<a href="https://codeclimate.com/github/macrat/PromiseBench/maintainability"><img src="https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/maintainability" alt="Maintainability"></a>
-<a href="https://github.com/macrat/PromiseBench/blob/master/LICENSE"><img src="https://img.shields.io/github/license/macrat/PromiseBench.svg" alt="license"></a>
-<a href="https://macrat.github.io/PromiseBench/"><img src="https://macrat.github.io/PromiseBench/badge.svg" alt="document"></a></p>
-<h2 id="be-simple">be simple</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark from &apos;promise-bench&apos;;
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="asyncmark">AsyncMark</h1><p>A benchmarking library for javascript that supports Promise.</p>
+<p><a href="https://nodei.co/npm/asyncmark/"><img src="https://nodei.co/npm/asyncmark.png" alt="NPM"></a></p>
+<p><a href="https://travis-ci.org/macrat/AsyncMark"><img src="https://travis-ci.org/macrat/AsyncMark.svg?branch=master" alt="Build Status"></a>
+<a href="https://codeclimate.com/github/macrat/AsyncMark/test_coverage"><img src="https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/test_coverage" alt="Test Coverage"></a>
+<a href="https://codeclimate.com/github/macrat/AsyncMark/maintainability"><img src="https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/maintainability" alt="Maintainability"></a>
+<a href="https://github.com/macrat/AsyncMark/blob/master/LICENSE"><img src="https://img.shields.io/github/license/macrat/AsyncMark.svg" alt="license"></a>
+<a href="https://macrat.github.io/AsyncMark/"><img src="https://macrat.github.io/AsyncMark/badge.svg" alt="document"></a></p>
+<h2 id="be-simple">be simple</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark from &apos;asyncmark&apos;;
 
 
-new Benchmark({
-    name: &apos;timeout&apos;,
-    fun() {
-        return new Promise((resolve, reject) =&gt; {
-            setTimeout(resolve, 100);
-        });
-    },
+new Benchmark(function() {
+    return new Promise((resolve, reject) =&gt; {
+        setTimeout(resolve, 100)
+    });
 }).run().catch(console.error);</code>
 </code></pre>
-<h2 id="be-customizable">be customizable</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import {Suite} from &apos;promise-bench&apos;;
+<h2 id="be-customizable">be customizable</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import {Suite} from &apos;asyncmark&apos;;
 
 
-new Suite({
+const suite = new Suite({
+    name: &apos;ways to find a character&apos;,
     beforeEach() {
         this.text = &apos;hello world&apos;;
     },
-    async: true,
-})
-.add(function() {
+    parallel: true,
+});
+
+suite.add(function() {
     /o/.test(this.text);
-})
-.add({
-    name: &apos;String#indexOf&apos;
+});
+
+suite.add({
+    name: &apos;String#indexOf&apos;,
     before() {
         console.log(&apos;starting String#indexOf...&apos;);
     },
     fun() {
         this.text.indexOf(&apos;o&apos;) &gt; -1;
     },
-})
-.add({
-    name: &apos;String#match&apos;
+});
+
+suite.add(new Benchmark({
+    name: &apos;String#match&apos;,
     fun() {
-        !!this.text.match(/o/);
+        Boolean(this.text.match(/o/));
     },
     after(result) {
         console.log(&apos;String#match is done! &apos; + result);
     },
-})
-.run()</code>
-</code></pre>
-<h2 id="installation">installation</h2><h3 id="node-js">Node.js</h3><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install git+https://github.com/macrat/PromiseBench.git</code>
-</code></pre>
-<h4 id="es6">ES6</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark, {Suite} from &apos;promise-bench&apos;;</code>
-</code></pre>
-<h4 id="commonjs">CommonJS</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">const PromiseBench = require(&apos;promise-bench&apos;);
+}));
 
-const Benchmark = PromiseBench.Benchmark;
-const Suite = PromiseBench.Suite;</code>
+suite.run()
+    .then(results =&gt; {
+        let min = results[0];
+        results.forEach(x =&gt; {
+            if (min.average &gt; x.average) {
+                min = x;
+            }
+        });
+        console.log(min.name + &apos; is best way!&apos;);
+    }).
+    catch(err =&gt; console.error(err));</code>
 </code></pre>
-<h3 id="browser">Browser</h3><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://rawgit.com/macrat/PromiseBench/master/dist/promise-bench.web.js&quot;&gt;&lt;/script&gt;
+<h2 id="installation">installation</h2><h3 id="node-js">Node.js</h3><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install asyncmark</code>
+</code></pre>
+<h4 id="es6">ES6</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark, {Suite} from &apos;asyncmark&apos;;</code>
+</code></pre>
+<h4 id="commonjs">CommonJS</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">const AsyncMark = require(&apos;asyncmark&apos;);
+
+const Benchmark = AsyncMark.Benchmark;
+const Suite = AsyncMark.Suite;</code>
+</code></pre>
+<h3 id="browser">Browser</h3><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://unpkg.com/asyncmark&quot;&gt;&lt;/script&gt;
 &lt;script&gt;
-const Benchmark = PromiseBench.Benchmark;
-const Suite = PromiseBench.Suite;
+const Benchmark = AsyncMark.Benchmark;
+const Suite = AsyncMark.Suite;
 &lt;/script&gt;</code>
 </code></pre>
 </div>
