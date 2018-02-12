@@ -3,6 +3,9 @@ PromiseBench
 
 A benchmarking library for javascript that supports Promise.
 
+[![Build Status](https://travis-ci.org/macrat/PromiseBench.svg?branch=master)](https://travis-ci.org/macrat/PromiseBench)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/test_coverage)](https://codeclimate.com/github/macrat/PromiseBench/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d15df6e95751f31ab637/maintainability)](https://codeclimate.com/github/macrat/PromiseBench/maintainability)
 [![license](https://img.shields.io/github/license/macrat/PromiseBench.svg)](https://github.com/macrat/PromiseBench/blob/master/LICENSE)
 [![document](https://macrat.github.io/PromiseBench/badge.svg)](https://macrat.github.io/PromiseBench/)
 
