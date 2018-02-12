@@ -358,14 +358,14 @@ describe(&apos;Benchmark&apos;, function() {
         });
 
         it(&apos;timer&apos;, async function() {
-            const r10 = await new Benchmark({
+            const r100 = await new Benchmark({
                 number: 3,
                 fun() {
-                    return new Promise((resolve, reject) =&gt; setTimeout(resolve, 10));
+                    return new Promise((resolve, reject) =&gt; setTimeout(resolve, 100));
                 },
                 after() {}
             }).run();
-            assert(Math.abs(r10.average - 10) &lt;= 1);
+            assert(Math.abs(r100.average - 100) &lt;= 3);
 
             const r42 = await new Benchmark({
                 number: 3,
@@ -374,7 +374,7 @@ describe(&apos;Benchmark&apos;, function() {
                 },
                 after() {}
             }).run();
-            assert(Math.abs(r42.average - 42) &lt;= 1);
+            assert(Math.abs(r42.average - 42) &lt;= 3);
         });
     });
 });
