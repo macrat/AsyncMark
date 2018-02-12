@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "test": "npm run test:eslint && npm run test:mocha",
-    "test:eslint": "./node_modules/.bin/eslint src/*.js examples/*.js && ./node_modules/.bin/eslint --global describe,it test/*.js",
+    "test:eslint": "./node_modules/.bin/eslint src/*.js examples/*.js build.js && ./node_modules/.bin/eslint --global describe,it test/*.js",
     "test:mocha": "NODE_ENV=development ./node_modules/.bin/nyc --require babel-core/register --reporter lcov --reporter text ./node_modules/.bin/mocha",
     "build": "npm run build:dist && npm run build:docs",
     "build:dist": "NODE_ENV=production node build.js",
