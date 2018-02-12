@@ -43,7 +43,8 @@
     "nyc": "^11.4.1",
     "power-assert": "^1.4.4",
     "rollup": "^0.55.5",
-    "rollup-plugin-babel": "^3.0.3"
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-plugin-uglify": "^3.0.0"
   },
   "esdoc": {
     "source": "./dist",

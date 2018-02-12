@@ -1,6 +1,8 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.PromiseBench = {})));
+}(this, (function (exports) { 'use strict';
 
 /**
  * milliseconds timer
@@ -622,3 +624,7 @@ exports.Result = Result;
 exports.default = Benchmark;
 exports.Benchmark = Benchmark;
 exports.Suite = Suite;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));
