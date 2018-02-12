@@ -82,8 +82,36 @@
   "eslintConfig": {
     "extends": "eslint:recommended",
     "rules": {
-      "no-unused-vars": "off",
+      "arrow-body-style": [
+        "warn",
+        "as-needed"
+      ],
+      "arrow-parens": [
+        "warn",
+        "as-needed"
+      ],
+      "eqeqeq": "error",
+      "indent": [
+        "error",
+        4
+      ],
+      "init-declarations": [
+        "error",
+        "always"
+      ],
+      "no-catch-shadow": "warn",
       "no-console": "off",
+      "no-floating-decimal": "error",
+      "no-implicit-coercion": "error",
+      "no-label-var": "error",
+      "no-self-compare": "error",
+      "no-shadow": "error",
+      "no-template-curly-in-string": "warn",
+      "no-throw-literal": "error",
+      "no-unused-vars": "off",
+      "no-var": "error",
+      "prefer-const": "warn",
+      "prefer-promise-reject-errors": "error",
       "quotes": [
         "warn",
         "single"
@@ -96,40 +124,12 @@
           "classes": "always"
         }
       ],
-      "indent": [
-        "error",
-        4
-      ],
-      "no-template-curly-in-string": "warn",
       "valid-jsdoc": "warn",
-      "eqeqeq": "error",
-      "no-floating-decimal": "error",
-      "no-implicit-coercion": "error",
-      "no-self-compare": "error",
-      "no-throw-literal": "error",
-      "prefer-promise-reject-errors": "error",
-      "yoda": "warn",
-      "init-declarations": [
-        "error",
-        "always"
-      ],
-      "no-catch-shadow": "warn",
-      "no-label-var": "error",
-      "no-shadow": "error",
-      "arrow-body-style": [
-        "warn",
-        "as-needed"
-      ],
-      "arrow-parens": [
-        "warn",
-        "as-needed"
-      ],
-      "no-var": "error",
-      "prefer-const": "warn"
+      "yoda": "warn"
     },
     "env": {
-      "es6": true,
       "browser": true,
+      "es6": true,
       "node": true
     },
     "parserOptions": {
