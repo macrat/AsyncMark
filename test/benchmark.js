@@ -319,14 +319,14 @@ describe('Benchmark', function() {
         });
 
         it('timer', async function() {
-            const r10 = await new Benchmark({
+            const r100 = await new Benchmark({
                 number: 3,
                 fun() {
-                    return new Promise((resolve, reject) => setTimeout(resolve, 10));
+                    return new Promise((resolve, reject) => setTimeout(resolve, 100));
                 },
                 after() {}
             }).run();
-            assert(Math.abs(r10.average - 10) <= 1);
+            assert(Math.abs(r100.average - 100) <= 3);
 
             const r42 = await new Benchmark({
                 number: 3,
@@ -335,7 +335,7 @@ describe('Benchmark', function() {
                 },
                 after() {}
             }).run();
-            assert(Math.abs(r42.average - 42) <= 1);
+            assert(Math.abs(r42.average - 42) <= 3);
         });
     });
 });
