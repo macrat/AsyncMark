@@ -136,12 +136,31 @@ class Result {
  *
  * @ignore
  */
-const now = typeof performance !== 'undefined' && performance.now ? function () {
-    return performance.now();
-} : function () {
-    const hr = process.hrtime();
-    return (hr[0] * 1e9 + hr[1]) / 1e6;
+let now = function () {
+    return Number(new Date());
 };
+
+if (typeof performance !== 'undefined' && performance.now) {
+    now = function () {
+        return performance.now();
+    };
+} else {
+    try {
+        const microtime = require('microtime');
+        now = function () {
+            return microtime.nowDouble() * 1000;
+        };
+    } catch (e) {
+        if (typeof process !== 'undefined' && process.hrtime) {
+            now = function () {
+                const hr = process.hrtime();
+                return (hr[0] * 1e9 + hr[1]) / 1e6;
+            };
+        }
+    }
+}
+
+var now$1 = now;
 
 /**
  * Class for benchmarking.
@@ -341,9 +360,9 @@ class Benchmark {
 
       await this.beforeEach.call(ctx, i);
 
-      const start = now();
+      const start = now$1();
       await this.fun.call(ctx);
-      const end = now();
+      const end = now$1();
 
       const msec = end - start;
       msecs.push(msec);
