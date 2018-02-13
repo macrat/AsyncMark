@@ -96,7 +96,7 @@ const Suite = AsyncMark.Suite;
 
 ### Browser
 ``` html
-<script src="https://unpkg.com/asyncmark"></script>
+<script src="https://unpkg.com/asyncmark/dist/asyncmark.min.js"></script>
 <script>
 const Benchmark = AsyncMark.Benchmark;
 const Suite = AsyncMark.Suite;
