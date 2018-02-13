@@ -18,7 +18,7 @@ import Benchmark from 'asyncmark';
 
 new Benchmark(function() {
     return new Promise((resolve, reject) => {
-        setTimeout(resolve, 100)
+        setTimeout(resolve, 100);
     });
 }).run().catch(console.error);
 ```
