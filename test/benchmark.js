@@ -327,8 +327,6 @@ describe('Benchmark', function() {
                     },
                     after() {}
                 }).run();
-                assert(r100.fastest >= 97);
-                assert(r100.slowest <= 103);
                 assert(Math.abs(r100.average - 100) <= 3);
 
                 const r42 = await new Benchmark({
@@ -338,8 +336,6 @@ describe('Benchmark', function() {
                     },
                     after() {}
                 }).run();
-                assert(r42.fastest >= 39);
-                assert(r42.slowest <= 45);
                 assert(Math.abs(r42.average - 42) <= 3);
             });
 
@@ -354,8 +350,6 @@ describe('Benchmark', function() {
                     after() {},
                 }).run();
 
-                assert(r.fastest >= 49 - 3);
-                assert(r.slowest <= 51 + 3);
                 assert(r.msecs.length >= 5);
                 assert(r.msecs.length <= 100);
                 assert(r.errorRate <= 0.2);
@@ -372,8 +366,6 @@ describe('Benchmark', function() {
                     after() {},
                 }).run();
 
-                assert(r.fastest >= 49 - 3);
-                assert(r.slowest <= 51 + 3);
                 assert(r.msecs.length >= 5);
                 assert(r.msecs.length <= 100);
                 assert(r.errorRate <= 0.4);
