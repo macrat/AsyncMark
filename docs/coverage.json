@@ -1,11 +1,11 @@
 {
   "coverage": "100%",
-  "expectCount": 43,
-  "actualCount": 43,
+  "expectCount": 45,
+  "actualCount": 45,
   "files": {
     "dist/asyncmark.mjs": {
-      "expectCount": 43,
-      "actualCount": 43,
+      "expectCount": 45,
+      "actualCount": 45,
       "undocumentLines": []
     }
   }

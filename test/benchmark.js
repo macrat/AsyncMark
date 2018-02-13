@@ -318,24 +318,66 @@ describe('Benchmark', function() {
             assert.deepStrictEqual(afterCounts, [0, 1]);
         });
 
-        it('timer', async function() {
-            const r100 = await new Benchmark({
-                number: 3,
-                fun() {
-                    return new Promise((resolve, reject) => setTimeout(resolve, 100));
-                },
-                after() {}
-            }).run();
-            assert(Math.abs(r100.average - 100) <= 3);
+        describe('loop and time', function() {
+            it('static number', async function() {
+                const r100 = await new Benchmark({
+                    number: 3,
+                    fun() {
+                        return new Promise((resolve, reject) => setTimeout(resolve, 100));
+                    },
+                    after() {}
+                }).run();
+                assert(r100.fastest >= 97);
+                assert(r100.slowest <= 103);
+                assert(Math.abs(r100.average - 100) <= 3);
 
-            const r42 = await new Benchmark({
-                number: 3,
-                fun() {
-                    return new Promise((resolve, reject) => setTimeout(resolve, 42));
-                },
-                after() {}
-            }).run();
-            assert(Math.abs(r42.average - 42) <= 3);
+                const r42 = await new Benchmark({
+                    number: 3,
+                    fun() {
+                        return new Promise((resolve, reject) => setTimeout(resolve, 42));
+                    },
+                    after() {}
+                }).run();
+                assert(r42.fastest >= 39);
+                assert(r42.slowest <= 45);
+                assert(Math.abs(r42.average - 42) <= 3);
+            });
+
+            it('auto / rate 20%', async function() {
+                const r = await new Benchmark({
+                    minNumber: 5,
+                    maxNumber: 100,
+                    targetErrorRate: 0.2,
+                    fun() {
+                        return new Promise((resolve, reject) => setTimeout(resolve, 49 + Math.random() * 2));
+                    },
+                    after() {},
+                }).run();
+
+                assert(r.fastest >= 49 - 3);
+                assert(r.slowest <= 51 + 3);
+                assert(r.msecs.length >= 5);
+                assert(r.msecs.length <= 100);
+                assert(r.errorRate <= 0.2);
+            });
+
+            it('auto / rate 40%', async function() {
+                const r = await new Benchmark({
+                    minNumber: 5,
+                    maxNumber: 100,
+                    targetErrorRate: 0.4,
+                    fun() {
+                        return new Promise((resolve, reject) => setTimeout(resolve, 49 + Math.random() * 2));
+                    },
+                    after() {},
+                }).run();
+
+                assert(r.fastest >= 49 - 3);
+                assert(r.slowest <= 51 + 3);
+                assert(r.msecs.length >= 5);
+                assert(r.msecs.length <= 100);
+                assert(r.errorRate <= 0.4);
+            });
         });
     });
 });

@@ -16,6 +16,22 @@ describe('Result', function() {
     });
 
     /**
+     * @test {Result#fastest}
+     */
+    it('#fastest', function() {
+        assert(new Result('test', [10, 20, 30]).fastest === 10);
+        assert(new Result('test', [33, 22, 11]).fastest === 11);
+    });
+
+    /**
+     * @test {Result#slowest}
+     */
+    it('#slowest', function() {
+        assert(new Result('test', [10, 20, 30]).slowest === 30);
+        assert(new Result('test', [33, 22, 11]).slowest === 33);
+    });
+
+    /**
      * @test {Result#average}
      */
     it('#average', function() {

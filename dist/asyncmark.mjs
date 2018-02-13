@@ -1,18 +1,4 @@
 /**
- * milliseconds timer
- *
- * @return {Number} high resolution current time in milliseconds.
- *
- * @ignore
- */
-const now = typeof performance !== 'undefined' && performance.now ? function () {
-  return performance.now();
-} : function () {
-  const hr = process.hrtime();
-  return (hr[0] * 1e9 + hr[1]) / 1e6;
-};
-
-/**
  * The result of benchmark.
  */
 class Result {
@@ -45,6 +31,24 @@ class Result {
    */
   get total() {
     return this.msecs.reduce((x, y) => x + y);
+  }
+
+  /**
+   * The time of fastest test in milliseconds.
+   *
+   * @type {Number}
+   */
+  get fastest() {
+    return this.msecs.reduce((x, y) => Math.min(x, y));
+  }
+
+  /**
+   * The time of slowest test in milliseconds.
+   *
+   * @type {Number}
+   */
+  get slowest() {
+    return this.msecs.reduce((x, y) => Math.max(x, y));
   }
 
   /**
@@ -124,6 +128,20 @@ class Result {
     return `${this.name}: ${ops}ops/sec ${avg}msec/op +-${range}msec/op (${rate}%) / ${this.msecs.length} times tried`;
   }
 }
+
+/**
+ * milliseconds timer
+ *
+ * @return {Number} high resolution current time in milliseconds.
+ *
+ * @ignore
+ */
+const now = typeof performance !== 'undefined' && performance.now ? function () {
+    return performance.now();
+} : function () {
+    const hr = process.hrtime();
+    return (hr[0] * 1e9 + hr[1]) / 1e6;
+};
 
 /**
  * Class for benchmarking.
@@ -534,11 +552,11 @@ class Suite {
   /**
    * Make new benchmark or suite and adding into this {@link Suite}.
    *
-   * @param {Benchmark|Suite|Object|function} [child={}] - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.
+   * @param {Benchmark|Suite|Object|function} child - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.
    *
    * @return {Suite} returns this suite for method chain.
    */
-  add(child = {}) {
+  add(child) {
     if (child instanceof Benchmark) {
       this.addBenchmark(child);
     } else if (child instanceof Suite) {

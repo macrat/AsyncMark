@@ -116,7 +116,25 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/benchmark.js.html#lineNumber321",
-    "Benchmark #run timer",
+    "Benchmark #run loop and time",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/benchmark.js.html#lineNumber346",
+    "Benchmark #run loop and time auto / rate 20%",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/benchmark.js.html#lineNumber364",
+    "Benchmark #run loop and time auto / rate 40%",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/benchmark.js.html#lineNumber322",
+    "Benchmark #run loop and time static number",
     "test"
   ],
   [
@@ -133,43 +151,55 @@ window.esdocSearchIndex = [
   ],
   [
     "result#average dist/asyncmark.mjs~result#average,result#average",
-    "test-file/test/result.js.html#lineNumber21",
+    "test-file/test/result.js.html#lineNumber37",
     "Result #average",
     "test"
   ],
   [
     "result#errorrange dist/asyncmark.mjs~result#errorrange,result#errorrange",
-    "test-file/test/result.js.html#lineNumber53",
+    "test-file/test/result.js.html#lineNumber69",
     "Result #errorRange",
     "test"
   ],
   [
     "result#errorrate dist/asyncmark.mjs~result#errorrate,result#errorrate",
-    "test-file/test/result.js.html#lineNumber61",
+    "test-file/test/result.js.html#lineNumber77",
     "Result #errorRate",
     "test"
   ],
   [
+    "result#fastest dist/asyncmark.mjs~result#fastest,result#fastest",
+    "test-file/test/result.js.html#lineNumber21",
+    "Result #fastest",
+    "test"
+  ],
+  [
     "result#opspersec dist/asyncmark.mjs~result#opspersec,result#opspersec",
-    "test-file/test/result.js.html#lineNumber69",
+    "test-file/test/result.js.html#lineNumber85",
     "Result #opsPerSec",
     "test"
   ],
   [
     "result#std dist/asyncmark.mjs~result#std,result#std",
-    "test-file/test/result.js.html#lineNumber45",
+    "test-file/test/result.js.html#lineNumber61",
     "Result #sem",
     "test"
   ],
   [
+    "result#slowest dist/asyncmark.mjs~result#slowest,result#slowest",
+    "test-file/test/result.js.html#lineNumber29",
+    "Result #slowest",
+    "test"
+  ],
+  [
     "result#std dist/asyncmark.mjs~result#std,result#std",
-    "test-file/test/result.js.html#lineNumber37",
+    "test-file/test/result.js.html#lineNumber53",
     "Result #std",
     "test"
   ],
   [
     "result#tostring dist/asyncmark.mjs~result#tostring,result#tostring",
-    "test-file/test/result.js.html#lineNumber77",
+    "test-file/test/result.js.html#lineNumber93",
     "Result #toString",
     "test"
   ],
@@ -181,7 +211,7 @@ window.esdocSearchIndex = [
   ],
   [
     "result#variance dist/asyncmark.mjs~result#variance,result#variance",
-    "test-file/test/result.js.html#lineNumber29",
+    "test-file/test/result.js.html#lineNumber45",
     "Result #variance",
     "test"
   ],
@@ -426,6 +456,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "dist/asyncmark.mjs~result#fastest",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-fastest",
+    "dist/asyncmark.mjs~Result#fastest",
+    "member"
+  ],
+  [
     "dist/asyncmark.mjs~result#msecs",
     "class/dist/asyncmark.mjs~Result.html#instance-member-msecs",
     "dist/asyncmark.mjs~Result#msecs",
@@ -447,6 +483,12 @@ window.esdocSearchIndex = [
     "dist/asyncmark.mjs~result#sem",
     "class/dist/asyncmark.mjs~Result.html#instance-get-sem",
     "dist/asyncmark.mjs~Result#sem",
+    "member"
+  ],
+  [
+    "dist/asyncmark.mjs~result#slowest",
+    "class/dist/asyncmark.mjs~Result.html#instance-get-slowest",
+    "dist/asyncmark.mjs~Result#slowest",
     "member"
   ],
   [

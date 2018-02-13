@@ -34,6 +34,24 @@ export default class Result {
     }
 
     /**
+     * The time of fastest test in milliseconds.
+     *
+     * @type {Number}
+     */
+    get fastest() {
+        return this.msecs.reduce((x, y) => Math.min(x, y));
+    }
+
+    /**
+     * The time of slowest test in milliseconds.
+     *
+     * @type {Number}
+     */
+    get slowest() {
+        return this.msecs.reduce((x, y) => Math.max(x, y));
+    }
+
+    /**
      * Average time of this benchmark in milliseconds.
      *
      * @type {Number}
