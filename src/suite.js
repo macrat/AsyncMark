@@ -73,9 +73,9 @@ export default class Suite {
      * @param {Number} [options.name='unnamed'] - name of this suite.
      * @param {Boolean} [options.parallel=false] - flag for executing each benchmark parallelly.
      * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.
-     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#before}.
-     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - setup function. see {@link Suite#after}.
-     * @param {function(results: Result[]): ?Promise} [options.after] - setup function. see {@link Suite#after}.
+     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#beforeEach}.
+     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.afterEach] - teardown function. see {@link Suite#afterEach}.
+     * @param {function(results: Result[]): ?Promise} [options.after] - teardown function. see {@link Suite#after}.
      * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.
      */
     constructor(options = {}) {
