@@ -11,7 +11,7 @@ A benchmarking library for javascript that supports Promise.
 [![license](https://img.shields.io/github/license/macrat/AsyncMark.svg)](https://github.com/macrat/AsyncMark/blob/master/LICENSE)
 [![document](https://macrat.github.io/AsyncMark/badge.svg)](https://macrat.github.io/AsyncMark/)
 
-You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/).
+You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/index.html).
 
 ## be simple
 ``` javascript
