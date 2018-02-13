@@ -3,9 +3,24 @@
   "expectCount": 45,
   "actualCount": 45,
   "files": {
-    "dist/asyncmark.mjs": {
-      "expectCount": 45,
-      "actualCount": 45,
+    "src/benchmark.js": {
+      "expectCount": 13,
+      "actualCount": 13,
+      "undocumentLines": []
+    },
+    "src/result.js": {
+      "expectCount": 15,
+      "actualCount": 15,
+      "undocumentLines": []
+    },
+    "src/suite.js": {
+      "expectCount": 16,
+      "actualCount": 16,
+      "undocumentLines": []
+    },
+    "src/timer.js": {
+      "expectCount": 1,
+      "actualCount": 1,
       "undocumentLines": []
     }
   }

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/benchmark.js | asyncmark</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/benchmark.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Result from &apos;./result&apos;;
+import now from &apos;./timer&apos;;
+
+
+/**
+ * Class for benchmarking.
+ *
+ * Benchmark will execute by flow like this.
+ *
+ *   - before
+ *   - beforeEach
+ *   - fun
+ *   - afterEach
+ *   - after
+ *
+ * Each function can override with options of the constructor.
+ *
+ *
+ * @example
+ * import Benchmark from &apos;asyncmark&apos;;
+ *
+ *
+ * new Benchmark({
+ *     name: &apos;timeout&apos;,
+ *     fun() {
+ *         return new Promise((resolve, reject) =&gt; {
+ *             setTimeout(resolve, 100);
+ *         });
+ *     },
+ * }).run().catch(console.error);
+ */
+export default class Benchmark {
+    /**
+     * @param {Object|function} [options] - options for this benchmark or benchmarking function.
+     * @param {Number} [options.name=&apos;unnamed&apos;] - name of this benchmark.
+     * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.
+     * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.
+     * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.
+     * @param {Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.
+     * @param {function(): ?Promise} [options.before] - setup function. see {@link Benchmark#before}.
+     * @param {function(count: Number): ?Promise} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.
+     * @param {function(): ?Promise} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.
+     * @param {function(count: Number, msec: Number): ?Promise} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.
+     * @param {function(result: Result): ?Promise} [options.after] - teardown function. see {@link Benchmark#after}.
+     */
+    constructor(options = {}) {
+        /**
+         * Name of this benchmark.
+         *
+         * @type {String}
+         */
+        this.name = options.name || &apos;unnamed&apos;;
+
+        /**
+         * Wanted maximum error rate.
+         * This value will be ignore if set {@link Benchmark#number}.
+         *
+         * @type {Number}
+         */
+        this.targetErrorRate = options.targetErrorRate || 0.1;
+
+        /**
+         * Maximum number of executing test.
+         * This value will be ignore if set {@link Benchmark#number}.
+         *
+         * @type {Number}
+         */
+        this.maxNumber = options.maxNumber || 10000;
+
+        /**
+         * Minimal number of executing test.
+         * This value will be ignore if set {@link Benchmark#number}.
+         *
+         * @type {Number}
+         */
+        this.minNumber = options.minNumber || 30;
+
+        /**
+         * The number of executing the test.
+         * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.
+         *
+         * @type {Number|null}
+         */
+        this.number = options.number || null;
+
+        if (typeof options === &apos;function&apos;) {
+            this.fun = options;
+        } else {
+            this.before = options.before || this.before;
+            this.beforeEach = options.beforeEach || this.beforeEach;
+            this.fun = options.fun || this.fun;
+            this.afterEach = options.afterEach || this.afterEach;
+            this.after = options.after || this.after;
+        }
+    }
+
+    /**
+     * Setup before execute benchmark.
+     *
+     * At the time executing this method, `this` is the unique object for the benchmark.
+     * So you can use `this` for storing testing data like a database.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#after}
+     *
+     * In default, do nothing.
+     *
+     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    async before() {}
+
+    /**
+     * Setup before each tests.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+     *
+     * In default, do nothing.
+     *
+     * @param {Number} count - count of done tests in this benchmark.
+     *
+     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    async beforeEach(count) {}
+
+    /**
+     * The target function for benchmarking.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+     *
+     * In default, couses error that `Error(&apos;target function is not defined&apos;)`.
+     *
+     * @abstract
+     *
+     * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
+     */
+    async fun() {
+        throw new Error(&apos;target function is not defined&apos;);
+    }
+
+    /**
+     * Teardown after each tests.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call this method.
+     *
+     * In default, do nothing.
+     *
+     * @param {Number} count - count of done tests in this benchmark.
+     * @param {Number} msec - duration of this execution.
+     *
+     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    async afterEach(count, msec) {}
+
+    /**
+     * Teardown after execute benchmark.
+     *
+     * At the time executing this method, `this` is the unique object for the benchmark.
+     * So you can use `this` for storing testing data like a database.
+     * Data of `this` that set in this method will discard after call this method.
+     *
+     * In default, shows test result.
+     *
+     * @param {Result} result - result of this benchmark.
+     *
+     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    async after(result) {
+        console.log(String(result));
+    }
+
+    /**
+     * Execute benchmark.
+     *
+     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
+     *
+     * @return {?Promise&lt;Result&gt;} A result of benchmark.
+     */
+    async run(context = {}) {
+        context = Object.assign({}, context);
+        context.__proto__ = this;
+
+        await this.before.call(context);
+
+        const loopNum = this.number || this.maxNumber;
+
+        const msecs = [];
+        for (let i = 0; i &lt; loopNum; i++) {
+            const ctx = Object.assign({}, context);
+
+            await this.beforeEach.call(ctx, i);
+
+            const start = now();
+            await this.fun.call(ctx);
+            const end = now();
+
+            await this.afterEach.call(ctx, i, end - start);
+            msecs.push(end - start);
+
+            if (!this.number &amp;&amp; i + 1 &gt;= this.minNumber &amp;&amp; (new Result(this.name, msecs)).errorRate &lt;= this.targetErrorRate) {
+                break;
+            }
+        }
+
+        const result = new Result(this.name, msecs);
+        await this.after.call(context, result);
+        return result;
+    }
+}
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.0.4)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

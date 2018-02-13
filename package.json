@@ -37,6 +37,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-power-assert": "^2.0.0",
     "esdoc": "^1.0.4",
+    "esdoc-importpath-plugin": "^1.0.1",
     "esdoc-standard-plugin": "^1.0.0",
     "eslint": "^4.17.0",
     "mocha": "^5.0.0",
@@ -47,10 +48,7 @@
     "rollup-plugin-uglify": "^3.0.0"
   },
   "esdoc": {
-    "source": "./dist",
-    "includes": [
-      "asyncmark\\.mjs"
-    ],
+    "source": "./src",
     "destination": "./docs",
     "plugins": [
       {
@@ -62,6 +60,18 @@
               ".*\\.js$"
             ]
           }
+        }
+      },
+      {
+        "name": "esdoc-importpath-plugin",
+        "option": {
+          "stripPackageName": "true",
+          "replaces": [
+            {
+              "from": "^.*$",
+              "to": "dist/asyncmark.mjs"
+            }
+          ]
         }
       }
     ]

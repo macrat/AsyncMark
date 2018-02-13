@@ -1,30 +1,30 @@
 window.esdocSearchIndex = [
   [
     "asyncmark/dist/asyncmark.mjs~benchmark",
-    "class/dist/asyncmark.mjs~Benchmark.html",
+    "class/src/benchmark.js~Benchmark.html",
     "<span>Benchmark</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
     "asyncmark/dist/asyncmark.mjs~result",
-    "class/dist/asyncmark.mjs~Result.html",
+    "class/src/result.js~Result.html",
     "<span>Result</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
     "asyncmark/dist/asyncmark.mjs~suite",
-    "class/dist/asyncmark.mjs~Suite.html",
+    "class/src/suite.js~Suite.html",
     "<span>Suite</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
     "class"
   ],
   [
-    "benchmark dist/asyncmark.mjs~benchmark,benchmark",
+    "benchmark src/benchmark.js~benchmark,benchmark",
     "test-file/test/benchmark.js.html#lineNumber9",
     "Benchmark",
     "test"
   ],
   [
-    "benchmark#after dist/asyncmark.mjs~benchmark#after,benchmark#after",
+    "benchmark#after src/benchmark.js~benchmark#after,benchmark#after",
     "test-file/test/benchmark.js.html#lineNumber140",
     "Benchmark #after",
     "test"
@@ -36,7 +36,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#constructor dist/asyncmark.mjs~benchmark#constructor,benchmark#constructor",
+    "benchmark#constructor src/benchmark.js~benchmark#constructor,benchmark#constructor",
     "test-file/test/benchmark.js.html#lineNumber17",
     "Benchmark #constructor",
     "test"
@@ -78,7 +78,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#fun dist/asyncmark.mjs~benchmark#fun,benchmark#fun",
+    "benchmark#fun src/benchmark.js~benchmark#fun,benchmark#fun",
     "test-file/test/benchmark.js.html#lineNumber127",
     "Benchmark #fun",
     "test"
@@ -90,7 +90,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#run dist/asyncmark.mjs~benchmark#run,benchmark#run",
+    "benchmark#run src/benchmark.js~benchmark#run,benchmark#run",
     "test-file/test/benchmark.js.html#lineNumber164",
     "Benchmark #run",
     "test"
@@ -144,85 +144,85 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "result dist/asyncmark.mjs~result,result",
+    "result src/result.js~result,result",
     "test-file/test/result.js.html#lineNumber9",
     "Result",
     "test"
   ],
   [
-    "result#average dist/asyncmark.mjs~result#average,result#average",
+    "result#average src/result.js~result#average,result#average",
     "test-file/test/result.js.html#lineNumber37",
     "Result #average",
     "test"
   ],
   [
-    "result#errorrange dist/asyncmark.mjs~result#errorrange,result#errorrange",
+    "result#errorrange src/result.js~result#errorrange,result#errorrange",
     "test-file/test/result.js.html#lineNumber69",
     "Result #errorRange",
     "test"
   ],
   [
-    "result#errorrate dist/asyncmark.mjs~result#errorrate,result#errorrate",
+    "result#errorrate src/result.js~result#errorrate,result#errorrate",
     "test-file/test/result.js.html#lineNumber77",
     "Result #errorRate",
     "test"
   ],
   [
-    "result#fastest dist/asyncmark.mjs~result#fastest,result#fastest",
+    "result#fastest src/result.js~result#fastest,result#fastest",
     "test-file/test/result.js.html#lineNumber21",
     "Result #fastest",
     "test"
   ],
   [
-    "result#opspersec dist/asyncmark.mjs~result#opspersec,result#opspersec",
+    "result#opspersec src/result.js~result#opspersec,result#opspersec",
     "test-file/test/result.js.html#lineNumber85",
     "Result #opsPerSec",
     "test"
   ],
   [
-    "result#std dist/asyncmark.mjs~result#std,result#std",
+    "result#std src/result.js~result#std,result#std",
     "test-file/test/result.js.html#lineNumber61",
     "Result #sem",
     "test"
   ],
   [
-    "result#slowest dist/asyncmark.mjs~result#slowest,result#slowest",
+    "result#slowest src/result.js~result#slowest,result#slowest",
     "test-file/test/result.js.html#lineNumber29",
     "Result #slowest",
     "test"
   ],
   [
-    "result#std dist/asyncmark.mjs~result#std,result#std",
+    "result#std src/result.js~result#std,result#std",
     "test-file/test/result.js.html#lineNumber53",
     "Result #std",
     "test"
   ],
   [
-    "result#tostring dist/asyncmark.mjs~result#tostring,result#tostring",
+    "result#tostring src/result.js~result#tostring,result#tostring",
     "test-file/test/result.js.html#lineNumber93",
     "Result #toString",
     "test"
   ],
   [
-    "result#total dist/asyncmark.mjs~result#total,result#total",
+    "result#total src/result.js~result#total,result#total",
     "test-file/test/result.js.html#lineNumber13",
     "Result #total",
     "test"
   ],
   [
-    "result#variance dist/asyncmark.mjs~result#variance,result#variance",
+    "result#variance src/result.js~result#variance,result#variance",
     "test-file/test/result.js.html#lineNumber45",
     "Result #variance",
     "test"
   ],
   [
-    "suite dist/asyncmark.mjs~suite,suite",
+    "suite src/suite.js~suite,suite",
     "test-file/test/suite.js.html#lineNumber9",
     "Suite",
     "test"
   ],
   [
-    "suite#add dist/asyncmark.mjs~suite#add,suite#add",
+    "suite#add src/suite.js~suite#add,suite#add",
     "test-file/test/suite.js.html#lineNumber117",
     "Suite #add",
     "test"
@@ -264,13 +264,13 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#addbenchmark dist/asyncmark.mjs~suite#addbenchmark,suite#addbenchmark",
+    "suite#addbenchmark src/suite.js~suite#addbenchmark,suite#addbenchmark",
     "test-file/test/suite.js.html#lineNumber80",
     "Suite #addBenchmark",
     "test"
   ],
   [
-    "suite#addsuite dist/asyncmark.mjs~suite#addsuite,suite#addsuite",
+    "suite#addsuite src/suite.js~suite#addsuite,suite#addsuite",
     "test-file/test/suite.js.html#lineNumber98",
     "Suite #addSuite",
     "test"
@@ -300,7 +300,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#run dist/asyncmark.mjs~suite#run,suite#run",
+    "suite#run src/suite.js~suite#run,suite#run",
     "test-file/test/suite.js.html#lineNumber267",
     "Suite #run",
     "test"
@@ -360,238 +360,544 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "dist/asyncmark.mjs",
-    "file/dist/asyncmark.mjs.html",
-    "dist/asyncmark.mjs",
+    "src/.external-ecmascript.js~array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "src/.external-ecmascript.js~Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~arraybuffer",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "src/.external-ecmascript.js~ArrayBuffer",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~boolean",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "src/.external-ecmascript.js~Boolean",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~dataview",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "src/.external-ecmascript.js~DataView",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~date",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "src/.external-ecmascript.js~Date",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~error",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "src/.external-ecmascript.js~Error",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~evalerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "src/.external-ecmascript.js~EvalError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~float32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "src/.external-ecmascript.js~Float32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~float64array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "src/.external-ecmascript.js~Float64Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~function",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "src/.external-ecmascript.js~Function",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~generator",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "src/.external-ecmascript.js~Generator",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~generatorfunction",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "src/.external-ecmascript.js~GeneratorFunction",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~infinity",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "src/.external-ecmascript.js~Infinity",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int16array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "src/.external-ecmascript.js~Int16Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "src/.external-ecmascript.js~Int32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~int8array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "src/.external-ecmascript.js~Int8Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~internalerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "src/.external-ecmascript.js~InternalError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~json",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "src/.external-ecmascript.js~JSON",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~map",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "src/.external-ecmascript.js~Map",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~nan",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "src/.external-ecmascript.js~NaN",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~number",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "src/.external-ecmascript.js~Number",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~object",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "src/.external-ecmascript.js~Object",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~promise",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "src/.external-ecmascript.js~Promise",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~proxy",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "src/.external-ecmascript.js~Proxy",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~rangeerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "src/.external-ecmascript.js~RangeError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~referenceerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "src/.external-ecmascript.js~ReferenceError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~reflect",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "src/.external-ecmascript.js~Reflect",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~regexp",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "src/.external-ecmascript.js~RegExp",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~set",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "src/.external-ecmascript.js~Set",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~string",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "src/.external-ecmascript.js~String",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~symbol",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "src/.external-ecmascript.js~Symbol",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~syntaxerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "src/.external-ecmascript.js~SyntaxError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~typeerror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "src/.external-ecmascript.js~TypeError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~urierror",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "src/.external-ecmascript.js~URIError",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint16array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "src/.external-ecmascript.js~Uint16Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint32array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "src/.external-ecmascript.js~Uint32Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint8array",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "src/.external-ecmascript.js~Uint8Array",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~uint8clampedarray",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "src/.external-ecmascript.js~Uint8ClampedArray",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~weakmap",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "src/.external-ecmascript.js~WeakMap",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~weakset",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "src/.external-ecmascript.js~WeakSet",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~boolean",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "src/.external-ecmascript.js~boolean",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~function",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "src/.external-ecmascript.js~function",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~null",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "src/.external-ecmascript.js~null",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~number",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "src/.external-ecmascript.js~number",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~object",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "src/.external-ecmascript.js~object",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~string",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "src/.external-ecmascript.js~string",
+    "external"
+  ],
+  [
+    "src/.external-ecmascript.js~undefined",
+    "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "src/.external-ecmascript.js~undefined",
+    "external"
+  ],
+  [
+    "src/benchmark.js",
+    "file/src/benchmark.js.html",
+    "src/benchmark.js",
     "file"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#after",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-after",
-    "dist/asyncmark.mjs~Benchmark#after",
+    "src/benchmark.js~benchmark#after",
+    "class/src/benchmark.js~Benchmark.html#instance-method-after",
+    "src/benchmark.js~Benchmark#after",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#aftereach",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-afterEach",
-    "dist/asyncmark.mjs~Benchmark#afterEach",
+    "src/benchmark.js~benchmark#aftereach",
+    "class/src/benchmark.js~Benchmark.html#instance-method-afterEach",
+    "src/benchmark.js~Benchmark#afterEach",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#before",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-before",
-    "dist/asyncmark.mjs~Benchmark#before",
+    "src/benchmark.js~benchmark#before",
+    "class/src/benchmark.js~Benchmark.html#instance-method-before",
+    "src/benchmark.js~Benchmark#before",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#beforeeach",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-beforeEach",
-    "dist/asyncmark.mjs~Benchmark#beforeEach",
+    "src/benchmark.js~benchmark#beforeeach",
+    "class/src/benchmark.js~Benchmark.html#instance-method-beforeEach",
+    "src/benchmark.js~Benchmark#beforeEach",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#constructor",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-constructor-constructor",
-    "dist/asyncmark.mjs~Benchmark#constructor",
+    "src/benchmark.js~benchmark#constructor",
+    "class/src/benchmark.js~Benchmark.html#instance-constructor-constructor",
+    "src/benchmark.js~Benchmark#constructor",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#fun",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-fun",
-    "dist/asyncmark.mjs~Benchmark#fun",
+    "src/benchmark.js~benchmark#fun",
+    "class/src/benchmark.js~Benchmark.html#instance-method-fun",
+    "src/benchmark.js~Benchmark#fun",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#maxnumber",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-maxNumber",
-    "dist/asyncmark.mjs~Benchmark#maxNumber",
+    "src/benchmark.js~benchmark#maxnumber",
+    "class/src/benchmark.js~Benchmark.html#instance-member-maxNumber",
+    "src/benchmark.js~Benchmark#maxNumber",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#minnumber",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-minNumber",
-    "dist/asyncmark.mjs~Benchmark#minNumber",
+    "src/benchmark.js~benchmark#minnumber",
+    "class/src/benchmark.js~Benchmark.html#instance-member-minNumber",
+    "src/benchmark.js~Benchmark#minNumber",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#name",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-name",
-    "dist/asyncmark.mjs~Benchmark#name",
+    "src/benchmark.js~benchmark#name",
+    "class/src/benchmark.js~Benchmark.html#instance-member-name",
+    "src/benchmark.js~Benchmark#name",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#number",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-number",
-    "dist/asyncmark.mjs~Benchmark#number",
+    "src/benchmark.js~benchmark#number",
+    "class/src/benchmark.js~Benchmark.html#instance-member-number",
+    "src/benchmark.js~Benchmark#number",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#run",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-method-run",
-    "dist/asyncmark.mjs~Benchmark#run",
+    "src/benchmark.js~benchmark#run",
+    "class/src/benchmark.js~Benchmark.html#instance-method-run",
+    "src/benchmark.js~Benchmark#run",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~benchmark#targeterrorrate",
-    "class/dist/asyncmark.mjs~Benchmark.html#instance-member-targetErrorRate",
-    "dist/asyncmark.mjs~Benchmark#targetErrorRate",
+    "src/benchmark.js~benchmark#targeterrorrate",
+    "class/src/benchmark.js~Benchmark.html#instance-member-targetErrorRate",
+    "src/benchmark.js~Benchmark#targetErrorRate",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#average",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-average",
-    "dist/asyncmark.mjs~Result#average",
+    "src/index.js",
+    "file/src/index.js.html",
+    "src/index.js",
+    "file"
+  ],
+  [
+    "src/result.js",
+    "file/src/result.js.html",
+    "src/result.js",
+    "file"
+  ],
+  [
+    "src/result.js~result#average",
+    "class/src/result.js~Result.html#instance-get-average",
+    "src/result.js~Result#average",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#errorrange",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-errorRange",
-    "dist/asyncmark.mjs~Result#errorRange",
+    "src/result.js~result#errorrange",
+    "class/src/result.js~Result.html#instance-get-errorRange",
+    "src/result.js~Result#errorRange",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#errorrate",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-errorRate",
-    "dist/asyncmark.mjs~Result#errorRate",
+    "src/result.js~result#errorrate",
+    "class/src/result.js~Result.html#instance-get-errorRate",
+    "src/result.js~Result#errorRate",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#fastest",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-fastest",
-    "dist/asyncmark.mjs~Result#fastest",
+    "src/result.js~result#fastest",
+    "class/src/result.js~Result.html#instance-get-fastest",
+    "src/result.js~Result#fastest",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#msecs",
-    "class/dist/asyncmark.mjs~Result.html#instance-member-msecs",
-    "dist/asyncmark.mjs~Result#msecs",
+    "src/result.js~result#msecs",
+    "class/src/result.js~Result.html#instance-member-msecs",
+    "src/result.js~Result#msecs",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#name",
-    "class/dist/asyncmark.mjs~Result.html#instance-member-name",
-    "dist/asyncmark.mjs~Result#name",
+    "src/result.js~result#name",
+    "class/src/result.js~Result.html#instance-member-name",
+    "src/result.js~Result#name",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#opspersec",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-opsPerSec",
-    "dist/asyncmark.mjs~Result#opsPerSec",
+    "src/result.js~result#opspersec",
+    "class/src/result.js~Result.html#instance-get-opsPerSec",
+    "src/result.js~Result#opsPerSec",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#sem",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-sem",
-    "dist/asyncmark.mjs~Result#sem",
+    "src/result.js~result#sem",
+    "class/src/result.js~Result.html#instance-get-sem",
+    "src/result.js~Result#sem",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#slowest",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-slowest",
-    "dist/asyncmark.mjs~Result#slowest",
+    "src/result.js~result#slowest",
+    "class/src/result.js~Result.html#instance-get-slowest",
+    "src/result.js~Result#slowest",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#std",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-std",
-    "dist/asyncmark.mjs~Result#std",
+    "src/result.js~result#std",
+    "class/src/result.js~Result.html#instance-get-std",
+    "src/result.js~Result#std",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#tostring",
-    "class/dist/asyncmark.mjs~Result.html#instance-method-toString",
-    "dist/asyncmark.mjs~Result#toString",
+    "src/result.js~result#tostring",
+    "class/src/result.js~Result.html#instance-method-toString",
+    "src/result.js~Result#toString",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~result#total",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-total",
-    "dist/asyncmark.mjs~Result#total",
+    "src/result.js~result#total",
+    "class/src/result.js~Result.html#instance-get-total",
+    "src/result.js~Result#total",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~result#variance",
-    "class/dist/asyncmark.mjs~Result.html#instance-get-variance",
-    "dist/asyncmark.mjs~Result#variance",
+    "src/result.js~result#variance",
+    "class/src/result.js~Result.html#instance-get-variance",
+    "src/result.js~Result#variance",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~suite#add",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-add",
-    "dist/asyncmark.mjs~Suite#add",
+    "src/suite.js",
+    "file/src/suite.js.html",
+    "src/suite.js",
+    "file"
+  ],
+  [
+    "src/suite.js~suite#add",
+    "class/src/suite.js~Suite.html#instance-method-add",
+    "src/suite.js~Suite#add",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#addbenchmark",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-addBenchmark",
-    "dist/asyncmark.mjs~Suite#addBenchmark",
+    "src/suite.js~suite#addbenchmark",
+    "class/src/suite.js~Suite.html#instance-method-addBenchmark",
+    "src/suite.js~Suite#addBenchmark",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#addsuite",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-addSuite",
-    "dist/asyncmark.mjs~Suite#addSuite",
+    "src/suite.js~suite#addsuite",
+    "class/src/suite.js~Suite.html#instance-method-addSuite",
+    "src/suite.js~Suite#addSuite",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#after",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-after",
-    "dist/asyncmark.mjs~Suite#after",
+    "src/suite.js~suite#after",
+    "class/src/suite.js~Suite.html#instance-method-after",
+    "src/suite.js~Suite#after",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#aftereach",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-afterEach",
-    "dist/asyncmark.mjs~Suite#afterEach",
+    "src/suite.js~suite#aftereach",
+    "class/src/suite.js~Suite.html#instance-method-afterEach",
+    "src/suite.js~Suite#afterEach",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#before",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-before",
-    "dist/asyncmark.mjs~Suite#before",
+    "src/suite.js~suite#before",
+    "class/src/suite.js~Suite.html#instance-method-before",
+    "src/suite.js~Suite#before",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#beforeeach",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-beforeEach",
-    "dist/asyncmark.mjs~Suite#beforeEach",
+    "src/suite.js~suite#beforeeach",
+    "class/src/suite.js~Suite.html#instance-method-beforeEach",
+    "src/suite.js~Suite#beforeEach",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#benchmarkdefault",
-    "class/dist/asyncmark.mjs~Suite.html#instance-member-benchmarkDefault",
-    "dist/asyncmark.mjs~Suite#benchmarkDefault",
+    "src/suite.js~suite#benchmarkdefault",
+    "class/src/suite.js~Suite.html#instance-member-benchmarkDefault",
+    "src/suite.js~Suite#benchmarkDefault",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~suite#benchmarks",
-    "class/dist/asyncmark.mjs~Suite.html#instance-member-benchmarks",
-    "dist/asyncmark.mjs~Suite#benchmarks",
+    "src/suite.js~suite#benchmarks",
+    "class/src/suite.js~Suite.html#instance-member-benchmarks",
+    "src/suite.js~Suite#benchmarks",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~suite#constructor",
-    "class/dist/asyncmark.mjs~Suite.html#instance-constructor-constructor",
-    "dist/asyncmark.mjs~Suite#constructor",
+    "src/suite.js~suite#constructor",
+    "class/src/suite.js~Suite.html#instance-constructor-constructor",
+    "src/suite.js~Suite#constructor",
     "method"
   ],
   [
-    "dist/asyncmark.mjs~suite#name",
-    "class/dist/asyncmark.mjs~Suite.html#instance-member-name",
-    "dist/asyncmark.mjs~Suite#name",
+    "src/suite.js~suite#name",
+    "class/src/suite.js~Suite.html#instance-member-name",
+    "src/suite.js~Suite#name",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~suite#parallel",
-    "class/dist/asyncmark.mjs~Suite.html#instance-member-parallel",
-    "dist/asyncmark.mjs~Suite#parallel",
+    "src/suite.js~suite#parallel",
+    "class/src/suite.js~Suite.html#instance-member-parallel",
+    "src/suite.js~Suite#parallel",
     "member"
   ],
   [
-    "dist/asyncmark.mjs~suite#run",
-    "class/dist/asyncmark.mjs~Suite.html#instance-method-run",
-    "dist/asyncmark.mjs~Suite#run",
+    "src/suite.js~suite#run",
+    "class/src/suite.js~Suite.html#instance-method-run",
+    "src/suite.js~Suite#run",
     "method"
+  ],
+  [
+    "src/timer.js",
+    "file/src/timer.js.html",
+    "src/timer.js",
+    "file"
   ],
   [
     "test/benchmark.js",
