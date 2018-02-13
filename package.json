@@ -47,6 +47,7 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-uglify": "^3.0.0"
   },
+  "runkitExample": "const AsyncMark = require('asyncmark');\n\nnew AsyncMark.Benchmark(function() {\n    return new Promise((resolve, reject) => {\n        setTimeout(resolve, 100);\n    });\n}).run().catch(console.error);\n",
   "esdoc": {
     "source": "./src",
     "destination": "./docs",
