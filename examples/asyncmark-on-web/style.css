@@ -1,0 +1,82 @@
+body {
+	margin: 0;
+    min-height: 100vh;
+    display: flex;
+	flex-direction: column;
+}
+
+header {
+	background-color: gray;
+	color: white;
+	padding: .3em;
+}
+
+main {
+    flex: 1 0 0;
+}
+
+.CodeMirror {
+	cursor: text;
+}
+
+main {
+	display: flex;
+    flex-wrap: wrap;
+}
+
+main > div {
+	display: flex;
+	flex-direction: column;
+	flex: 1 1 0;
+    min-width: 30em;
+}
+main > div > * {
+	border: 1px solid lightgray;
+}
+
+#resultarea > div {
+	flex: 1 1 0;
+}
+#editarea {
+    flex: 2 1 0;
+    min-height: 15em;
+}
+#logarea {
+    flex: 1 2 0;
+    min-height: 5em;
+}
+
+#editarea > div {
+	width: 100%;
+	height: 100%;
+}
+
+#logarea {
+	overflow: auto;
+}
+
+#resultarea > div {
+	flex: 1 1 0;
+    min-height: 10em;
+}
+
+table {
+	width: 100%;
+}
+th {
+	background-color: #ddd;
+	font-weight: normal;
+}
+tbody {
+	overflow: scroll;
+}
+
+.message {
+	margin: .1em 0;
+	padding: .1em .5em;
+	font-family: initial;
+}
+.message-stderr {
+	color: #f00;
+	background-color: #fee;
+}

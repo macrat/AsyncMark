@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<link rel=stylesheet href="style.css">
+	<link rel=stylesheet href="https://unpkg.com/codemirror/lib/codemirror.css">
+	<link rel=stylesheet href="https://unpkg.com/metrics-graphics/dist/metricsgraphics.css">
+
+	<script src="https://unpkg.com/lodash" defer></script>
+	<script src="https://unpkg.com/codemirror/lib/codemirror.js" defer></script>
+	<script src="https://unpkg.com/codemirror/mode/javascript/javascript.js" defer></script>
+	<script src="https://unpkg.com/d3" defer></script>
+	<script src="https://unpkg.com/metrics-graphics/dist/metricsgraphics.min.js" defer></script>
+
+	<script src="../dist/asyncmark.min.js" defer></script>
+	<script src="app.js" defer></script>
+</head>
+
+<body>
+	<header>
+		AsyncMark on Web
+	</header>
+	<main>
+		<div>
+			<div id=editarea></div>
+			<div id=logarea></div>
+		</div>
+		<div id=resultarea>
+			<div id=timeline></div>
+			<div id=histogram></div>
+			<div id=tablearea>
+				<table>
+					<thead>
+						<tr><th>name</th><th>operations/sec</th><th>msec/operation</th><th>error rate</th><th>tried times</th></tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</main>
+</body>
+</html>
