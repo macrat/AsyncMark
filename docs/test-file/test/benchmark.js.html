@@ -206,21 +206,11 @@ describe(&apos;Benchmark&apos;, function() {
 
             const conf = {
                 number: 2,
-                before() {
-                    callLog.push(&apos;before&apos;);
-                },
-                beforeEach() {
-                    callLog.push(&apos;beforeEach&apos;);
-                },
-                fun() {
-                    callLog.push(&apos;fun&apos;);
-                },
-                afterEach() {
-                    callLog.push(&apos;afterEach&apos;);
-                },
-                after() {
-                    callLog.push(&apos;after&apos;);
-                },
+                before() { callLog.push(&apos;before&apos;); },
+                beforeEach() { callLog.push(&apos;beforeEach&apos;); },
+                fun() { callLog.push(&apos;fun&apos;); },
+                afterEach() { callLog.push(&apos;afterEach&apos;); },
+                after() { callLog.push(&apos;after&apos;); },
             };
             const b = new Benchmark(conf);
 
@@ -241,6 +231,51 @@ describe(&apos;Benchmark&apos;, function() {
                     &apos;beforeEach&apos;,
                     &apos;fun&apos;,
                     &apos;afterEach&apos;,
+                    &apos;after&apos;,
+                ]);
+                assert.deepStrictEqual(messages, []);
+            } finally {
+                console.log = l;
+            }
+        });
+
+        it(&apos;call methods order (with callbacks)&apos;, async function() {
+            const callLog = [];
+
+            const conf = {
+                number: 2,
+                before() { callLog.push(&apos;before&apos;); },
+                beforeEach() { callLog.push(&apos;beforeEach&apos;); },
+                fun() { callLog.push(&apos;fun&apos;); },
+                afterEach() { callLog.push(&apos;afterEach&apos;); },
+                after() { callLog.push(&apos;after&apos;); },
+            };
+            const b = new Benchmark(conf);
+
+            const l = console.log;
+            const messages = [];
+            console.log = function() {
+                messages.push([...arguments].map(x =&gt; String(x)).join(&apos; &apos;));
+            }
+
+            try {
+                await b.run({}, {
+                    beforeTest() { callLog.push(&apos;beforeTest&apos;); },
+                    afterTest() { callLog.push(&apos;afterTest&apos;); },
+                });
+
+                assert.deepStrictEqual(callLog, [
+                    &apos;before&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;beforeEach&apos;,
+                    &apos;fun&apos;,
+                    &apos;afterEach&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;beforeEach&apos;,
+                    &apos;fun&apos;,
+                    &apos;afterEach&apos;,
+                    &apos;afterTest&apos;,
                     &apos;after&apos;,
                 ]);
                 assert.deepStrictEqual(messages, []);
@@ -307,7 +342,22 @@ describe(&apos;Benchmark&apos;, function() {
             }
 
             try {
-                await b.run();
+                await b.run({}, {
+                    beforeTest() {
+                        assert(this.inOuter === 123);
+                        assert(this.inInner === undefined);
+                        assert(this.inFunc === undefined);
+                        assert(this.outInner === undefined);
+                        assert(this.outOuter === undefined);
+                    },
+                    afterTest() {
+                        assert(this.inOuter === 123);
+                        assert(this.inInner === &apos;abc&apos;);
+                        assert(this.inFunc === true);
+                        assert(this.outInner === &apos;cba&apos;);
+                        assert(this.outOuter === undefined);
+                    },
+                });
                 assert.deepStrictEqual(messages, []);
             } finally {
                 console.log = l;
@@ -349,7 +399,18 @@ describe(&apos;Benchmark&apos;, function() {
                 },
             });
 
-            const result = await b.run();
+            const result = await b.run({}, {
+                beforeTest(count, bench) {
+                    assert(typeof count === &apos;number&apos;);
+                    assert(bench instanceof Benchmark);
+                },
+                afterTest(count, bench, msec) {
+                    assert(typeof count === &apos;number&apos;);
+                    assert(bench instanceof Benchmark);
+                    assert(typeof msec === &apos;number&apos;);
+                    assert(msec &lt; 1);
+                },
+            });
             assert(result instanceof Result);
             assert(result.msecs.length === 2);
 
@@ -366,8 +427,6 @@ describe(&apos;Benchmark&apos;, function() {
                     },
                     after() {}
                 }).run();
-                assert(r100.fastest &gt;= 97);
-                assert(r100.slowest &lt;= 103);
                 assert(Math.abs(r100.average - 100) &lt;= 3);
 
                 const r42 = await new Benchmark({
@@ -377,8 +436,6 @@ describe(&apos;Benchmark&apos;, function() {
                     },
                     after() {}
                 }).run();
-                assert(r42.fastest &gt;= 39);
-                assert(r42.slowest &lt;= 45);
                 assert(Math.abs(r42.average - 42) &lt;= 3);
             });
 
@@ -393,8 +450,6 @@ describe(&apos;Benchmark&apos;, function() {
                     after() {},
                 }).run();
 
-                assert(r.fastest &gt;= 49 - 3);
-                assert(r.slowest &lt;= 51 + 3);
                 assert(r.msecs.length &gt;= 5);
                 assert(r.msecs.length &lt;= 100);
                 assert(r.errorRate &lt;= 0.2);
@@ -411,8 +466,6 @@ describe(&apos;Benchmark&apos;, function() {
                     after() {},
                 }).run();
 
-                assert(r.fastest &gt;= 49 - 3);
-                assert(r.slowest &lt;= 51 + 3);
                 assert(r.msecs.length &gt;= 5);
                 assert(r.msecs.length &lt;= 100);
                 assert(r.errorRate &lt;= 0.4);

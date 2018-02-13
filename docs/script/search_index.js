@@ -97,7 +97,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber278",
+    "test-file/test/benchmark.js.html#lineNumber328",
     "Benchmark #run arguments for methods",
     "test"
   ],
@@ -109,31 +109,37 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber213",
+    "test-file/test/benchmark.js.html#lineNumber203",
+    "Benchmark #run call methods order (with callbacks)",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/benchmark.js.html#lineNumber248",
     "Benchmark #run context handling",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber321",
+    "test-file/test/benchmark.js.html#lineNumber382",
     "Benchmark #run loop and time",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber346",
+    "test-file/test/benchmark.js.html#lineNumber403",
     "Benchmark #run loop and time auto / rate 20%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber364",
+    "test-file/test/benchmark.js.html#lineNumber419",
     "Benchmark #run loop and time auto / rate 40%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber322",
+    "test-file/test/benchmark.js.html#lineNumber383",
     "Benchmark #run loop and time static number",
     "test"
   ],
@@ -307,13 +313,13 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber589",
+    "test-file/test/suite.js.html#lineNumber683",
     "Suite #run arguments for methods",
     "test"
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber593",
+    "test-file/test/suite.js.html#lineNumber687",
     "Suite #run arguments for methods (enabled parallel)",
     "test"
   ],
@@ -331,31 +337,31 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber297",
+    "test-file/test/suite.js.html#lineNumber303",
     "Suite #run call methods order empty tests (enabled parallel)",
     "test"
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber326",
+    "test-file/test/suite.js.html#lineNumber338",
     "Suite #run call methods order with test",
     "test"
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber380",
+    "test-file/test/suite.js.html#lineNumber435",
     "Suite #run call methods order with test (enabled parallel)",
     "test"
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber522",
+    "test-file/test/suite.js.html#lineNumber585",
     "Suite #run context handling",
     "test"
   ],
   [
     "",
-    "test-file/test/suite.js.html#lineNumber526",
+    "test-file/test/suite.js.html#lineNumber589",
     "Suite #run context handling (enabled parallel)",
     "test"
   ],
@@ -846,6 +852,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "src/suite.js~suite#aftertest",
+    "class/src/suite.js~Suite.html#instance-method-afterTest",
+    "src/suite.js~Suite#afterTest",
+    "method"
+  ],
+  [
     "src/suite.js~suite#before",
     "class/src/suite.js~Suite.html#instance-method-before",
     "src/suite.js~Suite#before",
@@ -855,6 +867,12 @@ window.esdocSearchIndex = [
     "src/suite.js~suite#beforeeach",
     "class/src/suite.js~Suite.html#instance-method-beforeEach",
     "src/suite.js~Suite#beforeEach",
+    "method"
+  ],
+  [
+    "src/suite.js~suite#beforetest",
+    "class/src/suite.js~Suite.html#instance-method-beforeTest",
+    "src/suite.js~Suite#beforeTest",
     "method"
   ],
   [

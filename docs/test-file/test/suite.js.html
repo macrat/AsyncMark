@@ -315,6 +315,12 @@ describe(&apos;Suite&apos;, function() {
                     beforeEach() {
                         callLog.push(&apos;beforeEach&apos;);
                     },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
                     afterEach() {
                         callLog.push(&apos;afterEach&apos;);
                     },
@@ -342,6 +348,12 @@ describe(&apos;Suite&apos;, function() {
                     },
                     beforeEach() {
                         callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
                     },
                     afterEach() {
                         callLog.push(&apos;afterEach&apos;);
@@ -372,6 +384,12 @@ describe(&apos;Suite&apos;, function() {
                     beforeEach() {
                         callLog.push(&apos;beforeEach&apos;);
                     },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
                     afterEach() {
                         callLog.push(&apos;afterEach&apos;);
                     },
@@ -399,19 +417,56 @@ describe(&apos;Suite&apos;, function() {
 
                 assert.deepStrictEqual(callLog, []);
 
-                await s.run();
+                await (new Suite({
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest parent&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest parent&apos;);
+                    },
+                })).add(s).run();
 
                 assert.deepStrictEqual(callLog, [
                     &apos;before&apos;,
+
                     &apos;beforeEach&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
                     &apos;bench1&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
                     &apos;bench1&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
                     &apos;afterEach&apos;,
+
                     &apos;beforeEach&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
                     &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
                     &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
                     &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
                     &apos;afterEach&apos;,
+
                     &apos;after&apos;,
                 ]);
             });
@@ -425,6 +480,12 @@ describe(&apos;Suite&apos;, function() {
                     },
                     beforeEach() {
                         callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
                     },
                     afterEach() {
                         callLog.push(&apos;afterEach&apos;);
@@ -456,7 +517,7 @@ describe(&apos;Suite&apos;, function() {
 
                 await s.run();
 
-                assert(callLog.length === 11);
+                assert(callLog.length === 21);
 
                 assert(callLog[0] === &apos;before&apos;);
                 assert(callLog[1] === &apos;beforeEach&apos;);
@@ -467,6 +528,8 @@ describe(&apos;Suite&apos;, function() {
                 assert(callLog.filter(x =&gt; x === &apos;bench2&apos;).length === 3);
                 assert(callLog.filter(x =&gt; x === &apos;beforeEach&apos;).length === 2);
                 assert(callLog.filter(x =&gt; x === &apos;afterEach&apos;).length === 2);
+                assert(callLog.filter(x =&gt; x === &apos;beforeTest&apos;).length === 5);
+                assert(callLog.filter(x =&gt; x === &apos;afterTest&apos;).length === 5);
             });
         });
 
@@ -569,6 +632,9 @@ describe(&apos;Suite&apos;, function() {
         const argumentsTest = async function(options) {
             const beforeCounts = [];
             const afterCounts = [];
+            const results = [];
+            const beforeTestCounts = [];
+            const afterTestCounts = [];
 
             options.__proto__ = {
                 before() {
@@ -582,8 +648,26 @@ describe(&apos;Suite&apos;, function() {
 
                     assert(benchmark instanceof Benchmark);
                 },
-                fun() {
-                    assert(arguments.length === 0);
+                beforeTest(suiteCount, benchCount, benchmark) {
+                    assert(arguments.length === 3);
+
+                    assert(typeof suiteCount === &apos;number&apos;);
+                    assert(typeof benchCount === &apos;number&apos;);
+                    assert(benchmark instanceof Benchmark);
+
+                    beforeTestCounts.push([benchmark.name, suiteCount, benchCount]);
+                },
+                afterTest(suiteCount, benchCount, benchmark, msec) {
+                    assert(arguments.length === 4);
+
+                    assert(typeof suiteCount === &apos;number&apos;);
+                    assert(typeof benchCount === &apos;number&apos;);
+                    assert(benchmark instanceof Benchmark);
+
+                    afterTestCounts.push([benchmark.name, suiteCount, benchCount]);
+
+                    assert(typeof msec === &apos;number&apos;);
+                    assert(msec &lt; 1);
                 },
                 afterEach(count, benchmark, result) {
                     assert(arguments.length === 3);
@@ -592,19 +676,22 @@ describe(&apos;Suite&apos;, function() {
                     afterCounts.push(count);
 
                     assert(benchmark instanceof Benchmark);
+
                     assert(result instanceof Result);
-                    assert(result.msecs.length === 3);
+                    results.push(result);
                 },
-                after(results) {
+                after(rs) {
                     assert(arguments.length === 1);
 
-                    results.forEach(x =&gt; {
+                    assert(rs[0].msecs.length === 2);
+                    assert(rs[1].msecs.length === 3);
+
+                    rs.forEach((x, i) =&gt; {
                         assert(x instanceof Result);
-                        assert(x.msecs.length === 3);
+                        assert.deepStrictEqual(results[i].msecs, x.msecs);
                     });
                 },
                 benchmarkDefault: {
-                    number: 3,
                     fun() {},
                     after() {},
                 },
@@ -612,17 +699,24 @@ describe(&apos;Suite&apos;, function() {
 
             const s = new Suite(options);
 
-            s.add({});
-            s.add({});
+            s.add({name: &apos;a&apos;, number: 2});
+            s.add({name: &apos;b&apos;, number: 3});
 
-            const results = await s.run();
-            results.forEach(x =&gt; {
+            const rs = await s.run();
+            assert(rs[0].msecs.length === 2);
+            assert(rs[1].msecs.length === 3);
+            rs.forEach((x, i) =&gt; {
                 assert(x instanceof Result);
-                assert(x.msecs.length === 3);
+                assert.deepStrictEqual(results[i].msecs, x.msecs);
             });
 
             assert.deepStrictEqual(beforeCounts, [0, 1]);
             assert.deepStrictEqual(afterCounts, [0, 1]);
+
+            beforeTestCounts.sort((x, y) =&gt; (x[1] - y[1]) * 10 + (x[2] - y[2]));
+            afterTestCounts.sort((x, y) =&gt; (x[1] - y[1]) * 10 + (x[2] - y[2]));
+            assert.deepStrictEqual(beforeTestCounts, [[&apos;a&apos;, 0, 0], [&apos;a&apos;, 0, 1], [&apos;b&apos;, 1, 0], [&apos;b&apos;, 1, 1], [&apos;b&apos;, 1, 2]]);
+            assert.deepStrictEqual(afterTestCounts,  [[&apos;a&apos;, 0, 0], [&apos;a&apos;, 0, 1], [&apos;b&apos;, 1, 0], [&apos;b&apos;, 1, 1], [&apos;b&apos;, 1, 2]]);
         };
 
         it(&apos;arguments for methods&apos;, function() {

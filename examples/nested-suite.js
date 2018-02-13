@@ -8,16 +8,16 @@ const benchmark = new AsyncMark.Benchmark({
         console.log('  5: Benchmark#before', this.token);
     },
     beforeEach() {
-        console.log('  6: Benchmark#beforeEach', this.token);
+        console.log('  8: Benchmark#beforeEach', this.token);
     },
     fun() {
-        console.log('    7: Benchmark#fun', this.token);
+        console.log('    9: Benchmark#fun', this.token);
     },
     afterEach() {
-        console.log('  8: Benchmark#afterEach', this.token);
+        console.log('  10: Benchmark#afterEach', this.token);
     },
     after() {
-        console.log('  9: Benchmark#after', this.token);
+        console.log('  13: Benchmark#after', this.token);
     },
 });
 
@@ -31,11 +31,17 @@ const child = new AsyncMark.Suite({
     beforeEach() {
         console.log(' 4: Suite#beforeEach', this.token);
     },
+    beforeTest() {
+        console.log('7: Suite#beforeTest (child suite)', this.token);
+    },
+    afterTest() {
+        console.log('11: Suite#afterTest (child suite)', this.token);
+    },
     afterEach() {
-        console.log(' 10: Suite#afterEach', this.token);
+        console.log(' 14: Suite#afterEach', this.token);
     },
     after() {
-        console.log(' 11: Suite#after', this.token);
+        console.log(' 15: Suite#after', this.token);
     },
 });
 
@@ -48,11 +54,17 @@ const parent_ = new AsyncMark.Suite({
     beforeEach() {
         console.log('2: Suite#beforeEach', this.token);
     },
+    beforeTest() {
+        console.log('6: Suite#beforeTest (parent suite)', this.token);
+    },
+    afterTest() {
+        console.log('12: Suite#afterTest (parent suite)', this.token);
+    },
     afterEach() {
-        console.log('12: Suite#afterEach', this.token);
+        console.log('16: Suite#afterEach', this.token);
     },
     after() {
-        console.log('13: Suite#after', this.token);
+        console.log('17: Suite#after', this.token);
     },
 });
 

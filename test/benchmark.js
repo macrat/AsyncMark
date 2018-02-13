@@ -167,21 +167,11 @@ describe('Benchmark', function() {
 
             const conf = {
                 number: 2,
-                before() {
-                    callLog.push('before');
-                },
-                beforeEach() {
-                    callLog.push('beforeEach');
-                },
-                fun() {
-                    callLog.push('fun');
-                },
-                afterEach() {
-                    callLog.push('afterEach');
-                },
-                after() {
-                    callLog.push('after');
-                },
+                before() { callLog.push('before'); },
+                beforeEach() { callLog.push('beforeEach'); },
+                fun() { callLog.push('fun'); },
+                afterEach() { callLog.push('afterEach'); },
+                after() { callLog.push('after'); },
             };
             const b = new Benchmark(conf);
 
@@ -202,6 +192,51 @@ describe('Benchmark', function() {
                     'beforeEach',
                     'fun',
                     'afterEach',
+                    'after',
+                ]);
+                assert.deepStrictEqual(messages, []);
+            } finally {
+                console.log = l;
+            }
+        });
+
+        it('call methods order (with callbacks)', async function() {
+            const callLog = [];
+
+            const conf = {
+                number: 2,
+                before() { callLog.push('before'); },
+                beforeEach() { callLog.push('beforeEach'); },
+                fun() { callLog.push('fun'); },
+                afterEach() { callLog.push('afterEach'); },
+                after() { callLog.push('after'); },
+            };
+            const b = new Benchmark(conf);
+
+            const l = console.log;
+            const messages = [];
+            console.log = function() {
+                messages.push([...arguments].map(x => String(x)).join(' '));
+            }
+
+            try {
+                await b.run({}, {
+                    beforeTest() { callLog.push('beforeTest'); },
+                    afterTest() { callLog.push('afterTest'); },
+                });
+
+                assert.deepStrictEqual(callLog, [
+                    'before',
+                    'beforeTest',
+                    'beforeEach',
+                    'fun',
+                    'afterEach',
+                    'afterTest',
+                    'beforeTest',
+                    'beforeEach',
+                    'fun',
+                    'afterEach',
+                    'afterTest',
                     'after',
                 ]);
                 assert.deepStrictEqual(messages, []);
@@ -268,7 +303,22 @@ describe('Benchmark', function() {
             }
 
             try {
-                await b.run();
+                await b.run({}, {
+                    beforeTest() {
+                        assert(this.inOuter === 123);
+                        assert(this.inInner === undefined);
+                        assert(this.inFunc === undefined);
+                        assert(this.outInner === undefined);
+                        assert(this.outOuter === undefined);
+                    },
+                    afterTest() {
+                        assert(this.inOuter === 123);
+                        assert(this.inInner === 'abc');
+                        assert(this.inFunc === true);
+                        assert(this.outInner === 'cba');
+                        assert(this.outOuter === undefined);
+                    },
+                });
                 assert.deepStrictEqual(messages, []);
             } finally {
                 console.log = l;
@@ -310,7 +360,18 @@ describe('Benchmark', function() {
                 },
             });
 
-            const result = await b.run();
+            const result = await b.run({}, {
+                beforeTest(count, bench) {
+                    assert(typeof count === 'number');
+                    assert(bench instanceof Benchmark);
+                },
+                afterTest(count, bench, msec) {
+                    assert(typeof count === 'number');
+                    assert(bench instanceof Benchmark);
+                    assert(typeof msec === 'number');
+                    assert(msec < 1);
+                },
+            });
             assert(result instanceof Result);
             assert(result.msecs.length === 2);
 

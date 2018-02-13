@@ -176,10 +176,13 @@ export default class Benchmark {
      * Execute benchmark.
      *
      * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
+     * @param {Object} [callbacks={}] - callback functions.
+     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [callbacks.beforeTest] - callback function that will be called when before executing each test.
+     * @param {function(count: Number, benchmark: Benchmark, msec: Number)} [callbacks.afterTest] - callback function that will be called when after executing each test.
      *
      * @return {?Promise<Result>} A result of benchmark.
      */
-    async run(context = {}) {
+    async run(context = {}, callbacks = {}) {
         context = Object.assign({}, context);
         context.__proto__ = this;
 
@@ -191,14 +194,24 @@ export default class Benchmark {
         for (let i = 0; i < loopNum; i++) {
             const ctx = Object.assign({}, context);
 
+            if (callbacks.beforeTest) {
+                await callbacks.beforeTest.call(ctx, i, this);
+            }
+
             await this.beforeEach.call(ctx, i);
 
             const start = now();
             await this.fun.call(ctx);
             const end = now();
 
-            await this.afterEach.call(ctx, i, end - start);
-            msecs.push(end - start);
+            const msec = end - start;
+            msecs.push(msec);
+
+            await this.afterEach.call(ctx, i, msec);
+
+            if (callbacks.afterTest) {
+                await callbacks.afterTest.call(ctx, i, this, msec);
+            }
 
             if (!this.number && i + 1 >= this.minNumber && (new Result(this.name, msecs)).errorRate <= this.targetErrorRate) {
                 break;
