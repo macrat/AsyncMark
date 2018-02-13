@@ -27,7 +27,10 @@ console.error = function() {
 }
 
 
-const __initial__script__ = `new AsyncMark.Suite({
+const __initial__script__ = `// write benchmark here
+// and press Ctrl-Return to execute.
+
+new AsyncMark.Suite({
     beforeEach() {
         this.array = [];
         for (let i=0; i<100000; i++) {
