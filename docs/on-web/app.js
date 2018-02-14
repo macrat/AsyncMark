@@ -6,6 +6,7 @@ const __e__ = console.error;
 
 let __log__ = [];
 let __bench_result__ = [];
+let __executing__ = false;
 
 
 console.log = function() {
@@ -73,7 +74,7 @@ new AsyncMark.Suite({
 })
 `;
 
-const __cm__ = CodeMirror(document.querySelector('#editarea'), {
+const __cm__ = CodeMirror(document.getElementById('editor'), {
     value: __initial__script__,
     lineNumbers: true,
     lineWrapping: true,
@@ -98,7 +99,7 @@ const __update_output__ = _.throttle(() => setTimeout(function() {
         elm.innerText = msg.message;
         return elm;
     });
-    const area = document.querySelector('#logarea');
+    const area = document.getElementById('logarea');
     area.innerText = '';
     outputs.forEach(x => area.appendChild(x));
     area.scrollTo(0, area.scrollHeight);
@@ -190,7 +191,7 @@ const __update_graph__ = _.throttle(() => setTimeout(function() {
             histdata.push(hist);
         }
 
-        const timeline = document.querySelector('#timeline');
+        const timeline = document.getElementById('timeline');
         timeline.innerHTML = '';
 		MG.data_graphic({
 			title: 'operations / msec',
@@ -209,7 +210,7 @@ const __update_graph__ = _.throttle(() => setTimeout(function() {
 			target: timeline,
 		});
 
-        const histogram = document.querySelector('#histogram');
+        const histogram = document.getElementById('histogram');
         histogram.innerHTML = '';
 		MG.data_graphic({
 			title: 'histogram of ops/sec',
@@ -270,33 +271,45 @@ function __run_suite__(suite) {
 
 
 function __execute__() {
-    __log__ = [];
-    __update_output__();
+    if (__executing__) {
+        return;
+    }
+    __executing__ = true;
+    document.getElementById('executebtn').classList.remove('btn-enabled');
 
-    const p = (async function() {
-        __l__('start execute');
-        document.querySelector('#logarea').innerText = '';
-        const suite = eval(__cm__.getDoc().getValue());
+    setTimeout(() => {
+        __log__ = [];
+        __update_output__();
 
-        if (!suite || !suite.run) {
-            return Promise.reject('benchmark code was not found');
-        }
+        const p = (async function() {
+            __l__('start execute');
+            document.getElementById('logarea').innerText = '';
+            const suite = eval(__cm__.getDoc().getValue());
 
-        await __run_suite__(suite);
+            if (!suite || !suite.run) {
+                return Promise.reject('benchmark code was not found');
+            }
 
-        __l__('done execute');
-        return await Promise.resolve();
-    })();
+            await __run_suite__(suite);
 
-    p.catch(err => {
-        console.error(err.stack || err);
-        __e__(err);
-    })
+            document.getElementById('executebtn').classList.add('btn-enabled');
+            __executing__ = false;
+
+            __l__('done execute');
+            return await Promise.resolve();
+        })();
+
+        p.catch(err => {
+            console.error(err.stack || err);
+            __e__(err);
+        })
+    }, 100);
 }
 
 
 __update_graph__();
 window.addEventListener('resize', __update_graph__);
+document.getElementById('executebtn').addEventListener('click', __execute__);;
 
 
 }, 10);
