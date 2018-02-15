@@ -94,6 +94,24 @@ th {
 tbody {
 	overflow: scroll;
 }
+thead th {
+	user-select: none;
+}
+thead th:hover {
+	background-color: #d0d0d0;
+}
+thead th:active {
+	background-color: #c0c0c0;
+}
+thead th:after {
+	content: " \25B5\25BF";
+}
+thead th.asc:after {
+	content: " \25B4\25BF";
+}
+thead th.desc:after {
+	content: " \25B5\25BE";
+}
 
 .message {
 	margin: .1em 0;

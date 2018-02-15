@@ -91,6 +91,39 @@ __cm__.addKeyMap({
 __cm__.focus();
 
 
+function __get_table_sorter__() {
+    const asc = document.querySelector('thead th.asc');
+    const desc = document.querySelector('thead th.desc');
+    const current = asc || desc;
+    const property = current.dataset.property;
+
+    const getter = (property === 'count') ? (id => __bench_result__[id].result.msecs.length)
+                                          : (id => __bench_result__[id].result[property]);
+
+    if (asc) {
+        return function(x, y) {
+            if (getter(x) < getter(y)) {
+                return -1;
+            } else if (getter(x) > getter(y)) {
+                return 1;
+            } else {
+                return x - y;
+            }
+        }
+    } else {
+        return function(x, y) {
+            if (getter(x) < getter(y)) {
+                return 1;
+            } else if (getter(x) > getter(y)) {
+                return -1;
+            } else {
+                return y - x;
+            }
+        }
+    }
+}
+
+
 const __update_output__ = _.throttle(() => setTimeout(function() {
     const outputs = __log__.map(msg => {
         const elm = document.createElement('pre');
@@ -115,18 +148,7 @@ const __update_table__ = _.throttle(() => setTimeout(function() {
         ids.push(id);
     }
 
-    ids.sort((x, y) => {
-        const xname = __bench_result__[x].name;
-        const yname = __bench_result__[y].name;
-
-        if (xname < yname) {
-            return -1;
-        } else if (xname > yname) {
-            return 1;
-        } else {
-            return x - y;
-        }
-    });
+    ids.sort(__get_table_sorter__());
 
     const opsFormat = d3.format(',.3f');
     const msecFormat = d3.format(',.4f');
@@ -310,6 +332,22 @@ function __execute__() {
 __update_graph__();
 window.addEventListener('resize', __update_graph__);
 document.getElementById('executebtn').addEventListener('click', __execute__);;
+
+document.querySelectorAll('thead th').forEach(elm => {
+    elm.addEventListener('click', () => {
+        if (elm.classList.contains('asc')) {
+            elm.classList.remove('asc');
+            elm.classList.add('desc');
+        } else {
+            document.querySelectorAll('thead th').forEach(x => {
+                x.classList.remove('asc');
+                x.classList.remove('desc');
+            });
+            elm.classList.add('asc');
+        }
+        __update_table__();
+    });
+});
 
 
 }, 10);
