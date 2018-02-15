@@ -112,6 +112,12 @@ thead th.asc:after {
 thead th.desc:after {
 	content: " \25B5\25BE";
 }
+tbody th {
+	text-align: left;
+}
+td {
+	text-align: right;
+}
 
 .message {
 	margin: .1em 0;
