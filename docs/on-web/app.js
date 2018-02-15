@@ -166,7 +166,7 @@ const __update_table__ = _.throttle(() => setTimeout(function() {
 
 const __update_graph__ = _.throttle(() => setTimeout(function() {
     setTimeout(() => {
-        const bins = 30;
+        const bins = 10;
 
         const timedata = [];
         const names = [];
