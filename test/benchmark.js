@@ -147,11 +147,11 @@ describe('Benchmark', function() {
 
             try {
                 const b = new Benchmark();
-                const r = new Result('after_test', [1, 2, 3])
+                const r = new Result('after_test', [1, 2, 3, 4, 5, 100])
 
                 await b.after(r);
 
-                assert.deepStrictEqual(messages, [r.toString()]);
+                assert.deepStrictEqual(messages, [new Result('after_test', [1, 2, 3, 4, 5]).toString()]);
             } finally {
                 console.log = l;
             }

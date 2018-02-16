@@ -88,6 +88,15 @@ describe('Result', function() {
     });
 
     /**
+     * test {Result#dropOutlier}
+     */
+    it('#opsPerSec', function() {
+        assert.deepStrictEqual(new Result('test', [10, 20, 30]).dropOutlier().msecs, [10, 20, 30]);
+        assert.deepStrictEqual(new Result('test', [10, 11, 12, 13, 14, 15, 100]).dropOutlier().msecs, [10, 11, 12, 13, 14, 15]);
+        assert.deepStrictEqual(new Result('test', [10, 11, 12, 13, 14, 15, 100]).dropOutlier(3).msecs, [10, 11, 12, 13, 14, 15, 100]);
+    });
+
+    /**
      * @test {Result#toString}
      */
     it('#toString', function() {

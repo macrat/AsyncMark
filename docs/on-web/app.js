@@ -97,8 +97,8 @@ function __get_table_sorter__() {
     const current = asc || desc;
     const property = current.dataset.property;
 
-    const getter = (property === 'count') ? (id => __bench_result__[id].result.msecs.length)
-                                          : (id => __bench_result__[id].result[property]);
+    const getter = (property === 'count') ? (id => __bench_result__[id].result.dropOutlier().msecs.length)
+                                          : (id => __bench_result__[id].result.dropOutlier()[property]);
 
     if (asc) {
         return function(x, y) {
@@ -157,6 +157,7 @@ const __update_table__ = _.throttle(() => setTimeout(function() {
 
     ids.forEach(id => {
         const data = __bench_result__[id];
+        const result = data.result.dropOutlier();
 
         const tr = document.createElement('tr');
         tbody.appendChild(tr);
@@ -167,19 +168,19 @@ const __update_table__ = _.throttle(() => setTimeout(function() {
 
         if (data.result.msecs.length > 0) {
             const ops = document.createElement('td');
-            ops.innerText = opsFormat(data.result.opsPerSec);
+            ops.innerText = opsFormat(result.opsPerSec);
             tr.appendChild(ops);
 
             const msec = document.createElement('td');
-            msec.innerText = msecFormat(data.result.average);
+            msec.innerText = msecFormat(result.average);
             tr.appendChild(msec);
 
             const err = document.createElement('td');
-            err.innerText = rateFormat(data.result.errorRate);
+            err.innerText = rateFormat(result.errorRate);
             tr.appendChild(err);
 
             const times = document.createElement('td');
-            times.innerText = triedFormat(data.result.msecs.length);
+            times.innerText = triedFormat(result.msecs.length);
             tr.appendChild(times);
         }
     });
@@ -238,6 +239,7 @@ const __update_graph__ = _.throttle(() => setTimeout(function() {
 			title: 'histogram of ops/sec',
 			chart_type: histdata.length > 0 ? 'line' : 'missing-data',
 			data: histdata,
+            markers: __bench_result__.map(x => ({'label': x.name, 'ops/sec': x.result.dropOutlier().opsPerSec})),
 			interpolate: d3.curveLinear,
 			missing_is_zero: true,
             legend: names,

@@ -169,7 +169,7 @@ export default class Benchmark {
      * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
      */
     async after(result) {
-        console.log(String(result));
+        console.log(String(result.dropOutlier()));
     }
 
     /**

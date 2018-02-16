@@ -205,7 +205,7 @@ window.esdocSearchIndex = [
   ],
   [
     "result#tostring src/result.js~result#tostring,result#tostring",
-    "test-file/test/result.js.html#lineNumber93",
+    "test-file/test/result.js.html#lineNumber102",
     "Result #toString",
     "test"
   ],
@@ -219,6 +219,12 @@ window.esdocSearchIndex = [
     "result#variance src/result.js~result#variance,result#variance",
     "test-file/test/result.js.html#lineNumber45",
     "Result #variance",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/result.js.html#lineNumber93",
+    "Result test {Result#dropOutlier}",
     "test"
   ],
   [
@@ -742,6 +748,12 @@ window.esdocSearchIndex = [
     "class/src/result.js~Result.html#instance-get-average",
     "src/result.js~Result#average",
     "member"
+  ],
+  [
+    "src/result.js~result#dropoutlier",
+    "class/src/result.js~Result.html#instance-method-dropOutlier",
+    "src/result.js~Result#dropOutlier",
+    "method"
   ],
   [
     "src/result.js~result#errorrange",

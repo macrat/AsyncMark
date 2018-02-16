@@ -1,5 +1,7 @@
 /**
  * The result of benchmark.
+ *
+ * This value will included outlier. Please use {@link Result#dropOutlier} if you want drop they.
  */
 class Result {
   /**
@@ -113,6 +115,19 @@ class Result {
    */
   get opsPerSec() {
     return 1000 / this.average;
+  }
+
+  /**
+   * Make new Result that droped outlier.
+   *
+   * @param {Number} [threshold=2] the threshold of outlier testing.
+   *
+   * @return {Result} new {@link Result} instance.
+   */
+  dropOutlier(threshold = 2) {
+    const avg = this.average;
+    const std = this.std;
+    return new Result(this.name, this.msecs.filter(x => Math.abs((x - avg) / std) <= threshold));
   }
 
   /**
@@ -329,7 +344,7 @@ class Benchmark {
    * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
    */
   async after(result) {
-    console.log(String(result));
+    console.log(String(result.dropOutlier()));
   }
 
   /**
