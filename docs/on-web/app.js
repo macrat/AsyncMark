@@ -238,6 +238,8 @@ const __update_graph__ = _.throttle(() => setTimeout(function() {
 			title: 'histogram of ops/sec',
 			chart_type: histdata.length > 0 ? 'line' : 'missing-data',
 			data: histdata,
+			interpolate: d3.curveLinear,
+			missing_is_zero: true,
             legend: names,
 			width: timeline.clientWidth,
 			height: timeline.clientHeight,
