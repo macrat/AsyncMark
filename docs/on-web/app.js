@@ -303,6 +303,11 @@ function __execute__() {
     __executing__ = true;
     document.getElementById('executebtn').classList.remove('btn-enabled');
 
+	const __code__ = __cm__.getDoc().getValue();
+	if (location.hash.slice(1) !== encodeURI(__code__)) {
+		window.history.pushState(null, '', '#' + encodeURI(__code__));
+	}
+
     setTimeout(() => {
         __log__ = [];
         __update_output__();
@@ -310,7 +315,7 @@ function __execute__() {
         const p = (async function() {
             __l__('start execute');
             document.getElementById('logarea').innerText = '';
-            const suite = eval(__cm__.getDoc().getValue());
+            const suite = eval(__code__);
 
             if (!suite || !suite.run) {
                 return Promise.reject('benchmark code was not found');
@@ -352,6 +357,16 @@ document.querySelectorAll('thead th').forEach(elm => {
         __update_table__();
     });
 });
+
+
+function __load_hash__() {
+	const code = decodeURI(location.hash.slice(1));
+	if (code !== __cm__.getDoc().getValue()) {
+		__cm__.getDoc().setValue(code || __initial__script__);
+	}
+}
+__load_hash__();
+window.addEventListener('popstate', __load_hash__);
 
 
 }, 10);
