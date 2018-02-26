@@ -179,7 +179,7 @@ export default class Result {
         const ops = Math.round(this.opsPerSec * 1000) / 1000;
         const range = Math.round(this.errorRange * 10000) / 10000;
         const rate = Math.round(this.errorRate * 10000) / 100;
-        return `${this.name}: ${ops}ops/sec ${avg}msec/op +-${range}msec/op (${rate}%) / ${this.msecs.length} times tried`;
+        return `${this.name}:\t${ops}ops/sec\t${avg}msec/op\t+-${range}msec/op (${rate}%)\t${this.msecs.length} times tried`;
     }
 }
 </code></pre>

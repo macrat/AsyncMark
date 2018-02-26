@@ -139,8 +139,8 @@ describe(&apos;Result&apos;, function() {
      * @test {Result#toString}
      */
     it(&apos;#toString&apos;, function() {
-        assert(String(new Result(&apos;test&apos;, [10, 20, 30])) === &apos;test: 50ops/sec 20msec/op +-11.3161msec/op (56.58%) / 3 times tried&apos;);
-        assert(String(new Result(&apos;test&apos;, [1.234567, 2.345678])) === &apos;test: 558.621ops/sec 1.7901msec/op +-1.0889msec/op (60.83%) / 2 times tried&apos;);
+        assert(String(new Result(&apos;test&apos;, [10, 20, 30])) === &apos;test:\t50ops/sec\t20msec/op\t+-11.3161msec/op (56.58%)\t3 times tried&apos;);
+        assert(String(new Result(&apos;test&apos;, [1.234567, 2.345678])) === &apos;test:\t558.621ops/sec\t1.7901msec/op\t+-1.0889msec/op (60.83%)\t2 times tried&apos;);
     });
 });
 </code></pre>
