@@ -331,6 +331,9 @@ function __execute__() {
         })();
 
         p.catch(err => {
+            document.getElementById('executebtn').classList.add('btn-enabled');
+			__executing__ = false;
+
             console.error(err.stack || err);
             __e__(err);
         })
