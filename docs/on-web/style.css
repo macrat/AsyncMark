@@ -104,13 +104,16 @@ thead th:active {
 	background-color: #c0c0c0;
 }
 thead th:after {
-	content: " \25B5\25BF";
+	font-size: 70%;
+	letter-spacing: -.3em;
+	padding-left: .5em;
+	content: "\25B3\25BD";
 }
 thead th.asc:after {
-	content: " \25B4\25BF";
+	content: "\25B2\25BD";
 }
 thead th.desc:after {
-	content: " \25B5\25BE";
+	content: "\25B3\25BC";
 }
 tbody th {
 	text-align: left;
