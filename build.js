@@ -1,6 +1,6 @@
 const rollup = require('rollup');
 const babel = require('rollup-plugin-babel');
-const uglify = require('rollup-plugin-uglify');
+const {terser} = require('rollup-plugin-terser');
 
 
 rollup
@@ -18,7 +18,7 @@ rollup
 rollup
     .rollup({
         input: 'src/index.js',
-        plugins: [babel(), uglify()],
+        plugins: [babel(), terser()],
     })
     .then(bundle => Promise.all([
         bundle.write({format: 'es',  exports: 'named', file: 'dist/asyncmark.min.mjs'}),
