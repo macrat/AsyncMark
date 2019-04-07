@@ -365,6 +365,21 @@ describe(&apos;Benchmark&apos;, function() {
             }
         });
 
+        it(&apos;context sandboxing&apos;, async function() {
+            const b = new Benchmark({
+                number: 2,
+                fun() {
+                    assert(this.x === undefined);
+                    this.x = &apos;foobar&apos;;
+                    assert(this.x === &apos;foobar&apos;);
+                },
+                after() {},
+            });
+
+            b.run();
+            b.run();
+        });
+
         it(&apos;arguments for methods&apos;, async function() {
             const beforeCounts = [];
             const afterCounts = [];

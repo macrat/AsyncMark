@@ -17,7 +17,7 @@ describe('utility function', function() {
             }
             assert(Math.abs(sum/5 - 42) <= 3);
         });
-        it('context', async function() {
+        it('use context', async function() {
             const ctx = {
                 count: 0,
             };
@@ -29,6 +29,16 @@ describe('utility function', function() {
                 assert(ctx.count === i+1);
                 assert(ctx.count2 === i);
             }
+        });
+        it('context sandboxing', async function() {
+            function f() {
+                assert(this.x === undefined);
+                this.x = 'foobar';
+                assert(this.x === 'foobar');
+            }
+
+            await timeit(f);
+            await timeit(f);
         });
         it('arguments', async function() {
             const ctx = {};

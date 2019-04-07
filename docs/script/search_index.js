@@ -103,7 +103,7 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber328",
+    "test-file/test/benchmark.js.html#lineNumber343",
     "Benchmark #run arguments for methods",
     "test"
   ],
@@ -127,25 +127,31 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber382",
+    "test-file/test/benchmark.js.html#lineNumber328",
+    "Benchmark #run context sandboxing",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/benchmark.js.html#lineNumber397",
     "Benchmark #run loop and time",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber403",
+    "test-file/test/benchmark.js.html#lineNumber418",
     "Benchmark #run loop and time auto / rate 20%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber419",
+    "test-file/test/benchmark.js.html#lineNumber434",
     "Benchmark #run loop and time auto / rate 40%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber383",
+    "test-file/test/benchmark.js.html#lineNumber398",
     "Benchmark #run loop and time static number",
     "test"
   ],
@@ -973,20 +979,26 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber33",
+    "test-file/test/timer.js.html#lineNumber43",
     "utility function timeit arguments",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber20",
-    "utility function timeit context",
+    "test-file/test/timer.js.html#lineNumber33",
+    "utility function timeit context sandboxing",
     "test"
   ],
   [
     "",
     "test-file/test/timer.js.html#lineNumber11",
     "utility function timeit measure",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/timer.js.html#lineNumber20",
+    "utility function timeit use context",
     "test"
   ]
 ]
