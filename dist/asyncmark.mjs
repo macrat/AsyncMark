@@ -175,7 +175,28 @@ if (typeof performance !== 'undefined' && performance.now) {
     }
 }
 
-var now$1 = now;
+/**
+ * Measure tiem to execute a function.
+ *
+ * wait for done if the target function returns a thenable object. so you can use async function.
+ *
+ * @param {function} [fun] - the target function.
+ * @param {Object} [context={}] - the `this` for target function.
+ *
+ * @return {Promise<int>} milliseconds taked executing.
+ *
+ * @example
+ * const msec = await timeit(function() {
+ *     # do something heavy.
+ * });
+ */
+async function timeit(fun, context = {}) {
+    const start = now();
+    await fun.call(context);
+    const end = now();
+
+    return end - start;
+}
 
 /**
  * Class for benchmarking.
@@ -375,11 +396,7 @@ class Benchmark {
 
       await this.beforeEach.call(ctx, i);
 
-      const start = now$1();
-      await this.fun.call(ctx);
-      const end = now$1();
-
-      const msec = end - start;
+      const msec = await timeit(this.fun, ctx);
       msecs.push(msec);
 
       await this.afterEach.call(ctx, i, msec);
@@ -771,4 +788,4 @@ class Suite {
 }
 
 export default Benchmark;
-export { Result, Benchmark, Suite };
+export { Result, Benchmark, Suite, timeit };

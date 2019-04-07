@@ -32,13 +32,14 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/benchmark.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import Result from &apos;./result&apos;;
-import now from &apos;./timer&apos;;
+import {timeit} from &apos;./timer&apos;;
 
 
 /**
@@ -239,11 +240,7 @@ export default class Benchmark {
 
             await this.beforeEach.call(ctx, i);
 
-            const start = now();
-            await this.fun.call(ctx);
-            const end = now();
-
-            const msec = end - start;
+            const msec = await timeit(this.fun, ctx)
             msecs.push(msec);
 
             await this.afterEach.call(ctx, i, msec);

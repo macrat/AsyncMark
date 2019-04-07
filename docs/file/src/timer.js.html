@@ -32,6 +32,7 @@
   <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
 </ul>
 </div>
 </nav>
@@ -69,7 +70,31 @@ if (typeof performance !== &apos;undefined&apos; &amp;&amp; performance.now) {
 }
 
 
-export default now;
+/**
+ * Measure tiem to execute a function.
+ *
+ * wait for done if the target function returns a thenable object. so you can use async function.
+ *
+ * @param {function} [fun] - the target function.
+ * @param {Object} [context={}] - the `this` for target function.
+ *
+ * @return {Promise&lt;int&gt;} milliseconds taked executing.
+ *
+ * @example
+ * const msec = await timeit(function() {
+ *     # do something heavy.
+ * });
+ */
+async function timeit(fun, context={}) {
+    const start = now();
+    await fun.call(context);
+    const end = now();
+
+    return end - start;
+}
+
+
+export {now, timeit};
 </code></pre>
 
 </div>

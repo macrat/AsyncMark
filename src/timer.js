@@ -30,4 +30,28 @@ if (typeof performance !== 'undefined' && performance.now) {
 }
 
 
-export default now;
+/**
+ * Measure tiem to execute a function.
+ *
+ * wait for done if the target function returns a thenable object. so you can use async function.
+ *
+ * @param {function} [fun] - the target function.
+ * @param {Object} [context={}] - the `this` for target function.
+ *
+ * @return {Promise<int>} milliseconds taked executing.
+ *
+ * @example
+ * const msec = await timeit(function() {
+ *     # do something heavy.
+ * });
+ */
+async function timeit(fun, context={}) {
+    const start = now();
+    await fun.call(context);
+    const end = now();
+
+    return end - start;
+}
+
+
+export {now, timeit};

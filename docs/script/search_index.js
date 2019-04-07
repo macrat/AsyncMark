@@ -18,6 +18,12 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
+    "asyncmark/dist/asyncmark.mjs~timeit",
+    "function/index.html#static-function-timeit",
+    "<span>timeit</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
+    "function"
+  ],
+  [
     "benchmark src/benchmark.js~benchmark,benchmark",
     "test-file/test/benchmark.js.html#lineNumber9",
     "Benchmark",
@@ -946,5 +952,35 @@ window.esdocSearchIndex = [
     "test-file/test/suite.js.html",
     "test/suite.js",
     "testFile"
+  ],
+  [
+    "test/timer.js",
+    "test-file/test/timer.js.html",
+    "test/timer.js",
+    "testFile"
+  ],
+  [
+    "",
+    "test-file/test/timer.js.html#lineNumber6",
+    "utility function",
+    "test"
+  ],
+  [
+    "timeit src/timer.js~timeit,timeit",
+    "test-file/test/timer.js.html#lineNumber10",
+    "utility function timeit",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/timer.js.html#lineNumber20",
+    "utility function timeit context",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/timer.js.html#lineNumber11",
+    "utility function timeit measure",
+    "test"
   ]
 ]

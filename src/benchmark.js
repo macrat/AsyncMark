@@ -1,5 +1,5 @@
 import Result from './result';
-import now from './timer';
+import {timeit} from './timer';
 
 
 /**
@@ -200,11 +200,7 @@ export default class Benchmark {
 
             await this.beforeEach.call(ctx, i);
 
-            const start = now();
-            await this.fun.call(ctx);
-            const end = now();
-
-            const msec = end - start;
+            const msec = await timeit(this.fun, ctx)
             msecs.push(msec);
 
             await this.afterEach.call(ctx, i, msec);
