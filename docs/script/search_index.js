@@ -973,6 +973,12 @@ window.esdocSearchIndex = [
   ],
   [
     "",
+    "test-file/test/timer.js.html#lineNumber33",
+    "utility function timeit arguments",
+    "test"
+  ],
+  [
+    "",
     "test-file/test/timer.js.html#lineNumber20",
     "utility function timeit context",
     "test"

@@ -30,5 +30,17 @@ describe('utility function', function() {
                 assert(ctx.count2 === i);
             }
         });
+        it('arguments', async function() {
+            const ctx = {};
+            function f(x, y) {
+                this.result = x + y;
+            }
+
+            await timeit(f, ctx, [11, 22])
+            assert(ctx.result === 33);
+
+            await timeit(f, ctx, [42, 84])
+            assert(ctx.result === 126);
+        });
     });
 });

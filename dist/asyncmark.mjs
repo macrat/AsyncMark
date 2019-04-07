@@ -195,6 +195,7 @@ if (typeof performance !== 'undefined' && performance.now) {
  *
  * @param {function} fun - the target function.
  * @param {Object} [context={}] - the `this` for target function.
+ * @param {Object[]} [args=[]] - arguments to passing to target function.
  *
  * @return {Promise<Number>} milliseconds taked executing.
  *
@@ -202,12 +203,15 @@ if (typeof performance !== 'undefined' && performance.now) {
  * const msec = await timeit(function() {
  *     # do something heavy.
  * });
+ *
+ * @example
+ * console.log(await timeit(axios.get, args=['http://example.com']));
  */
 
 
-async function timeit(fun, context = {}) {
+async function timeit(fun, context = {}, args = []) {
   const start = now();
-  await fun.call(context);
+  await fun.call(context, ...args);
   const end = now();
   return end - start;
 }

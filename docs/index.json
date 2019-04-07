@@ -2221,7 +2221,7 @@
     "__docId__": 112,
     "kind": "file",
     "name": "src/timer.js",
-    "content": "/**\n * milliseconds timer\n *\n * @return {Number} high resolution current time in milliseconds.\n *\n * @ignore\n */\nlet now = function() {\n    return Number(new Date());\n};\n\nif (typeof performance !== 'undefined' && performance.now) {\n    now = function() {\n        return performance.now();\n    };\n} else {\n    try {\n        const microtime = require('microtime');\n        now = function() {\n            return microtime.nowDouble() * 1000;\n        };\n    } catch(e) {\n        if (typeof process !== 'undefined' && process.hrtime) {\n            now = function() {\n                const hr = process.hrtime();\n                return (hr[0] * 1e9 + hr[1]) / 1e6;\n            };\n        }\n    }\n}\n\n\n/**\n * Measure tiem to execute a function.\n *\n * wait for done if the target function returns a thenable object. so you can use async function.\n *\n * @param {function} fun - the target function.\n * @param {Object} [context={}] - the `this` for target function.\n *\n * @return {Promise<Number>} milliseconds taked executing.\n *\n * @example\n * const msec = await timeit(function() {\n *     # do something heavy.\n * });\n */\nasync function timeit(fun, context={}) {\n    const start = now();\n    await fun.call(context);\n    const end = now();\n\n    return end - start;\n}\n\n\nexport {now, timeit};\n",
+    "content": "/**\n * milliseconds timer\n *\n * @return {Number} high resolution current time in milliseconds.\n *\n * @ignore\n */\nlet now = function() {\n    return Number(new Date());\n};\n\nif (typeof performance !== 'undefined' && performance.now) {\n    now = function() {\n        return performance.now();\n    };\n} else {\n    try {\n        const microtime = require('microtime');\n        now = function() {\n            return microtime.nowDouble() * 1000;\n        };\n    } catch(e) {\n        if (typeof process !== 'undefined' && process.hrtime) {\n            now = function() {\n                const hr = process.hrtime();\n                return (hr[0] * 1e9 + hr[1]) / 1e6;\n            };\n        }\n    }\n}\n\n\n/**\n * Measure tiem to execute a function.\n *\n * wait for done if the target function returns a thenable object. so you can use async function.\n *\n * @param {function} fun - the target function.\n * @param {Object} [context={}] - the `this` for target function.\n * @param {Object[]} [args=[]] - arguments to passing to target function.\n *\n * @return {Promise<Number>} milliseconds taked executing.\n *\n * @example\n * const msec = await timeit(function() {\n *     # do something heavy.\n * });\n *\n * @example\n * console.log(await timeit(axios.get, args=['http://example.com']));\n */\nasync function timeit(fun, context={}, args=[]) {\n    const start = now();\n    await fun.call(context, ...args);\n    const end = now();\n\n    return end - start;\n}\n\n\nexport {now, timeit};\n",
     "static": true,
     "longname": "/mnt/tmpfs/asyncmark/src/timer.js",
     "access": "public",
@@ -2269,9 +2269,10 @@
     "importStyle": "{timeit}",
     "description": "Measure tiem to execute a function.\n\nwait for done if the target function returns a thenable object. so you can use async function.",
     "examples": [
-      "const msec = await timeit(function() {\n    # do something heavy.\n});"
+      "const msec = await timeit(function() {\n    # do something heavy.\n});",
+      "console.log(await timeit(axios.get, args=['http://example.com']));"
     ],
-    "lineNumber": 48,
+    "lineNumber": 52,
     "params": [
       {
         "nullable": null,
@@ -2294,6 +2295,18 @@
         "defaultRaw": {},
         "name": "context",
         "description": "the `this` for target function."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Object[]"
+        ],
+        "spread": false,
+        "optional": true,
+        "defaultValue": "[]",
+        "defaultRaw": [],
+        "name": "args",
+        "description": "arguments to passing to target function."
       }
     ],
     "return": {
@@ -3194,7 +3207,7 @@
     "__docId__": 177,
     "kind": "testFile",
     "name": "test/timer.js",
-    "content": "import assert from 'power-assert';\n\nimport {timeit} from '../src';\n\n\ndescribe('utility function', function() {\n    /**\n     * @test {timeit}\n     */\n    describe('timeit', function() {\n        it('measure', async function() {\n            let sum = 0;\n            for (let i=0; i<5; i++) {\n                sum += await timeit(function() {\n                    return new Promise((resolve, reject) => setTimeout(resolve, 42));\n                });\n            }\n            assert(Math.abs(sum/5 - 42) <= 3);\n        });\n        it('context', async function() {\n            const ctx = {\n                count: 0,\n            };\n            for (let i=0; i<5; i++) {\n                await timeit(function() {\n                    this.count++;\n                    this.count2 = i;\n                }, ctx);\n                assert(ctx.count === i+1);\n                assert(ctx.count2 === i);\n            }\n        });\n    });\n});\n",
+    "content": "import assert from 'power-assert';\n\nimport {timeit} from '../src';\n\n\ndescribe('utility function', function() {\n    /**\n     * @test {timeit}\n     */\n    describe('timeit', function() {\n        it('measure', async function() {\n            let sum = 0;\n            for (let i=0; i<5; i++) {\n                sum += await timeit(function() {\n                    return new Promise((resolve, reject) => setTimeout(resolve, 42));\n                });\n            }\n            assert(Math.abs(sum/5 - 42) <= 3);\n        });\n        it('context', async function() {\n            const ctx = {\n                count: 0,\n            };\n            for (let i=0; i<5; i++) {\n                await timeit(function() {\n                    this.count++;\n                    this.count2 = i;\n                }, ctx);\n                assert(ctx.count === i+1);\n                assert(ctx.count2 === i);\n            }\n        });\n        it('arguments', async function() {\n            const ctx = {};\n            function f(x, y) {\n                this.result = x + y;\n            }\n\n            await timeit(f, ctx, [11, 22])\n            assert(ctx.result === 33);\n\n            await timeit(f, ctx, [42, 84])\n            assert(ctx.result === 126);\n        });\n    });\n});\n",
     "static": true,
     "longname": "/mnt/tmpfs/asyncmark/test/timer.js",
     "access": null,
@@ -3255,5 +3268,18 @@
     "access": null,
     "description": "context",
     "lineNumber": 20
+  },
+  {
+    "__docId__": 182,
+    "kind": "test",
+    "name": "it63",
+    "testId": 63,
+    "memberof": "test/timer.js~describe59.describe60",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/timer.js~describe59.describe60.it63",
+    "access": null,
+    "description": "arguments",
+    "lineNumber": 33
   }
 ]
