@@ -88,7 +88,7 @@ describe('Result', function() {
     });
 
     /**
-     * test {Result#dropOutlier}
+     * @test {Result#dropOutlier}
      */
     it('#opsPerSec', function() {
         assert.deepStrictEqual(new Result('test', [10, 20, 30]).dropOutlier().msecs, [10, 20, 30]);

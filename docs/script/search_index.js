@@ -186,6 +186,12 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
+    "result#dropoutlier src/result.js~result#dropoutlier,result#dropoutlier",
+    "test-file/test/result.js.html#lineNumber93",
+    "Result #opsPerSec",
+    "test"
+  ],
+  [
     "result#opspersec src/result.js~result#opspersec,result#opspersec",
     "test-file/test/result.js.html#lineNumber85",
     "Result #opsPerSec",
@@ -225,12 +231,6 @@ window.esdocSearchIndex = [
     "result#variance src/result.js~result#variance,result#variance",
     "test-file/test/result.js.html#lineNumber45",
     "Result #variance",
-    "test"
-  ],
-  [
-    "",
-    "test-file/test/result.js.html#lineNumber93",
-    "Result test {Result#dropOutlier}",
     "test"
   ],
   [
