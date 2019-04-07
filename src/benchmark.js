@@ -180,7 +180,7 @@ export default class Benchmark {
      * @param {function(count: Number, benchmark: Benchmark): ?Promise} [callbacks.beforeTest] - callback function that will be called when before executing each test.
      * @param {function(count: Number, benchmark: Benchmark, msec: Number)} [callbacks.afterTest] - callback function that will be called when after executing each test.
      *
-     * @return {?Promise<Result>} A result of benchmark.
+     * @return {Promise<Result>} A result of benchmark.
      */
     async run(context = {}, callbacks = {}) {
         context = Object.assign({}, context);

@@ -199,10 +199,10 @@
      *
      * wait for done if the target function returns a thenable object. so you can use async function.
      *
-     * @param {function} [fun] - the target function.
+     * @param {function} fun - the target function.
      * @param {Object} [context={}] - the `this` for target function.
      *
-     * @return {Promise<int>} milliseconds taked executing.
+     * @return {Promise<Number>} milliseconds taked executing.
      *
      * @example
      * const msec = await timeit(function() {
@@ -401,7 +401,7 @@
        * @param {function(count: Number, benchmark: Benchmark): ?Promise} [callbacks.beforeTest] - callback function that will be called when before executing each test.
        * @param {function(count: Number, benchmark: Benchmark, msec: Number)} [callbacks.afterTest] - callback function that will be called when after executing each test.
        *
-       * @return {?Promise<Result>} A result of benchmark.
+       * @return {Promise<Result>} A result of benchmark.
        */
 
 
