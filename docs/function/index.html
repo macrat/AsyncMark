@@ -68,7 +68,7 @@
     </td>
     <td>
       
-      
+      <span class="since" data-ice="since">since 0.2.4</span>
     </td>
   </tr>
 </tbody>
@@ -87,16 +87,17 @@
     <span class="code" data-ice="name">timeit</span><span class="code" data-ice="signature">(fun: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span>, context: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span>, args: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a></span><span>[]</span></span>): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a></span>&lt;<span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></span>&gt;</span>
     <span class="right-info">
       
-      
-      <span data-ice="source"><span><a href="file/src/timer.js.html#lineNumber52">source</a></span></span>
+      <span class="since" data-ice="since">since 0.2.4</span>
+      <span data-ice="source"><span><a href="file/src/timer.js.html#lineNumber79">source</a></span></span>
     </span>
   </h3>
 
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {timeit} from &apos;<span><a href="file/src/timer.js.html#lineNumber52">asyncmark/dist/asyncmark.mjs</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {timeit} from &apos;<span><a href="file/src/timer.js.html#lineNumber79">asyncmark/dist/asyncmark.mjs</a></span>&apos;</code></pre></div>
   
   
   <div data-ice="description"><p>Measure tiem to execute a function.</p>
 <p>wait for done if the target function returns a thenable object. so you can use async function.</p>
+<p>NOTE: this function will execute target function only once.</p>
 </div>
 
   
@@ -179,7 +180,7 @@
     <h4>Test:</h4>
     <ul>
       
-    <li data-ice="test"><span><a href="test-file/test/timer.js.html#lineNumber10">utility function timeit</a></span></li>
+    <li data-ice="test"><span><a href="test-file/test/timer.js.html#lineNumber11">utility function timeit</a></span></li>
 </ul>
   </div>
 

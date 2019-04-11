@@ -54,9 +54,6 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-terser": "^4.0.4"
   },
-  "optionalDependencies": {
-    "microtime": "^3.0.0"
-  },
   "runkitExample": "const AsyncMark = require('asyncmark');\n\nnew AsyncMark.Benchmark(function() {\n    return new Promise((resolve, reject) => {\n        setTimeout(resolve, 100);\n    });\n}).run().catch(console.error);\n",
   "esdoc": {
     "source": "./src",

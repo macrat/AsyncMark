@@ -1,7 +1,7 @@
 {
   "coverage": "100%",
-  "expectCount": 50,
-  "actualCount": 50,
+  "expectCount": 53,
+  "actualCount": 53,
   "files": {
     "src/benchmark.js": {
       "expectCount": 13,
@@ -19,8 +19,8 @@
       "undocumentLines": []
     },
     "src/timer.js": {
-      "expectCount": 2,
-      "actualCount": 2,
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     }
   }

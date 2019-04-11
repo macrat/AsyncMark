@@ -192,14 +192,14 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "result#dropoutlier src/result.js~result#dropoutlier,result#dropoutlier",
-    "test-file/test/result.js.html#lineNumber93",
+    "result#opspersec src/result.js~result#opspersec,result#opspersec",
+    "test-file/test/result.js.html#lineNumber85",
     "Result #opsPerSec",
     "test"
   ],
   [
-    "result#opspersec src/result.js~result#opspersec,result#opspersec",
-    "test-file/test/result.js.html#lineNumber85",
+    "result#dropoutlier src/result.js~result#dropoutlier,result#dropoutlier",
+    "test-file/test/result.js.html#lineNumber93",
     "Result #opsPerSec",
     "test"
   ],
@@ -967,37 +967,37 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber6",
+    "test-file/test/timer.js.html#lineNumber7",
     "utility function",
     "test"
   ],
   [
     "timeit src/timer.js~timeit,timeit",
-    "test-file/test/timer.js.html#lineNumber10",
+    "test-file/test/timer.js.html#lineNumber11",
     "utility function timeit",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber43",
+    "test-file/test/timer.js.html#lineNumber44",
     "utility function timeit arguments",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber33",
+    "test-file/test/timer.js.html#lineNumber34",
     "utility function timeit context sandboxing",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber11",
+    "test-file/test/timer.js.html#lineNumber12",
     "utility function timeit measure",
     "test"
   ],
   [
     "",
-    "test-file/test/timer.js.html#lineNumber20",
+    "test-file/test/timer.js.html#lineNumber21",
     "utility function timeit use context",
     "test"
   ]

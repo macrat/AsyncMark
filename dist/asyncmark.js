@@ -164,40 +164,65 @@
     }
 
     /**
-     * milliseconds timer
+     * Get a timer value in milliseconds resolution with {@link Date} class.
      *
-     * @return {Number} high resolution current time in milliseconds.
+     * @return {Number} a timer value in milliseconds.
+     *
+     * @ignore
+     * @since 0.2.5
+     */
+    function now_date() {
+      return Number(new Date());
+    }
+    /**
+     * Get a timer value in microseconds resolution with {@link Performance.now} function.
+     *
+     * @return {Number} a timer value in milliseconds. (microseconds resolution)
+     *
+     * @ignore
+     * @since 0.2.5
+     */
+
+
+    function now_now() {
+      return performance.now();
+    }
+    /**
+     * Get a timer value in nanoseconds resolution with {@link Process.hrtime} function.
+     *
+     * @return {Number} a timer value in milliseconds. (nanoseconds resolution)
+     *
+     * @ignore
+     * @since 0.2.5
+     */
+
+
+    function now_hrtime() {
+      const hr = process.hrtime();
+      return (hr[0] * 1e9 + hr[1]) / 1e6;
+    }
+    /**
+     * Get the current time as high resolution as possible in the current platform.
+     *
+     * @return {Number} a timer value in milliseconds.
      *
      * @ignore
      */
-    let now = function () {
-      return Number(new Date());
-    };
 
-    if (typeof performance !== 'undefined' && performance.now) {
-      now = function () {
-        return performance.now();
-      };
-    } else {
-      try {
-        const microtime = require('microtime');
 
-        now = function () {
-          return microtime.nowDouble() * 1000;
-        };
-      } catch (e) {
-        if (typeof process !== 'undefined' && process.hrtime) {
-          now = function () {
-            const hr = process.hrtime();
-            return (hr[0] * 1e9 + hr[1]) / 1e6;
-          };
-        }
-      }
+    let now = now_date;
+
+    if (typeof process !== 'undefined' && process.hrtime) {
+      now = now_hrtime;
+    } else if (typeof performance !== 'undefined' && performance.now) {
+      now = now_now;
     }
     /**
      * Measure tiem to execute a function.
      *
      * wait for done if the target function returns a thenable object. so you can use async function.
+     *
+     * NOTE: this function will execute target function only once.
      *
      * @param {function} fun - the target function.
      * @param {Object} [context={}] - the `this` for target function.
@@ -212,6 +237,8 @@
      *
      * @example
      * console.log(await timeit(axios.get, args=['http://example.com']));
+     *
+     * @since 0.2.4
      */
 
 

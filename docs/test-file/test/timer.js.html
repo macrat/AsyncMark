@@ -41,6 +41,7 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
 
 import {timeit} from &apos;../src&apos;;
+import {now, now_date, now_now, now_hrtime} from &apos;../src/timer.js&apos;;
 
 
 describe(&apos;utility function&apos;, function() {
@@ -91,6 +92,68 @@ describe(&apos;utility function&apos;, function() {
 
             await timeit(f, ctx, [42, 84])
             assert(ctx.result === 126);
+        });
+    });
+
+    /**
+     * @ignore
+     */
+    describe(&apos;timer function&apos;, function() {
+        const global = new Function(&apos;return this&apos;)();
+
+        function checkTimer(func, resolution) {
+            return function() {
+                assert(typeof func() === &apos;number&apos;);
+
+                const a = func();
+                const b = func();
+                assert(a &lt;= b);
+                assert(b - a &lt;= resolution);
+            };
+        }
+
+        /**
+         * @test {now}
+         */
+        it(&apos;now&apos;, checkTimer(now, 1e-2));
+
+        /**
+         * @test {now_date}
+         */
+        it(&apos;now_date&apos;, checkTimer(now_date, 1e-2));
+
+        /**
+         * @test {now_now}
+         */
+        describe(&apos;now_now&apos;, function() {
+            (typeof performance !== &apos;undefined&apos; &amp;&amp; performance.now ? it : it.skip)(&apos;simple execute&apos;, checkTimer(now_now, 1e-2));
+
+            it(&apos;with dummy function&apos;, function() {
+                const backup = global.performance;
+                try {
+                    global.performance = {now: () =&gt; 123.456};
+                    assert(now_now() === 123.456);
+                } finally {
+                    global.performance = backup;
+                }
+            });
+        });
+
+        /**
+         * @test {now_hrtime}
+         */
+        describe(&apos;now_hrtime&apos;, function() {
+            (typeof process !== &apos;undefined&apos; &amp;&amp; process.hrtime ? it : it.skip)(&apos;simple execute&apos;, checkTimer(now_hrtime, 1e-2));
+
+            it(&apos;with dummy function&apos;, function() {
+                const backup = global.process;
+                try {
+                    global.process = {hrtime: () =&gt; [123, 456]};
+                    assert(now_hrtime() === 123e3 + 456e-6);
+                } finally {
+                    global.process = backup;
+                }
+            });
         });
     });
 });
