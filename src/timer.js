@@ -60,7 +60,7 @@ if (typeof process !== 'undefined' && process.hrtime) {
  *
  * NOTE: this function will execute target function only once.
  *
- * @param {function} fun - the target function.
+ * @param {function(): ?Promise} fun - the target function.
  * @param {Object} [context={}] - the `this` for target function.
  * @param {Object[]} [args=[]] - arguments to passing to target function.
  *
