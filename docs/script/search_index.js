@@ -163,79 +163,85 @@ window.esdocSearchIndex = [
   ],
   [
     "result src/result.js~result,result",
-    "test-file/test/result.js.html#lineNumber9",
+    "test-file/test/result.js.html#lineNumber10",
     "Result",
     "test"
   ],
   [
+    "result#assert src/result.js~result#assert,result#assert",
+    "test-file/test/result.js.html#lineNumber111",
+    "Result #assert",
+    "test"
+  ],
+  [
     "result#average src/result.js~result#average,result#average",
-    "test-file/test/result.js.html#lineNumber37",
+    "test-file/test/result.js.html#lineNumber38",
     "Result #average",
     "test"
   ],
   [
     "result#errorrange src/result.js~result#errorrange,result#errorrange",
-    "test-file/test/result.js.html#lineNumber69",
+    "test-file/test/result.js.html#lineNumber70",
     "Result #errorRange",
     "test"
   ],
   [
     "result#errorrate src/result.js~result#errorrate,result#errorrate",
-    "test-file/test/result.js.html#lineNumber77",
+    "test-file/test/result.js.html#lineNumber78",
     "Result #errorRate",
     "test"
   ],
   [
     "result#fastest src/result.js~result#fastest,result#fastest",
-    "test-file/test/result.js.html#lineNumber21",
+    "test-file/test/result.js.html#lineNumber22",
     "Result #fastest",
     "test"
   ],
   [
     "result#opspersec src/result.js~result#opspersec,result#opspersec",
-    "test-file/test/result.js.html#lineNumber85",
+    "test-file/test/result.js.html#lineNumber86",
     "Result #opsPerSec",
     "test"
   ],
   [
     "result#dropoutlier src/result.js~result#dropoutlier,result#dropoutlier",
-    "test-file/test/result.js.html#lineNumber93",
+    "test-file/test/result.js.html#lineNumber94",
     "Result #opsPerSec",
     "test"
   ],
   [
     "result#std src/result.js~result#std,result#std",
-    "test-file/test/result.js.html#lineNumber61",
+    "test-file/test/result.js.html#lineNumber62",
     "Result #sem",
     "test"
   ],
   [
     "result#slowest src/result.js~result#slowest,result#slowest",
-    "test-file/test/result.js.html#lineNumber29",
+    "test-file/test/result.js.html#lineNumber30",
     "Result #slowest",
     "test"
   ],
   [
     "result#std src/result.js~result#std,result#std",
-    "test-file/test/result.js.html#lineNumber53",
+    "test-file/test/result.js.html#lineNumber54",
     "Result #std",
     "test"
   ],
   [
     "result#tostring src/result.js~result#tostring,result#tostring",
-    "test-file/test/result.js.html#lineNumber102",
+    "test-file/test/result.js.html#lineNumber103",
     "Result #toString",
     "test"
   ],
   [
     "result#total src/result.js~result#total,result#total",
-    "test-file/test/result.js.html#lineNumber13",
+    "test-file/test/result.js.html#lineNumber14",
     "Result #total",
     "test"
   ],
   [
     "result#variance src/result.js~result#variance,result#variance",
-    "test-file/test/result.js.html#lineNumber45",
+    "test-file/test/result.js.html#lineNumber46",
     "Result #variance",
     "test"
   ],
@@ -381,6 +387,42 @@ window.esdocSearchIndex = [
     "",
     "test-file/test/suite.js.html#lineNumber589",
     "Suite #run context handling (enabled parallel)",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/assertion.js.html#lineNumber8",
+    "assertion",
+    "test"
+  ],
+  [
+    "assertrule assertrule,assertrule",
+    "test-file/test/assertion.js.html#lineNumber32",
+    "assertion AssertRule",
+    "test"
+  ],
+  [
+    "assertrule#assert assertrule#assert,assertrule#assert",
+    "test-file/test/assertion.js.html#lineNumber78",
+    "assertion AssertRule #assert",
+    "test"
+  ],
+  [
+    "assertrule#check assertrule#check,assertrule#check",
+    "test-file/test/assertion.js.html#lineNumber61",
+    "assertion AssertRule #check",
+    "test"
+  ],
+  [
+    "assertrule#constructor assertrule#constructor,assertrule#constructor",
+    "test-file/test/assertion.js.html#lineNumber36",
+    "assertion AssertRule #constructor",
+    "test"
+  ],
+  [
+    "unit unit,unit",
+    "test-file/test/assertion.js.html#lineNumber12",
+    "assertion unit converter",
     "test"
   ],
   [
@@ -666,6 +708,12 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/assertion.js",
+    "file/src/assertion.js.html",
+    "src/assertion.js",
+    "file"
+  ],
+  [
     "src/benchmark.js",
     "file/src/benchmark.js.html",
     "src/benchmark.js",
@@ -754,6 +802,12 @@ window.esdocSearchIndex = [
     "file/src/result.js.html",
     "src/result.js",
     "file"
+  ],
+  [
+    "src/result.js~result#assert",
+    "class/src/result.js~Result.html#instance-method-assert",
+    "src/result.js~Result#assert",
+    "method"
   ],
   [
     "src/result.js~result#average",
@@ -942,6 +996,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "test/assertion.js",
+    "test-file/test/assertion.js.html",
+    "test/assertion.js",
+    "testFile"
+  ],
+  [
     "test/benchmark.js",
     "test-file/test/benchmark.js.html",
     "test/benchmark.js",
@@ -968,37 +1028,37 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/timer.js.html#lineNumber7",
-    "utility function",
+    "timer",
     "test"
   ],
   [
     "timeit src/timer.js~timeit,timeit",
     "test-file/test/timer.js.html#lineNumber11",
-    "utility function timeit",
+    "timer timeit",
     "test"
   ],
   [
     "",
     "test-file/test/timer.js.html#lineNumber44",
-    "utility function timeit arguments",
+    "timer timeit arguments",
     "test"
   ],
   [
     "",
     "test-file/test/timer.js.html#lineNumber34",
-    "utility function timeit context sandboxing",
+    "timer timeit context sandboxing",
     "test"
   ],
   [
     "",
     "test-file/test/timer.js.html#lineNumber12",
-    "utility function timeit measure",
+    "timer timeit measure",
     "test"
   ],
   [
     "",
     "test-file/test/timer.js.html#lineNumber21",
-    "utility function timeit use context",
+    "timer timeit use context",
     "test"
   ]
 ]

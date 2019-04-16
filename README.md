@@ -73,8 +73,24 @@ suite.run()
             }
         });
         console.log(min.name + ' is best way!');
-    }).
-    catch(err => console.error(err));
+    })
+    .catch(err => console.error(err));
+```
+
+## with unit test
+``` javascript
+import Benchmark from 'asyncmark';
+
+
+describe('benchmark test', function() {
+    it('foobar', async function() {
+        const result = await new Benchmark(function() {
+            # do_something
+        }).run();
+
+        result.assert("<100ms");  # expect faster than 100ms.
+    });
+});
 ```
 
 ## installation

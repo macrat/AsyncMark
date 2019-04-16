@@ -4,7 +4,7 @@ import {timeit} from '../src';
 import {now, now_date, now_now, now_hrtime} from '../src/timer.js';
 
 
-describe('utility function', function() {
+describe('timer', function() {
     /**
      * @test {timeit}
      */

@@ -1,4 +1,5 @@
 import assert from 'power-assert';
+import {AssertionError} from 'assert';
 
 import {Result} from '../src';
 
@@ -102,5 +103,24 @@ describe('Result', function() {
     it('#toString', function() {
         assert(String(new Result('test', [10, 20, 30])) === 'test:\t50ops/sec\t20msec/op\t+-11.3161msec/op (56.58%)\t3 times tried');
         assert(String(new Result('test', [1.234567, 2.345678])) === 'test:\t558.621ops/sec\t1.7901msec/op\t+-1.0889msec/op (60.83%)\t2 times tried');
+    });
+
+    /**
+     * @test {Result#assert}
+     */
+    it('#assert', function() {
+        const result = new Result('test', [100]);
+
+        assert.doesNotThrow(() => {
+            result.assert('>=100ms', '<=100ms');
+        });
+
+        assert.throws(() => {
+            result.assert('>100ms', '<=100ms');
+        }, AssertionError, 'benchmark "test": actual:100msec/op > expected:100msec/op');
+
+        assert.throws(() => {
+            result.assert('>=100ms', '<100ms');
+        }, AssertionError, 'benchmark "test": actual:100msec/op < expected:100msec/op');
     });
 });

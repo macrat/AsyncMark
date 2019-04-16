@@ -100,8 +100,21 @@ suite.run()
             }
         });
         console.log(min.name + &apos; is best way!&apos;);
-    }).
-    catch(err =&gt; console.error(err));</code>
+    })
+    .catch(err =&gt; console.error(err));</code>
+</code></pre>
+<h2 id="with-unit-test">with unit test</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark from &apos;asyncmark&apos;;
+
+
+describe(&apos;benchmark test&apos;, function() {
+    it(&apos;foobar&apos;, async function() {
+        const result = await new Benchmark(function() {
+            # do_something
+        }).run();
+
+        result.assert(&quot;&lt;100ms&quot;);  # expect faster than 100ms.
+    });
+});</code>
 </code></pre>
 <h2 id="installation">installation</h2><h3 id="node-js">Node.js</h3><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install asyncmark</code>
 </code></pre>

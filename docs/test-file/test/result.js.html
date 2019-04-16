@@ -39,6 +39,7 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">test/result.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
+import {AssertionError} from &apos;assert&apos;;
 
 import {Result} from &apos;../src&apos;;
 
@@ -142,6 +143,25 @@ describe(&apos;Result&apos;, function() {
     it(&apos;#toString&apos;, function() {
         assert(String(new Result(&apos;test&apos;, [10, 20, 30])) === &apos;test:\t50ops/sec\t20msec/op\t+-11.3161msec/op (56.58%)\t3 times tried&apos;);
         assert(String(new Result(&apos;test&apos;, [1.234567, 2.345678])) === &apos;test:\t558.621ops/sec\t1.7901msec/op\t+-1.0889msec/op (60.83%)\t2 times tried&apos;);
+    });
+
+    /**
+     * @test {Result#assert}
+     */
+    it(&apos;#assert&apos;, function() {
+        const result = new Result(&apos;test&apos;, [100]);
+
+        assert.doesNotThrow(() =&gt; {
+            result.assert(&apos;&gt;=100ms&apos;, &apos;&lt;=100ms&apos;);
+        });
+
+        assert.throws(() =&gt; {
+            result.assert(&apos;&gt;100ms&apos;, &apos;&lt;=100ms&apos;);
+        }, AssertionError, &apos;benchmark &quot;test&quot;: actual:100msec/op &gt; expected:100msec/op&apos;);
+
+        assert.throws(() =&gt; {
+            result.assert(&apos;&gt;=100ms&apos;, &apos;&lt;100ms&apos;);
+        }, AssertionError, &apos;benchmark &quot;test&quot;: actual:100msec/op &lt; expected:100msec/op&apos;);
     });
 });
 </code></pre>

@@ -38,7 +38,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/result.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import AssertRule from &apos;./assertion&apos;;
+
+
+/**
  * The result of benchmark.
  *
  * This value will included outlier. Please use {@link Result#dropOutlier} if you want drop they.
@@ -181,6 +184,55 @@ export default class Result {
         const range = Math.round(this.errorRange * 10000) / 10000;
         const rate = Math.round(this.errorRate * 10000) / 100;
         return `${this.name}:\t${ops}ops/sec\t${avg}msec/op\t+-${range}msec/op (${rate}%)\t${this.msecs.length} times tried`;
+    }
+
+    /**
+     * Assertion if it taked more (or less) time than expected.
+     *
+     * Expected rule format is `{operator}{number}{unit}`; use like `&lt;=10msec`.
+     * Operator and unit are can omit. If omitted, uses `&lt;=` and `msec`.
+     *
+     * ## Supported operators
+     * |example       |means              |
+     * |--------------|-------------------|
+     * |&quot;&lt;42&quot;         |faster than 42 msec|
+     * |&quot;&lt;=42&quot; or omit|42 msec or faster  |
+     * |&quot;&gt;42&quot;         |slower than 42 msec|
+     * |&quot;&gt;=42&quot;        |42 msec or slower  |
+     *
+     * ## Supported units
+     * |example           |means       |
+     * |------------------|------------|
+     * |&quot;42s&quot; or &quot;42sec&quot;  |seconds     |
+     * |&quot;42ms&quot; or &quot;42msec&quot;|milliseconds|
+     * |&quot;42us&quot; or &quot;42usec&quot;|microseconds|
+     * |&quot;42ns&quot; or &quot;42nsec&quot;|nanoseconds |
+     *
+     * @param {Number|String} expected - expected time in milliseconds {@link Number} or {@String} value like &apos;&lt;10ms&apos; or &apos;&gt;=20s&apos;.
+     *
+     * @throw {assert.AssertionError} when result is unacceptable.
+     * @return {undefined}
+     *
+     * @example
+     * const result = await Benchmark(function() {
+     *     # do something that expect done in least 100msec
+     * }).run();
+     *
+     * result.assert(100);
+     *
+     * @example
+     * const result = await Benchmark(async function() {
+     *     await sleep_function(100);
+     * }).run();
+     *
+     * result.assert(&apos;&gt;90ms&apos;, &apos;&lt;110ms&apos;);
+     *
+     * @since 0.3.0
+     */
+    assert(...expected) {
+        const rules = expected.map(x =&gt; new AssertRule(x));
+
+        rules.forEach(rule =&gt; rule.assert(this, this.assert));
     }
 }
 </code></pre>

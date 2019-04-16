@@ -1,14 +1,134 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = global || self, factory(global.AsyncMark = {}));
-}(this, function (exports) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('assert')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'assert'], factory) :
+    (global = global || self, factory(global.AsyncMark = {}, global.assert));
+}(this, function (exports, assert) { 'use strict';
+
+    /**
+     * Convert unit to number
+     *
+     * @example
+     * assert(100 * unit('ms') == 0.1 * unit('sec'))
+     *
+     * @param {Number} u - unit name like 'ms', 'sec' or etc.
+     *
+     * @return {Number} number to convert milliseconds.
+     *
+     * @since 0.3.0
+     * @ignore
+     */
+
+    function unit(u) {
+      switch (u) {
+        case 's':
+        case 'sec':
+          return 1e3;
+
+        case '':
+        case 'ms':
+        case 'msec':
+          return 1;
+
+        case 'us':
+        case 'usec':
+          return 1e-3;
+
+        case 'ns':
+        case 'nsec':
+          return 1e-6;
+
+        default:
+          throw Error(`unknown unit name: "${u}"`);
+      }
+    }
+    /**
+     * The assertion rule
+     *
+     * @since 0.3.0
+     */
+
+
+    class AssertRule {
+      /**
+       * Parse time rule for assertion.
+       *
+       * Rule format is `{operator}{number}{unit}`; use like `<=10msec`.
+       * Operator and unit are can omit. If omitted, uses `<=` and `msec`.
+       *
+       * Supported operators
+       * |`<42`|faster than 42 msec|
+       * |`<=42` or omit|42 msec or faster|
+       * |`>42`|slower than 42 msec|
+       * |`>=42`|42 msec or slower|
+       *
+       * Supported units
+       * |`42s` or `42sec`|seconds|
+       * |`42ms` or `42msec`|milliseconds|
+       * |`42us` or `42usec`|microseconds|
+       * |`42ns` or `42nsec`|nanoseconds|
+       *
+       * @param {Number|String} rule - assert rule that milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+       */
+      constructor(rule) {
+        const m = String(rule).match(/^(|[<>]=?)(\d+(?:\.\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);
+
+        if (m === null) {
+          throw Error(`Invalid rule format: "${rule}"`);
+        }
+
+        this.operator = m[1] || '<=';
+        this.expected = Number(m[2]) * unit(m[3]);
+      }
+      /**
+       * Checking benchmark result.
+       *
+       * @param {Number} msec - target milliseconds.
+       *
+       * @return {Boolean} returns true if msec is acceptable.
+       */
+
+
+      check(msec) {
+        return {
+          '<': ms => ms < this.expected,
+          '<=': ms => ms <= this.expected,
+          '>': ms => ms > this.expected,
+          '>=': ms => ms >= this.expected
+        }[this.operator](msec);
+      }
+      /**
+       * Assert with benchmark result.
+       *
+       * @param {Result} result - result of benchmark.
+       * @param {function} [stackStartFn] - provided function will remove from stack trace.
+       *
+       * @throw {assert.AssertionError} when result is unacceptable.
+       * @return {undefined}
+       *
+       * @since 0.3.0
+       */
+
+
+      assert(result, stackStartFn = null) {
+        if (!this.check(result.average)) {
+          throw new assert.AssertionError({
+            message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
+            actual: `${result.average} msec/op`,
+            expected: `${this.expected} msec/op`,
+            operator: this.operator,
+            stackStartFn: stackStartFn || this.assert
+          });
+        }
+      }
+
+    }
 
     /**
      * The result of benchmark.
      *
      * This value will included outlier. Please use {@link Result#dropOutlier} if you want drop they.
      */
+
     class Result {
       /**
        * @param {String} name - name of benchmark.
@@ -159,6 +279,55 @@
         const range = Math.round(this.errorRange * 10000) / 10000;
         const rate = Math.round(this.errorRate * 10000) / 100;
         return `${this.name}:\t${ops}ops/sec\t${avg}msec/op\t+-${range}msec/op (${rate}%)\t${this.msecs.length} times tried`;
+      }
+      /**
+       * Assertion if it taked more (or less) time than expected.
+       *
+       * Expected rule format is `{operator}{number}{unit}`; use like `<=10msec`.
+       * Operator and unit are can omit. If omitted, uses `<=` and `msec`.
+       *
+       * ## Supported operators
+       * |example       |means              |
+       * |--------------|-------------------|
+       * |"<42"         |faster than 42 msec|
+       * |"<=42" or omit|42 msec or faster  |
+       * |">42"         |slower than 42 msec|
+       * |">=42"        |42 msec or slower  |
+       *
+       * ## Supported units
+       * |example           |means       |
+       * |------------------|------------|
+       * |"42s" or "42sec"  |seconds     |
+       * |"42ms" or "42msec"|milliseconds|
+       * |"42us" or "42usec"|microseconds|
+       * |"42ns" or "42nsec"|nanoseconds |
+       *
+       * @param {Number|String} expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+       *
+       * @throw {assert.AssertionError} when result is unacceptable.
+       * @return {undefined}
+       *
+       * @example
+       * const result = await Benchmark(function() {
+       *     # do something that expect done in least 100msec
+       * }).run();
+       *
+       * result.assert(100);
+       *
+       * @example
+       * const result = await Benchmark(async function() {
+       *     await sleep_function(100);
+       * }).run();
+       *
+       * result.assert('>90ms', '<110ms');
+       *
+       * @since 0.3.0
+       */
+
+
+      assert(...expected) {
+        const rules = expected.map(x => new AssertRule(x));
+        rules.forEach(rule => rule.assert(this, this.assert));
       }
 
     }

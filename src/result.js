@@ -1,3 +1,6 @@
+import AssertRule from './assertion';
+
+
 /**
  * The result of benchmark.
  *
@@ -141,5 +144,54 @@ export default class Result {
         const range = Math.round(this.errorRange * 10000) / 10000;
         const rate = Math.round(this.errorRate * 10000) / 100;
         return `${this.name}:\t${ops}ops/sec\t${avg}msec/op\t+-${range}msec/op (${rate}%)\t${this.msecs.length} times tried`;
+    }
+
+    /**
+     * Assertion if it taked more (or less) time than expected.
+     *
+     * Expected rule format is `{operator}{number}{unit}`; use like `<=10msec`.
+     * Operator and unit are can omit. If omitted, uses `<=` and `msec`.
+     *
+     * ## Supported operators
+     * |example       |means              |
+     * |--------------|-------------------|
+     * |"<42"         |faster than 42 msec|
+     * |"<=42" or omit|42 msec or faster  |
+     * |">42"         |slower than 42 msec|
+     * |">=42"        |42 msec or slower  |
+     *
+     * ## Supported units
+     * |example           |means       |
+     * |------------------|------------|
+     * |"42s" or "42sec"  |seconds     |
+     * |"42ms" or "42msec"|milliseconds|
+     * |"42us" or "42usec"|microseconds|
+     * |"42ns" or "42nsec"|nanoseconds |
+     *
+     * @param {Number|String} expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+     *
+     * @throw {assert.AssertionError} when result is unacceptable.
+     * @return {undefined}
+     *
+     * @example
+     * const result = await Benchmark(function() {
+     *     # do something that expect done in least 100msec
+     * }).run();
+     *
+     * result.assert(100);
+     *
+     * @example
+     * const result = await Benchmark(async function() {
+     *     await sleep_function(100);
+     * }).run();
+     *
+     * result.assert('>90ms', '<110ms');
+     *
+     * @since 0.3.0
+     */
+    assert(...expected) {
+        const rules = expected.map(x => new AssertRule(x));
+
+        rules.forEach(rule => rule.assert(this, this.assert));
     }
 }
