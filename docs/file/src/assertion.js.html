@@ -38,7 +38,7 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/assertion.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {AssertionError} from &apos;assert&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;assert&apos;;
 
 
 /**
@@ -144,13 +144,17 @@ class AssertRule {
      */
     assert(result, stackStartFn=null) {
         if (!this.check(result.average)) {
-            throw new AssertionError({
-                message: `benchmark &quot;${result.name}&quot;: actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
-                actual: `${result.average} msec/op`,
-                expected: `${this.expected} msec/op`,
-                operator: this.operator,
-                stackStartFn: stackStartFn || this.assert,
-            });
+            if (assert === undefined) {
+                throw new Error(`benchmark &quot;${result.name}&quot;: actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`);
+            } else {
+                throw new assert.AssertionError({
+                    message: `benchmark &quot;${result.name}&quot;: actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
+                    actual: `${result.average} msec/op`,
+                    expected: `${this.expected} msec/op`,
+                    operator: this.operator,
+                    stackStartFn: stackStartFn || this.assert,
+                });
+            }
         }
     }
 }

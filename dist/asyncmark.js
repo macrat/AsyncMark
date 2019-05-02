@@ -4,6 +4,8 @@
     (global = global || self, factory(global.AsyncMark = {}, global.assert));
 }(this, function (exports, assert) { 'use strict';
 
+    assert = assert && assert.hasOwnProperty('default') ? assert['default'] : assert;
+
     /**
      * Convert unit to number
      *
@@ -111,13 +113,17 @@
 
       assert(result, stackStartFn = null) {
         if (!this.check(result.average)) {
-          throw new assert.AssertionError({
-            message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
-            actual: `${result.average} msec/op`,
-            expected: `${this.expected} msec/op`,
-            operator: this.operator,
-            stackStartFn: stackStartFn || this.assert
-          });
+          if (assert === undefined) {
+            throw new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`);
+          } else {
+            throw new assert.AssertionError({
+              message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
+              actual: `${result.average} msec/op`,
+              expected: `${this.expected} msec/op`,
+              operator: this.operator,
+              stackStartFn: stackStartFn || this.assert
+            });
+          }
         }
       }
 
@@ -393,7 +399,7 @@
      *
      * NOTE: this function will execute target function only once.
      *
-     * @param {function} fun - the target function.
+     * @param {function(): ?Promise} fun - the target function.
      * @param {Object} [context={}] - the `this` for target function.
      * @param {Object[]} [args=[]] - arguments to passing to target function.
      *

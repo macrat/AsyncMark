@@ -1,4 +1,4 @@
-import {AssertionError} from 'assert';
+import assert from 'assert';
 
 
 /**
@@ -104,13 +104,17 @@ class AssertRule {
      */
     assert(result, stackStartFn=null) {
         if (!this.check(result.average)) {
-            throw new AssertionError({
-                message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
-                actual: `${result.average} msec/op`,
-                expected: `${this.expected} msec/op`,
-                operator: this.operator,
-                stackStartFn: stackStartFn || this.assert,
-            });
+            if (assert === undefined) {
+                throw new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`);
+            } else {
+                throw new assert.AssertionError({
+                    message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
+                    actual: `${result.average} msec/op`,
+                    expected: `${this.expected} msec/op`,
+                    operator: this.operator,
+                    stackStartFn: stackStartFn || this.assert,
+                });
+            }
         }
     }
 }
