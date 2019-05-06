@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/assertion.js",
-    "content": "import assert from 'assert';\r\n\r\n\r\n/**\r\n * Convert unit to number\r\n *\r\n * @example\r\n * assert(100 * unit('ms') == 0.1 * unit('sec'))\r\n *\r\n * @param {Number} u - unit name like 'ms', 'sec' or etc.\r\n *\r\n * @return {Number} number to convert milliseconds.\r\n *\r\n * @since 0.3.0\r\n * @ignore\r\n */\r\nfunction unit(u) {\r\n    switch (u) {\r\n    case 's':\r\n    case 'sec':\r\n        return 1e3;\r\n\r\n    case '':\r\n    case 'ms':\r\n    case 'msec':\r\n        return 1;\r\n\r\n    case 'us':\r\n    case 'usec':\r\n        return 1e-3;\r\n\r\n    case 'ns':\r\n    case 'nsec':\r\n        return 1e-6;\r\n\r\n    default:\r\n        throw Error(`unknown unit name: \"${u}\"`);\r\n    }\r\n}\r\n\r\n\r\n/**\r\n * The assertion rule\r\n *\r\n * @since 0.3.0\r\n */\r\nclass AssertRule {\r\n    /**\r\n     * Parse time rule for assertion.\r\n     *\r\n     * Rule format is `{operator}{number}{unit}`; use like `<=10msec`.\r\n     * Operator and unit are can omit. If omitted, uses `<=` and `msec`.\r\n     *\r\n     * Supported operators\r\n     * |`<42`|faster than 42 msec|\r\n     * |`<=42` or omit|42 msec or faster|\r\n     * |`>42`|slower than 42 msec|\r\n     * |`>=42`|42 msec or slower|\r\n     *\r\n     * Supported units\r\n     * |`42s` or `42sec`|seconds|\r\n     * |`42ms` or `42msec`|milliseconds|\r\n     * |`42us` or `42usec`|microseconds|\r\n     * |`42ns` or `42nsec`|nanoseconds|\r\n     *\r\n     * @param {Number|String} rule - assert rule that milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.\r\n     */\r\n    constructor(rule) {\r\n        const m = String(rule).match(/^(|[<>]=?)(\\d+(?:\\.\\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);\r\n        if (m === null) {\r\n            throw Error(`Invalid rule format: \"${rule}\"`);\r\n        }\r\n\r\n        this.operator = m[1] || '<=';\r\n        this.expected = Number(m[2]) * unit(m[3]);\r\n    }\r\n\r\n    /**\r\n     * Checking benchmark result.\r\n     *\r\n     * @param {Number} msec - target milliseconds.\r\n     *\r\n     * @return {Boolean} returns true if msec is acceptable.\r\n     */\r\n    check(msec) {\r\n        return {\r\n            '<': ms => ms < this.expected,\r\n            '<=': ms => ms <= this.expected,\r\n            '>': ms => ms > this.expected,\r\n            '>=': ms => ms >= this.expected,\r\n        }[this.operator](msec);\r\n    }\r\n\r\n    /**\r\n     * Assert with benchmark result.\r\n     *\r\n     * @param {Result} result - result of benchmark.\r\n     * @param {function} [stackStartFn] - provided function will remove from stack trace.\r\n     *\r\n     * @throw {assert.AssertionError} when result is unacceptable.\r\n     * @return {undefined}\r\n     *\r\n     * @since 0.3.0\r\n     */\r\n    assert(result, stackStartFn=null) {\r\n        if (!this.check(result.average)) {\r\n            if (assert === undefined) {\r\n                throw new Error(`benchmark \"${result.name}\": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`);\r\n            } else {\r\n                throw new assert.AssertionError({\r\n                    message: `benchmark \"${result.name}\": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,\r\n                    actual: `${result.average} msec/op`,\r\n                    expected: `${this.expected} msec/op`,\r\n                    operator: this.operator,\r\n                    stackStartFn: stackStartFn || this.assert,\r\n                });\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\n\r\nexport {AssertRule as default, unit};\r\n",
+    "content": "import assert from 'assert';\r\n\r\n\r\n/**\r\n * Generate {@link AssertionError}\r\n *\r\n * @param {AssertRule} rule - the rule that couses error.\r\n * @param {Result} result - the result for assert.\r\n * @param {function} [stackStartFn] - provided function will remove from stack trace.\r\n *\r\n * @return {assert.AssertionError} generated error\r\n *\r\n * @ignore\r\n * @since 0.3.0\r\n */\r\nfunction AssertionError(rule, result, stackStartFn) {\r\n    return new assert.AssertionError({\r\n        message: `benchmark \"${result.name}\": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`,\r\n        actual: `${result.average} msec/op`,\r\n        expected: `${rule.expected} msec/op`,\r\n        operator: rule.operator,\r\n        stackStartFn: stackStartFn || rule.assert,\r\n    });\r\n}\r\n\r\n\r\n/**\r\n * Generate alternate error with default {@link Error}\r\n *\r\n * @param {AssertRule} rule - the rule that couses error.\r\n * @param {Result} result - the result for assert.\r\n * @param {function} [stackStartFn] - provided function will remove from stack trace.\r\n *\r\n * @return {Error} generated error\r\n *\r\n * @ignore\r\n * @since 0.3.0\r\n */\r\nfunction AlternateError(rule, result, stackStartFn) {\r\n    return Object.assign(\r\n        new Error(`benchmark \"${result.name}\": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`),\r\n        {\r\n            actual: `${result.average} msec/op`,\r\n            expected: `${rule.expected} msec/op`,\r\n            operator: rule.operator,\r\n        }\r\n    );\r\n}\r\n\r\n\r\n/**\r\n * Convert unit to number\r\n *\r\n * @example\r\n * assert(100 * unit('ms') == 0.1 * unit('sec'))\r\n *\r\n * @param {Number} u - unit name like 'ms', 'sec' or etc.\r\n *\r\n * @return {Number} number to convert milliseconds.\r\n *\r\n * @since 0.3.0\r\n * @ignore\r\n */\r\nfunction unit(u) {\r\n    switch (u) {\r\n    case 's':\r\n    case 'sec':\r\n        return 1e3;\r\n\r\n    case '':\r\n    case 'ms':\r\n    case 'msec':\r\n        return 1;\r\n\r\n    case 'us':\r\n    case 'usec':\r\n        return 1e-3;\r\n\r\n    case 'ns':\r\n    case 'nsec':\r\n        return 1e-6;\r\n\r\n    default:\r\n        throw Error(`unknown unit name: \"${u}\"`);\r\n    }\r\n}\r\n\r\n\r\n/**\r\n * The assertion rule\r\n *\r\n * @since 0.3.0\r\n */\r\nclass AssertRule {\r\n    /**\r\n     * Parse time rule for assertion.\r\n     *\r\n     * Rule format is `{operator}{number}{unit}`; use like `<=10msec`.\r\n     * Operator and unit are can omit. If omitted, uses `<=` and `msec`.\r\n     *\r\n     * Supported operators\r\n     * |`<42`|faster than 42 msec|\r\n     * |`<=42` or omit|42 msec or faster|\r\n     * |`>42`|slower than 42 msec|\r\n     * |`>=42`|42 msec or slower|\r\n     *\r\n     * Supported units\r\n     * |`42s` or `42sec`|seconds|\r\n     * |`42ms` or `42msec`|milliseconds|\r\n     * |`42us` or `42usec`|microseconds|\r\n     * |`42ns` or `42nsec`|nanoseconds|\r\n     *\r\n     * @param {Number|String} rule - assert rule that milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.\r\n     */\r\n    constructor(rule) {\r\n        const m = String(rule).match(/^(|[<>]=?)(\\d+(?:\\.\\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);\r\n        if (m === null) {\r\n            throw Error(`Invalid rule format: \"${rule}\"`);\r\n        }\r\n\r\n        this.operator = m[1] || '<=';\r\n        this.expected = Number(m[2]) * unit(m[3]);\r\n\r\n        this.errorFn = assert !== undefined ? AssertionError : AlternateError;\r\n    }\r\n\r\n    /**\r\n     * Checking benchmark result.\r\n     *\r\n     * @param {Number} msec - target milliseconds.\r\n     *\r\n     * @return {Boolean} returns true if msec is acceptable.\r\n     */\r\n    check(msec) {\r\n        return {\r\n            '<': ms => ms < this.expected,\r\n            '<=': ms => ms <= this.expected,\r\n            '>': ms => ms > this.expected,\r\n            '>=': ms => ms >= this.expected,\r\n        }[this.operator](msec);\r\n    }\r\n\r\n    /**\r\n     * Assert with benchmark result.\r\n     *\r\n     * @param {Result} result - result of benchmark.\r\n     * @param {function} [stackStartFn] - provided function will remove from stack trace.\r\n     *\r\n     * @throw {assert.AssertionError} when result is unacceptable.\r\n     * @return {undefined}\r\n     *\r\n     * @since 0.3.0\r\n     */\r\n    assert(result, stackStartFn=null) {\r\n        if (!this.check(result.average)) {\r\n            throw this.errorFn(this, result, stackStartFn);\r\n        }\r\n    }\r\n}\r\n\r\n\r\nexport {AssertRule as default, unit, AssertionError, AlternateError};\r\n",
     "static": true,
     "longname": "/mnt/tmpfs/asyncmark/src/assertion.js",
     "access": "public",
@@ -586,7 +586,7 @@
     "importPath": "asyncmark/dist/asyncmark.mjs",
     "importStyle": null,
     "description": "The assertion rule",
-    "lineNumber": 47,
+    "lineNumber": 94,
     "since": "0.3.0",
     "interface": false,
     "ignore": true
@@ -602,7 +602,7 @@
     "longname": "src/assertion.js~AssertRule#constructor",
     "access": "public",
     "description": "Parse time rule for assertion.\n\nRule format is `{operator}{number}{unit}`; use like `<=10msec`.\nOperator and unit are can omit. If omitted, uses `<=` and `msec`.\n\nSupported operators\n|`<42`|faster than 42 msec|\n|`<=42` or omit|42 msec or faster|\n|`>42`|slower than 42 msec|\n|`>=42`|42 msec or slower|\n\nSupported units\n|`42s` or `42sec`|seconds|\n|`42ms` or `42msec`|milliseconds|\n|`42us` or `42usec`|microseconds|\n|`42ns` or `42nsec`|nanoseconds|",
-    "lineNumber": 68,
+    "lineNumber": 115,
     "params": [
       {
         "nullable": null,
@@ -626,7 +626,7 @@
     "longname": "src/assertion.js~AssertRule#operator",
     "access": "public",
     "description": null,
-    "lineNumber": 74,
+    "lineNumber": 121,
     "undocument": true,
     "type": {
       "types": [
@@ -643,7 +643,7 @@
     "longname": "src/assertion.js~AssertRule#expected",
     "access": "public",
     "description": null,
-    "lineNumber": 75,
+    "lineNumber": 122,
     "undocument": true,
     "type": {
       "types": [
@@ -653,6 +653,23 @@
   },
   {
     "__docId__": 53,
+    "kind": "member",
+    "name": "errorFn",
+    "memberof": "src/assertion.js~AssertRule",
+    "static": false,
+    "longname": "src/assertion.js~AssertRule#errorFn",
+    "access": "public",
+    "description": null,
+    "lineNumber": 124,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 54,
     "kind": "method",
     "name": "check",
     "memberof": "src/assertion.js~AssertRule",
@@ -662,7 +679,7 @@
     "longname": "src/assertion.js~AssertRule#check",
     "access": "public",
     "description": "Checking benchmark result.",
-    "lineNumber": 85,
+    "lineNumber": 134,
     "params": [
       {
         "nullable": null,
@@ -685,7 +702,7 @@
     }
   },
   {
-    "__docId__": 54,
+    "__docId__": 55,
     "kind": "method",
     "name": "assert",
     "memberof": "src/assertion.js~AssertRule",
@@ -695,7 +712,7 @@
     "longname": "src/assertion.js~AssertRule#assert",
     "access": "public",
     "description": "Assert with benchmark result.",
-    "lineNumber": 105,
+    "lineNumber": 154,
     "since": "0.3.0",
     "unknown": [
       {
@@ -735,7 +752,7 @@
     }
   },
   {
-    "__docId__": 55,
+    "__docId__": 56,
     "kind": "function",
     "name": "unit",
     "memberof": "src/assertion.js",
@@ -751,7 +768,7 @@
     "examples": [
       "assert(100 * unit('ms') == 0.1 * unit('sec'))"
     ],
-    "lineNumber": 17,
+    "lineNumber": 64,
     "since": "0.3.0",
     "ignore": true,
     "params": [
@@ -776,7 +793,123 @@
     }
   },
   {
-    "__docId__": 56,
+    "__docId__": 57,
+    "kind": "function",
+    "name": "AssertionError",
+    "memberof": "src/assertion.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/assertion.js~AssertionError",
+    "access": "public",
+    "export": true,
+    "importPath": "asyncmark/dist/asyncmark.mjs",
+    "importStyle": "{AssertionError}",
+    "description": "Generate {@link AssertionError}",
+    "lineNumber": 16,
+    "since": "0.3.0",
+    "ignore": true,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "AssertRule"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rule",
+        "description": "the rule that couses error."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Result"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "result",
+        "description": "the result for assert."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "stackStartFn",
+        "description": "provided function will remove from stack trace."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "assert.AssertionError"
+      ],
+      "spread": false,
+      "description": "generated error"
+    }
+  },
+  {
+    "__docId__": 58,
+    "kind": "function",
+    "name": "AlternateError",
+    "memberof": "src/assertion.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/assertion.js~AlternateError",
+    "access": "public",
+    "export": true,
+    "importPath": "asyncmark/dist/asyncmark.mjs",
+    "importStyle": "{AlternateError}",
+    "description": "Generate alternate error with default {@link Error}",
+    "lineNumber": 39,
+    "since": "0.3.0",
+    "ignore": true,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "AssertRule"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "rule",
+        "description": "the rule that couses error."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "Result"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "result",
+        "description": "the result for assert."
+      },
+      {
+        "nullable": null,
+        "types": [
+          "function"
+        ],
+        "spread": false,
+        "optional": true,
+        "name": "stackStartFn",
+        "description": "provided function will remove from stack trace."
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "Error"
+      ],
+      "spread": false,
+      "description": "generated error"
+    }
+  },
+  {
+    "__docId__": 59,
     "kind": "file",
     "name": "src/benchmark.js",
     "content": "import Result from './result';\nimport {timeit} from './timer';\n\n\n/**\n * Class for benchmarking.\n *\n * Benchmark will execute by flow like this.\n *\n *   - before\n *   - beforeEach\n *   - fun\n *   - afterEach\n *   - after\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import Benchmark from 'asyncmark';\n *\n *\n * new Benchmark({\n *     name: 'timeout',\n *     fun() {\n *         return new Promise((resolve, reject) => {\n *             setTimeout(resolve, 100);\n *         });\n *     },\n * }).run().catch(console.error);\n */\nexport default class Benchmark {\n    /**\n     * @param {Object|function} [options] - options for this benchmark or benchmarking function.\n     * @param {Number} [options.name='unnamed'] - name of this benchmark.\n     * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.\n     * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.\n     * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.\n     * @param {Number} [options.number] - the number of executing the test. see {@link Benchmark#number}.\n     * @param {function(): ?Promise} [options.before] - setup function. see {@link Benchmark#before}.\n     * @param {function(count: Number): ?Promise} [options.beforeEach] - setup function. see {@link Benchmark#beforeEach}.\n     * @param {function(): ?Promise} [options.fun] - target function for benchmarking. see {@link Benchmark#fun}.\n     * @param {function(count: Number, msec: Number): ?Promise} [options.afterEach] - teardown function. see {@link Benchmark#afterEach}.\n     * @param {function(result: Result): ?Promise} [options.after] - teardown function. see {@link Benchmark#after}.\n     */\n    constructor(options = {}) {\n        /**\n         * Name of this benchmark.\n         *\n         * @type {String}\n         */\n        this.name = options.name || 'unnamed';\n\n        /**\n         * Wanted maximum error rate.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.targetErrorRate = options.targetErrorRate || 0.1;\n\n        /**\n         * Maximum number of executing test.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.maxNumber = options.maxNumber || 10000;\n\n        /**\n         * Minimal number of executing test.\n         * This value will be ignore if set {@link Benchmark#number}.\n         *\n         * @type {Number}\n         */\n        this.minNumber = options.minNumber || 30;\n\n        /**\n         * The number of executing the test.\n         * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.\n         *\n         * @type {Number|null}\n         */\n        this.number = options.number || null;\n\n        if (typeof options === 'function') {\n            this.fun = options;\n        } else {\n            this.before = options.before || this.before;\n            this.beforeEach = options.beforeEach || this.beforeEach;\n            this.fun = options.fun || this.fun;\n            this.afterEach = options.afterEach || this.afterEach;\n            this.after = options.after || this.after;\n        }\n    }\n\n    /**\n     * Setup before execute benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#after}\n     *\n     * In default, do nothing.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async before() {}\n\n    /**\n     * Setup before each tests.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done tests in this benchmark.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async beforeEach(count) {}\n\n    /**\n     * The target function for benchmarking.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}\n     *\n     * In default, couses error that `Error('target function is not defined')`.\n     *\n     * @abstract\n     *\n     * @return {?Promise} If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.\n     */\n    async fun() {\n        throw new Error('target function is not defined');\n    }\n\n    /**\n     * Teardown after each tests.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done tests in this benchmark.\n     * @param {Number} msec - duration of this execution.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async afterEach(count, msec) {}\n\n    /**\n     * Teardown after execute benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, shows test result.\n     *\n     * @param {Result} result - result of this benchmark.\n     *\n     * @return {?Promise} {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async after(result) {\n        console.log(String(result.dropOutlier()));\n    }\n\n    /**\n     * Execute benchmark.\n     *\n     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n     * @param {Object} [callbacks={}] - callback functions.\n     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [callbacks.beforeTest] - callback function that will be called when before executing each test.\n     * @param {function(count: Number, benchmark: Benchmark, msec: Number)} [callbacks.afterTest] - callback function that will be called when after executing each test.\n     *\n     * @return {Promise<Result>} A result of benchmark.\n     */\n    async run(context = {}, callbacks = {}) {\n        context = Object.assign({}, context);\n        context.__proto__ = this;\n\n        await this.before.call(context);\n\n        const loopNum = this.number || this.maxNumber;\n\n        const msecs = [];\n        for (let i = 0; i < loopNum; i++) {\n            const ctx = Object.assign({}, context);\n\n            if (callbacks.beforeTest) {\n                await callbacks.beforeTest.call(ctx, i, this);\n            }\n\n            await this.beforeEach.call(ctx, i);\n\n            const msec = await timeit(this.fun, ctx)\n            msecs.push(msec);\n\n            await this.afterEach.call(ctx, i, msec);\n\n            if (callbacks.afterTest) {\n                await callbacks.afterTest.call(ctx, i, this, msec);\n            }\n\n            if (!this.number && i + 1 >= this.minNumber && (new Result(this.name, msecs)).errorRate <= this.targetErrorRate) {\n                break;\n            }\n        }\n\n        const result = new Result(this.name, msecs);\n        await this.after.call(context, result);\n        return result;\n    }\n}\n",
@@ -787,7 +920,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 57,
+    "__docId__": 60,
     "kind": "class",
     "name": "Benchmark",
     "memberof": "src/benchmark.js",
@@ -805,7 +938,7 @@
     "interface": false
   },
   {
-    "__docId__": 58,
+    "__docId__": 61,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/benchmark.js~Benchmark",
@@ -939,7 +1072,7 @@
     ]
   },
   {
-    "__docId__": 59,
+    "__docId__": 62,
     "kind": "member",
     "name": "name",
     "memberof": "src/benchmark.js~Benchmark",
@@ -958,7 +1091,7 @@
     }
   },
   {
-    "__docId__": 60,
+    "__docId__": 63,
     "kind": "member",
     "name": "targetErrorRate",
     "memberof": "src/benchmark.js~Benchmark",
@@ -977,7 +1110,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 64,
     "kind": "member",
     "name": "maxNumber",
     "memberof": "src/benchmark.js~Benchmark",
@@ -996,7 +1129,7 @@
     }
   },
   {
-    "__docId__": 62,
+    "__docId__": 65,
     "kind": "member",
     "name": "minNumber",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1015,7 +1148,7 @@
     }
   },
   {
-    "__docId__": 63,
+    "__docId__": 66,
     "kind": "member",
     "name": "number",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1035,7 +1168,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 73,
     "kind": "method",
     "name": "before",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1057,7 +1190,7 @@
     "params": []
   },
   {
-    "__docId__": 71,
+    "__docId__": 74,
     "kind": "method",
     "name": "beforeEach",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1090,7 +1223,7 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 75,
     "kind": "method",
     "name": "fun",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1113,7 +1246,7 @@
     "params": []
   },
   {
-    "__docId__": 73,
+    "__docId__": 76,
     "kind": "method",
     "name": "afterEach",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1156,7 +1289,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 77,
     "kind": "method",
     "name": "after",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1189,7 +1322,7 @@
     }
   },
   {
-    "__docId__": 75,
+    "__docId__": 78,
     "kind": "method",
     "name": "run",
     "memberof": "src/benchmark.js~Benchmark",
@@ -1256,7 +1389,7 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 79,
     "kind": "file",
     "name": "src/index.js",
     "content": "export {default as Result} from './result';\n\nexport {default as Benchmark} from './benchmark';\nexport {default as default} from './benchmark';\n\nexport {default as Suite} from './suite';\n\nexport {timeit} from './timer';\n",
@@ -1267,7 +1400,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 77,
+    "__docId__": 80,
     "kind": "file",
     "name": "src/result.js",
     "content": "import AssertRule from './assertion';\n\n\n/**\n * The result of benchmark.\n *\n * This value will included outlier. Please use {@link Result#dropOutlier} if you want drop they.\n */\nexport default class Result {\n    /**\n     * @param {String} name - name of benchmark.\n     * @param {Number[]} msecs - times of benchmark result.\n     *\n     * @ignore\n     */\n    constructor(name, msecs) {\n        /**\n         * Name of this test.\n         *\n         * @type {String}\n         */\n        this.name = name;\n\n        /**\n         * Times of benchmark result in milliseconds.\n         *\n         * @type {Number[]}\n         */\n        this.msecs = msecs;\n    }\n\n    /**\n     * Total milliseconds of this benchmark.\n     *\n     * @type {Number}\n     */\n    get total() {\n        return this.msecs.reduce((x, y) => x + y);\n    }\n\n    /**\n     * The time of fastest test in milliseconds.\n     *\n     * @type {Number}\n     */\n    get fastest() {\n        return this.msecs.reduce((x, y) => Math.min(x, y));\n    }\n\n    /**\n     * The time of slowest test in milliseconds.\n     *\n     * @type {Number}\n     */\n    get slowest() {\n        return this.msecs.reduce((x, y) => Math.max(x, y));\n    }\n\n    /**\n     * Average time of this benchmark in milliseconds.\n     *\n     * @type {Number}\n     */\n    get average() {\n        return this.total / this.msecs.length;\n    }\n\n    /**\n     * Time unbiased sample variance of times.\n     *\n     * @type {Number}\n     */\n    get variance() {\n        const avg = this.average;\n        return this.msecs.map(x => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);\n    }\n\n    /**\n     * Standard division of times.\n     *\n     * @type {Number}\n     */\n    get std() {\n        return Math.sqrt(this.variance);\n    }\n\n    /**\n     * Standard error of the mean of times.\n     *\n     * @type {Number}\n     */\n    get sem() {\n        return this.std / Math.sqrt(this.msecs.length);\n    }\n\n    /**\n     * Guessed error range of this benchmark.\n     *\n     * @type {Number}\n     */\n    get errorRange() {\n        return this.sem * 1.96;\n    }\n\n    /**\n     * Error range per average time.\n     *\n     * @type {Number}\n     */\n    get errorRate() {\n        return this.errorRange / this.average;\n    }\n\n    /**\n     * Operations per seconds.\n     *\n     * @type {Number}\n     */\n    get opsPerSec() {\n        return 1000 / this.average;\n    }\n\n    /**\n     * Make new Result that droped outlier.\n     *\n     * @param {Number} [threshold=2] the threshold of outlier testing.\n     *\n     * @return {Result} new {@link Result} instance.\n     */\n    dropOutlier(threshold=2) {\n        const avg = this.average;\n        const std = this.std;\n        return new Result(this.name, this.msecs.filter(x => Math.abs((x - avg) / std) <= threshold));\n    }\n\n    /**\n     * Convert to string for printing.\n     *\n     * @return {String} human redable string\n     */\n    toString() {\n        const avg = Math.round(this.average * 10000) / 10000;\n        const ops = Math.round(this.opsPerSec * 1000) / 1000;\n        const range = Math.round(this.errorRange * 10000) / 10000;\n        const rate = Math.round(this.errorRate * 10000) / 100;\n        return `${this.name}:\\t${ops}ops/sec\\t${avg}msec/op\\t+-${range}msec/op (${rate}%)\\t${this.msecs.length} times tried`;\n    }\n\n    /**\n     * Assertion if it taked more (or less) time than expected.\n     *\n     * Expected rule format is `{operator}{number}{unit}`; use like `<=10msec`.\n     * Operator and unit are can omit. If omitted, uses `<=` and `msec`.\n     *\n     * ## Supported operators\n     * |example       |means              |\n     * |--------------|-------------------|\n     * |\"<42\"         |faster than 42 msec|\n     * |\"<=42\" or omit|42 msec or faster  |\n     * |\">42\"         |slower than 42 msec|\n     * |\">=42\"        |42 msec or slower  |\n     *\n     * ## Supported units\n     * |example           |means       |\n     * |------------------|------------|\n     * |\"42s\" or \"42sec\"  |seconds     |\n     * |\"42ms\" or \"42msec\"|milliseconds|\n     * |\"42us\" or \"42usec\"|microseconds|\n     * |\"42ns\" or \"42nsec\"|nanoseconds |\n     *\n     * @param {Number|String} expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.\n     *\n     * @throw {assert.AssertionError} when result is unacceptable.\n     * @return {undefined}\n     *\n     * @example\n     * const result = await Benchmark(function() {\n     *     # do something that expect done in least 100msec\n     * }).run();\n     *\n     * result.assert(100);\n     *\n     * @example\n     * const result = await Benchmark(async function() {\n     *     await sleep_function(100);\n     * }).run();\n     *\n     * result.assert('>90ms', '<110ms');\n     *\n     * @since 0.3.0\n     */\n    assert(...expected) {\n        const rules = expected.map(x => new AssertRule(x));\n\n        rules.forEach(rule => rule.assert(this, this.assert));\n    }\n}\n",
@@ -1278,7 +1411,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 78,
+    "__docId__": 81,
     "kind": "class",
     "name": "Result",
     "memberof": "src/result.js",
@@ -1293,7 +1426,7 @@
     "interface": false
   },
   {
-    "__docId__": 79,
+    "__docId__": 82,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/result.js~Result",
@@ -1329,7 +1462,7 @@
     ]
   },
   {
-    "__docId__": 80,
+    "__docId__": 83,
     "kind": "member",
     "name": "name",
     "memberof": "src/result.js~Result",
@@ -1348,7 +1481,7 @@
     }
   },
   {
-    "__docId__": 81,
+    "__docId__": 84,
     "kind": "member",
     "name": "msecs",
     "memberof": "src/result.js~Result",
@@ -1367,7 +1500,7 @@
     }
   },
   {
-    "__docId__": 82,
+    "__docId__": 85,
     "kind": "get",
     "name": "total",
     "memberof": "src/result.js~Result",
@@ -1388,7 +1521,7 @@
     }
   },
   {
-    "__docId__": 83,
+    "__docId__": 86,
     "kind": "get",
     "name": "fastest",
     "memberof": "src/result.js~Result",
@@ -1409,7 +1542,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 87,
     "kind": "get",
     "name": "slowest",
     "memberof": "src/result.js~Result",
@@ -1430,7 +1563,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 88,
     "kind": "get",
     "name": "average",
     "memberof": "src/result.js~Result",
@@ -1451,7 +1584,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 89,
     "kind": "get",
     "name": "variance",
     "memberof": "src/result.js~Result",
@@ -1472,7 +1605,7 @@
     }
   },
   {
-    "__docId__": 87,
+    "__docId__": 90,
     "kind": "get",
     "name": "std",
     "memberof": "src/result.js~Result",
@@ -1493,7 +1626,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 91,
     "kind": "get",
     "name": "sem",
     "memberof": "src/result.js~Result",
@@ -1514,7 +1647,7 @@
     }
   },
   {
-    "__docId__": 89,
+    "__docId__": 92,
     "kind": "get",
     "name": "errorRange",
     "memberof": "src/result.js~Result",
@@ -1535,7 +1668,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 93,
     "kind": "get",
     "name": "errorRate",
     "memberof": "src/result.js~Result",
@@ -1556,7 +1689,7 @@
     }
   },
   {
-    "__docId__": 91,
+    "__docId__": 94,
     "kind": "get",
     "name": "opsPerSec",
     "memberof": "src/result.js~Result",
@@ -1577,7 +1710,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 95,
     "kind": "method",
     "name": "dropOutlier",
     "memberof": "src/result.js~Result",
@@ -1612,7 +1745,7 @@
     }
   },
   {
-    "__docId__": 93,
+    "__docId__": 96,
     "kind": "method",
     "name": "toString",
     "memberof": "src/result.js~Result",
@@ -1634,7 +1767,7 @@
     "params": []
   },
   {
-    "__docId__": 94,
+    "__docId__": 97,
     "kind": "method",
     "name": "assert",
     "memberof": "src/result.js~Result",
@@ -1679,7 +1812,7 @@
     }
   },
   {
-    "__docId__": 95,
+    "__docId__": 98,
     "kind": "file",
     "name": "src/suite.js",
     "content": "import Benchmark from './benchmark';\n\n\n/**\n * A set of {@link Benchmark}s for executing those sequential or parallel.\n *\n * Suite will execute by flow like this.\n *\n *   - {@link Suite#before}\n *   - {@link Suite#beforeEach}\n *   - {@link Benchmark#before}\n *   - {@link Suite#beforeTest}\n *   - {@link Benchmark#beforeEach}\n *   - {@link Benchmark#fun}\n *   - {@link Benchmark#afterEach}\n *   - {@link Suite#afterTest}\n *   - {@link Benchmark#after}\n *   - {@link Suite#afterEach}\n *   - {@link Suite#after}\n *\n * Each function can override with options of the constructor.\n *\n *\n * @example\n * import {Suite} from 'asyncmark';\n *\n *\n * const suite = new Suite({\n *     name: 'ways to find a character',\n *     beforeEach() {\n *         this.text = 'hello world';\n *     },\n *     parallel: true,\n * });\n *\n * suite.add(function() {\n *     /o/.test(this.text);\n * });\n *\n * suite.add({\n *     name: 'String#indexOf',\n *     before() {\n *         console.log('starting String#indexOf...');\n *     },\n *     fun() {\n *         this.text.indexOf('o') > -1;\n *     },\n * });\n *\n * suite.add(new Benchmark({\n *     name: 'String#match',\n *     fun() {\n *         Boolean(this.text.match(/o/));\n *     },\n *     after(result) {\n *         console.log('String#match is done! ' + result);\n *     },\n * }));\n *\n * suite.run()\n *     .then(results => {\n *         let min = results[0];\n *         results.forEach(x => {\n *             if (min.average > x.average) {\n *                 min = x;\n *             }\n *         });\n *         console.log(min.name + ' is best way!');\n *     }).\n *     catch(err => console.error(err));\n */\nexport default class Suite {\n    /**\n     * @param {Object} [options={}] - options for this suite.\n     * @param {Number} [options.name='unnamed'] - name of this suite.\n     * @param {Boolean} [options.parallel=false] - flag for executing each benchmark parallelly.\n     * @param {function(): ?Promise} [options.before] - setup function. see {@link Suite#before}.\n     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [options.beforeEach] - setup function. see {@link Suite#beforeEach}.\n     * @param {function(suiteCount: Number, benchCount: Number, benchmark: Benchmark): ?Promise} [options.beforeTest] - setup function. see {@link Suite#beforeTest}.\n     * @param {function(suiteCount: Number, benchCount: Number, benchmark: Benchmark, msec: Number): ?Promise} [options.afterTest] - teardown function. see {@link Suite#afterTest}.\n     * @param {function(count: Number, benchmark: Benchmark, result: Result): ?Promise} [options.afterEach] - teardown function. see {@link Suite#afterEach}.\n     * @param {function(results: Result[]): ?Promise} [options.after] - teardown function. see {@link Suite#after}.\n     * @param {Object} [options.benchmarkDefault={}] - default options for {@link Suite#add}.\n     */\n    constructor(options = {}) {\n        /**\n         * Name of this suite.\n         *\n         * @type {String}\n         */\n        this.name = options.name || 'unnamed';\n\n        /**\n         * Default options for benchmarks in this suite.\n         *\n         * @type {Object}\n         */\n        this.benchmarkDefault = options.benchmarkDefault || {};\n\n        /**\n         * A list of {@link Benchmark}.\n         *\n         * @type {Benchmark[]}\n         */\n        this.benchmarks = [];\n\n        /**\n         * Flag for executing each benchmark parallelly.\n         *\n         * @type {Boolean}\n         */\n        this.parallel = options.parallel || false;\n\n        this.before = options.before || this.before;\n        this.beforeEach = options.beforeEach || this.beforeEach;\n        this.beforeTest = options.beforeTest || this.beforeTest;\n        this.afterTest = options.afterTest || this.afterTest;\n        this.afterEach = options.afterEach || this.afterEach;\n        this.after = options.after || this.after;\n    }\n\n    /**\n     * Setup before execute all benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the suite.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Suite#after}.\n     *\n     * In default, do nothing.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async before() {}\n\n    /**\n     * Setup before execute each benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Suite#afterEach}.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done benchmarks in this suite.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async beforeEach(count, benchmark) {}\n\n    /**\n     * Setup before execute each test of benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call {@link Suite#afterTest}.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} suiteCount - count of done benchmarks in this suite.\n     * @param {Number} benchCount - count of done tests in this benchmark.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that will execute.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async beforeTest(suiteCount, benchCount, benchmark) {}\n\n    /**\n     * Teardown after execute each test of benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the test.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} suiteCount - count of done benchmarks in this suite.\n     * @param {Number} benchCount - count of done tests in this benchmark.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.\n     * @param {Number} msec - a result of this test.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async afterTest(suiteCount, benchCount, benchmark, msec) {}\n\n    /**\n     * Teardown after execute each benchmark.\n     *\n     * At the time executing this method, `this` is the unique object for the benchmark.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Number} count - count of done benchmarks in this suite.\n     * @param {Benchmark} benchmark - a {@link Benchmark} instance that executed.\n     * @param {Result} result - a result of this benchmark.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async afterEach(count, benchmark, result) {}\n\n    /**\n     * Teardown after execute all benchmarks.\n     *\n     * At the time executing this method, `this` is the unique object for the suite.\n     * So you can use `this` for storing testing data like a database.\n     * Data of `this` that set in this method will discard after call this method.\n     *\n     * In default, do nothing.\n     *\n     * @param {Result[]} results - a list of benchmark result.\n     *\n     * @return {?Promise} {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.\n     */\n    async after(results) {}\n\n    /**\n     * Adding {@link Benchmark} instance into this {@link Suite}.\n     *\n     * @param {Benchmark} benchmark - the benchmark instance for adding.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    addBenchmark(benchmark) {\n        this.benchmarks.push(benchmark);\n        return this;\n    }\n\n    /**\n     * Adding child {@link Suite} instance into this {@link Suite}.\n     *\n     * @param {Suite} suite - the suite instance for adding.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    addSuite(suite) {\n        this.benchmarks.push(suite);\n        return this;\n    }\n\n    /**\n     * Make new benchmark or suite and adding into this {@link Suite}.\n     *\n     * @param {Benchmark|Suite|Object|function} child - {@link Benchmark}, {@link Suite}, or arguments for {@link Benchmark#constructor}.\n     *\n     * @return {Suite} returns this suite for method chain.\n     */\n    add(child) {\n        if (child instanceof Benchmark) {\n            this.addBenchmark(child);\n        } else if (child instanceof Suite) {\n            this.addSuite(child);\n        } else if (typeof child === 'function') {\n            const options = {fun: child};\n            options.__proto__ = this.benchmarkDefault;\n            this.addBenchmark(new Benchmark(options));\n        } else {\n            const options = Object.assign({}, child);\n            options.__proto__ = this.benchmarkDefault;\n            this.addBenchmark(new Benchmark(options));\n        }\n        return this;\n    }\n\n    /**\n     * Make callbacks for {@link Benchmark#run}.\n     *\n     * @param {Number} count - count of benchmark in this suite.\n     * @param {Object} parentCallbacks - callback functions of parent suite. same as callbacks of {@link Suite#run}.\n     *\n     * @return {Object} callbacks.\n     *\n     * @ignore\n     */\n    _makeCallbacks(count, parentCallbacks) {\n        const that = this;\n\n        return {\n            beforeTest(c, b) {\n                if (parentCallbacks.beforeTest) {\n                    parentCallbacks.beforeTest.call(this, c, b);\n                }\n                that.beforeTest.call(this, count, c, b);\n            },\n            afterTest(c, b, r) {\n                that.afterTest.call(this, count, c, b, r);\n                if (parentCallbacks.afterTest) {\n                    parentCallbacks.afterTest.call(this, c, b, r);\n                }\n            },\n        };\n    }\n\n    /**\n     * Execute benchmarks parallelly.\n     *\n     * @param {Object} context - the context for execute.\n     * @param {Object} callbacks - callback functions. same as callbacks of {@link Suite#run}.\n     *\n     * @return {Promise<Result[]>} result of benchmarks.\n     *\n     * @ignore\n     */\n    async _runParallel(context, callbacks) {\n        await this.before.call(context);\n\n        const results = await Promise.all(this.benchmarks.map(async (x, i) => {\n            const ctx = Object.assign({}, context);\n\n            await this.beforeEach.call(ctx, i, x);\n            const result = await x.run(ctx, this._makeCallbacks(i, callbacks));\n            await this.afterEach.call(ctx, i, x, result);\n            return result;\n        }));\n\n        await this.after.call(context, results);\n\n        return results;\n    }\n\n    /**\n     * Execute benchmarks sequential.\n     *\n     * @param {Object} context - the context for execute.\n     * @param {Object} callbacks - callback functions. same as callbacks of {@link Suite#run}.\n     *\n     * @return {Promise<Result[]>} result of benchmarks.\n     *\n     * @ignore\n     */\n    async _runSequential(context, callbacks) {\n        await this.before.call(context);\n\n        const results = [];\n        for (let i=0; i<this.benchmarks.length; i++) {\n            const b = this.benchmarks[i];\n            const ctx = Object.assign({}, context);\n            await this.beforeEach.call(ctx, i, b);\n            const result = await b.run(ctx, this._makeCallbacks(i, callbacks));\n            results.push(result);\n            await this.afterEach.call(ctx, i, b, result);\n        }\n\n        await this.after.call(context, results);\n\n        return results;\n    }\n\n    /**\n     * Execute benchmarks in this suite.\n     *\n     * All benchmarks will execute parallel if enabled {@link Suite#parallel} option.\n     * Else do execute sequentially by added order.\n     *\n     * @param {Object} [context={}] - the `this` for each benchmarking functions. `__proto__` will override with this instance.\n     * @param {Object} [callbacks={}] - callback functions.\n     * @param {function(count: Number, benchmark: Benchmark): ?Promise} [callbacks.beforeTest] - callback function that will be called when before executing each test.\n     * @param {function(count: Number, benchmark: Benchmark, msec: Number)} [callbacks.afterTest] - callback function that will be called when after executing each test.\n     *\n     * @return {Promise<Result[]>} An array of {@link Result}s.\n     */\n    async run(context = {}, callbacks = {}) {\n        context = Object.assign({}, context);\n        context.__proto__ = this;\n\n        if (this.parallel) {\n            return await this._runParallel(context, callbacks);\n        } else {\n            return await this._runSequential(context, callbacks);\n        }\n    }\n}\n",
@@ -1690,7 +1823,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 96,
+    "__docId__": 99,
     "kind": "class",
     "name": "Suite",
     "memberof": "src/suite.js",
@@ -1708,7 +1841,7 @@
     "interface": false
   },
   {
-    "__docId__": 97,
+    "__docId__": 100,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/suite.js~Suite",
@@ -1831,7 +1964,7 @@
     ]
   },
   {
-    "__docId__": 98,
+    "__docId__": 101,
     "kind": "member",
     "name": "name",
     "memberof": "src/suite.js~Suite",
@@ -1850,7 +1983,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 102,
     "kind": "member",
     "name": "benchmarkDefault",
     "memberof": "src/suite.js~Suite",
@@ -1869,7 +2002,7 @@
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 103,
     "kind": "member",
     "name": "benchmarks",
     "memberof": "src/suite.js~Suite",
@@ -1888,7 +2021,7 @@
     }
   },
   {
-    "__docId__": 101,
+    "__docId__": 104,
     "kind": "member",
     "name": "parallel",
     "memberof": "src/suite.js~Suite",
@@ -1907,7 +2040,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 111,
     "kind": "method",
     "name": "before",
     "memberof": "src/suite.js~Suite",
@@ -1929,7 +2062,7 @@
     "params": []
   },
   {
-    "__docId__": 109,
+    "__docId__": 112,
     "kind": "method",
     "name": "beforeEach",
     "memberof": "src/suite.js~Suite",
@@ -1972,7 +2105,7 @@
     }
   },
   {
-    "__docId__": 110,
+    "__docId__": 113,
     "kind": "method",
     "name": "beforeTest",
     "memberof": "src/suite.js~Suite",
@@ -2025,7 +2158,7 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 114,
     "kind": "method",
     "name": "afterTest",
     "memberof": "src/suite.js~Suite",
@@ -2088,7 +2221,7 @@
     }
   },
   {
-    "__docId__": 112,
+    "__docId__": 115,
     "kind": "method",
     "name": "afterEach",
     "memberof": "src/suite.js~Suite",
@@ -2141,7 +2274,7 @@
     }
   },
   {
-    "__docId__": 113,
+    "__docId__": 116,
     "kind": "method",
     "name": "after",
     "memberof": "src/suite.js~Suite",
@@ -2174,7 +2307,7 @@
     }
   },
   {
-    "__docId__": 114,
+    "__docId__": 117,
     "kind": "method",
     "name": "addBenchmark",
     "memberof": "src/suite.js~Suite",
@@ -2207,7 +2340,7 @@
     }
   },
   {
-    "__docId__": 115,
+    "__docId__": 118,
     "kind": "method",
     "name": "addSuite",
     "memberof": "src/suite.js~Suite",
@@ -2240,7 +2373,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 119,
     "kind": "method",
     "name": "add",
     "memberof": "src/suite.js~Suite",
@@ -2276,7 +2409,7 @@
     }
   },
   {
-    "__docId__": 117,
+    "__docId__": 120,
     "kind": "method",
     "name": "_makeCallbacks",
     "memberof": "src/suite.js~Suite",
@@ -2320,7 +2453,7 @@
     }
   },
   {
-    "__docId__": 118,
+    "__docId__": 121,
     "kind": "method",
     "name": "_runParallel",
     "memberof": "src/suite.js~Suite",
@@ -2364,7 +2497,7 @@
     }
   },
   {
-    "__docId__": 119,
+    "__docId__": 122,
     "kind": "method",
     "name": "_runSequential",
     "memberof": "src/suite.js~Suite",
@@ -2408,7 +2541,7 @@
     }
   },
   {
-    "__docId__": 120,
+    "__docId__": 123,
     "kind": "method",
     "name": "run",
     "memberof": "src/suite.js~Suite",
@@ -2475,7 +2608,7 @@
     }
   },
   {
-    "__docId__": 121,
+    "__docId__": 124,
     "kind": "file",
     "name": "src/timer.js",
     "content": "/**\n * Get a timer value in milliseconds resolution with {@link Date} class.\n *\n * @return {Number} a timer value in milliseconds.\n *\n * @ignore\n * @since 0.2.5\n */\nfunction now_date() {\n    return Number(new Date());\n}\n\n\n/**\n * Get a timer value in microseconds resolution with {@link Performance.now} function.\n *\n * @return {Number} a timer value in milliseconds. (microseconds resolution)\n *\n * @ignore\n * @since 0.2.5\n */\nfunction now_now() {\n    return performance.now();\n}\n\n\n/**\n * Get a timer value in nanoseconds resolution with {@link Process.hrtime} function.\n *\n * @return {Number} a timer value in milliseconds. (nanoseconds resolution)\n *\n * @ignore\n * @since 0.2.5\n */\nfunction now_hrtime() {\n    const hr = process.hrtime();\n    return (hr[0] * 1e9 + hr[1]) / 1e6;\n}\n\n\n/**\n * Get the current time as high resolution as possible in the current platform.\n *\n * @return {Number} a timer value in milliseconds.\n *\n * @ignore\n */\nlet now = now_date;\nif (typeof process !== 'undefined' && process.hrtime) {\n    now = now_hrtime;\n} else if (typeof performance !== 'undefined' && performance.now) {\n    now = now_now;\n}\n\n\n/**\n * Measure tiem to execute a function.\n *\n * wait for done if the target function returns a thenable object. so you can use async function.\n *\n * NOTE: this function will execute target function only once.\n *\n * @param {function(): ?Promise} fun - the target function.\n * @param {Object} [context={}] - the `this` for target function.\n * @param {Object[]} [args=[]] - arguments to passing to target function.\n *\n * @return {Promise<Number>} milliseconds taked executing.\n *\n * @example\n * const msec = await timeit(function() {\n *     # do something heavy.\n * });\n *\n * @example\n * console.log(await timeit(axios.get, args=['http://example.com']));\n *\n * @since 0.2.4\n */\nasync function timeit(fun, context={}, args=[]) {\n    const start = now();\n    await fun.call(context, ...args);\n    const end = now();\n\n    return end - start;\n}\n\n\nexport {timeit, now, now_date, now_now, now_hrtime};\n",
@@ -2486,7 +2619,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 122,
+    "__docId__": 125,
     "kind": "function",
     "name": "timeit",
     "memberof": "src/timer.js",
@@ -2551,7 +2684,7 @@
     }
   },
   {
-    "__docId__": 123,
+    "__docId__": 126,
     "kind": "variable",
     "name": "now",
     "memberof": "src/timer.js",
@@ -2579,7 +2712,7 @@
     }
   },
   {
-    "__docId__": 124,
+    "__docId__": 127,
     "kind": "function",
     "name": "now_date",
     "memberof": "src/timer.js",
@@ -2606,7 +2739,7 @@
     "params": []
   },
   {
-    "__docId__": 125,
+    "__docId__": 128,
     "kind": "function",
     "name": "now_now",
     "memberof": "src/timer.js",
@@ -2633,7 +2766,7 @@
     "params": []
   },
   {
-    "__docId__": 126,
+    "__docId__": 129,
     "kind": "function",
     "name": "now_hrtime",
     "memberof": "src/timer.js",
@@ -2676,10 +2809,10 @@
     "access": "public"
   },
   {
-    "__docId__": 127,
+    "__docId__": 130,
     "kind": "testFile",
     "name": "test/assertion.js",
-    "content": "import assert from 'power-assert';\r\nimport {AssertionError} from 'assert';\r\n\r\nimport AssertRule, {unit} from '../src/assertion.js';\r\nimport {Result} from '../src';\r\n\r\n\r\ndescribe('assertion', function() {\r\n    /**\r\n     * @test {unit}\r\n     */\r\n    it('unit converter', function() {\r\n        assert(unit('s') === 1000);\r\n        assert(unit('sec') === 1000);\r\n\r\n        assert(unit('') === 1);\r\n        assert(unit('ms') === 1);\r\n        assert(unit('msec') === 1);\r\n\r\n        assert(unit('us') === 0.001);\r\n        assert(unit('usec') === 0.001);\r\n\r\n        assert(unit('ns') === 0.000001);\r\n        assert(unit('nsec') === 0.000001);\r\n\r\n        assert.throws(() => unit('foobar'), Error, 'unknown unit name: \"foobar\"');\r\n    });\r\n\r\n    /**\r\n     * @test {AssertRule}\r\n     */\r\n    describe('AssertRule', function() {\r\n        /**\r\n         * @test {AssertRule#constructor}\r\n         */\r\n        it('#constructor', function() {\r\n            function parseTest(expr, expect, unit_) {\r\n                const x = new AssertRule(`${expr}${expect}${unit_}`)\r\n\r\n                assert(x.operator === (expr || '<='));\r\n                assert(x.expected === expect * unit(unit_));\r\n            }\r\n\r\n            assert.throws(function() { new AssertRule('=100') }, Error, 'Invalid rule format: \"=100\"');\r\n            assert.throws(function() { new AssertRule('>1h') }, Error, 'Invalid rule format: \">1h\"');\r\n\r\n            parseTest('', 100, '');\r\n\r\n            parseTest('>', 12.3, '');\r\n            parseTest('>=', 12.3, '');\r\n            parseTest('<', 12.3, '');\r\n            parseTest('<=', 12.3, '');\r\n\r\n            parseTest('', 1234, 'us');\r\n            parseTest('', 1.234, 's');\r\n        });\r\n\r\n        /**\r\n         * @test {AssertRule#check}\r\n         */\r\n        it('#check', function() {\r\n            assert(new AssertRule('<100').check(99.9) === true);\r\n            assert(new AssertRule('<100').check(100.0) === false);\r\n\r\n            assert(new AssertRule('<=100').check(100.0) === true);\r\n            assert(new AssertRule('<=100').check(100.1) === false);\r\n\r\n            assert(new AssertRule('>100').check(100.1) === true);\r\n            assert(new AssertRule('>100').check(100.0) === false);\r\n\r\n            assert(new AssertRule('>=100').check(100.0) === true);\r\n            assert(new AssertRule('>=100').check(99.9) === false);\r\n        });\r\n\r\n        /**\r\n         * @test {AssertRule#assert}\r\n         */\r\n        it('#assert', function() {\r\n            const rule = new AssertRule('100');\r\n\r\n            assert.doesNotThrow(() => rule.assert(new Result('hoge', [100])));\r\n\r\n            assert.throws(\r\n                () => rule.assert(new Result('hoge', [100.1])),\r\n                AssertionError,\r\n                'benchmark \"hoge\": actual:100.1msec/op <= expected:100msec/op',\r\n            );\r\n        });\r\n    });\r\n});\r\n",
+    "content": "import assert from 'power-assert';\r\n\r\nimport AssertRule, {unit, AssertionError, AlternateError} from '../src/assertion.js';\r\nimport {Result} from '../src';\r\n\r\n\r\ndescribe('assertion', function() {\r\n    /**\r\n     * @test {unit}\r\n     */\r\n    it('unit converter', function() {\r\n        assert(unit('s') === 1000);\r\n        assert(unit('sec') === 1000);\r\n\r\n        assert(unit('') === 1);\r\n        assert(unit('ms') === 1);\r\n        assert(unit('msec') === 1);\r\n\r\n        assert(unit('us') === 0.001);\r\n        assert(unit('usec') === 0.001);\r\n\r\n        assert(unit('ns') === 0.000001);\r\n        assert(unit('nsec') === 0.000001);\r\n\r\n        assert.throws(() => unit('foobar'), Error, 'unknown unit name: \"foobar\"');\r\n    });\r\n\r\n    describe('error generator', function() {\r\n        [['AssertionError [ERR_ASSERTION]', AssertionError], ['Error', AlternateError]].map(([name, fn]) => {\r\n            /**\r\n             * @test {AssertionError}\r\n             * @test {AlternateError}\r\n             */\r\n            it(fn.name, function() {\r\n                assert.throws(\r\n                    () => {\r\n                        throw fn(new AssertRule('100'), new Result('hoge', [100.1]));\r\n                    }, {\r\n                        name: name,\r\n                        message: 'benchmark \"hoge\": actual:100.1msec/op <= expected:100msec/op',\r\n                        actual: '100.1 msec/op',\r\n                        expected: '100 msec/op',\r\n                        operator: '<=',\r\n                    },\r\n                );\r\n\r\n                assert.throws(\r\n                    () => {\r\n                        throw fn(new AssertRule('>0.1s'), new Result('fuga', [10]));\r\n                    }, {\r\n                        name: name,\r\n                        message: 'benchmark \"fuga\": actual:10msec/op > expected:100msec/op',\r\n                        actual: '10 msec/op',\r\n                        expected: '100 msec/op',\r\n                        operator: '>',\r\n                    },\r\n                );\r\n            });\r\n        });\r\n    });\r\n\r\n    /**\r\n     * @test {AssertRule}\r\n     */\r\n    describe('AssertRule', function() {\r\n        /**\r\n         * @test {AssertRule#constructor}\r\n         */\r\n        it('#constructor', function() {\r\n            function parseTest(expr, expect, unit_) {\r\n                const x = new AssertRule(`${expr}${expect}${unit_}`)\r\n\r\n                assert(x.operator === (expr || '<='));\r\n                assert(x.expected === expect * unit(unit_));\r\n            }\r\n\r\n            assert.throws(function() { new AssertRule('=100') }, Error, 'Invalid rule format: \"=100\"');\r\n            assert.throws(function() { new AssertRule('>1h') }, Error, 'Invalid rule format: \">1h\"');\r\n\r\n            parseTest('', 100, '');\r\n\r\n            parseTest('>', 12.3, '');\r\n            parseTest('>=', 12.3, '');\r\n            parseTest('<', 12.3, '');\r\n            parseTest('<=', 12.3, '');\r\n\r\n            parseTest('', 1234, 'us');\r\n            parseTest('', 1.234, 's');\r\n        });\r\n\r\n        /**\r\n         * @test {AssertRule#check}\r\n         */\r\n        it('#check', function() {\r\n            assert(new AssertRule('<100').check(99.9) === true);\r\n            assert(new AssertRule('<100').check(100.0) === false);\r\n\r\n            assert(new AssertRule('<=100').check(100.0) === true);\r\n            assert(new AssertRule('<=100').check(100.1) === false);\r\n\r\n            assert(new AssertRule('>100').check(100.1) === true);\r\n            assert(new AssertRule('>100').check(100.0) === false);\r\n\r\n            assert(new AssertRule('>=100').check(100.0) === true);\r\n            assert(new AssertRule('>=100').check(99.9) === false);\r\n        });\r\n\r\n        /**\r\n         * @test {AssertRule#assert}\r\n         */\r\n        describe('#assert', function() {\r\n            const rule = new AssertRule('100');\r\n\r\n            assert.doesNotThrow(() => rule.assert(new Result('hoge', [100])));\r\n\r\n            assert.throws(\r\n                () => rule.assert(new Result('hoge', [100.1])),\r\n                {\r\n                    name: 'AssertionError [ERR_ASSERTION]',\r\n                    message: 'benchmark \"hoge\": actual:100.1msec/op <= expected:100msec/op',\r\n                    actual: '100.1 msec/op',\r\n                    expected: '100 msec/op',\r\n                    operator: '<=',\r\n                },\r\n            );\r\n        });\r\n    });\r\n});\r\n",
     "static": true,
     "longname": "/mnt/tmpfs/asyncmark/test/assertion.js",
     "access": null,
@@ -2687,7 +2820,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 128,
+    "__docId__": 131,
     "kind": "test",
     "name": "describe0",
     "testId": 0,
@@ -2697,10 +2830,10 @@
     "longname": "test/assertion.js~describe0",
     "access": null,
     "description": "assertion",
-    "lineNumber": 8
+    "lineNumber": 7
   },
   {
-    "__docId__": 129,
+    "__docId__": 132,
     "kind": "test",
     "name": "it1",
     "testId": 1,
@@ -2710,13 +2843,13 @@
     "longname": "test/assertion.js~describe0.it1",
     "access": null,
     "description": "unit converter",
-    "lineNumber": 12,
+    "lineNumber": 11,
     "testTargets": [
       "unit"
     ]
   },
   {
-    "__docId__": 130,
+    "__docId__": 133,
     "kind": "test",
     "name": "describe2",
     "testId": 2,
@@ -2725,14 +2858,11 @@
     "static": true,
     "longname": "test/assertion.js~describe0.describe2",
     "access": null,
-    "description": "AssertRule",
-    "lineNumber": 32,
-    "testTargets": [
-      "AssertRule"
-    ]
+    "description": "error generator",
+    "lineNumber": 28
   },
   {
-    "__docId__": 131,
+    "__docId__": 134,
     "kind": "test",
     "name": "it3",
     "testId": 3,
@@ -2741,46 +2871,78 @@
     "static": true,
     "longname": "test/assertion.js~describe0.describe2.it3",
     "access": null,
+    "lineNumber": 34,
+    "testTargets": [
+      "AssertionError",
+      "AlternateError"
+    ]
+  },
+  {
+    "__docId__": 135,
+    "kind": "test",
+    "name": "describe4",
+    "testId": 4,
+    "memberof": "test/assertion.js~describe0",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/assertion.js~describe0.describe4",
+    "access": null,
+    "description": "AssertRule",
+    "lineNumber": 65,
+    "testTargets": [
+      "AssertRule"
+    ]
+  },
+  {
+    "__docId__": 136,
+    "kind": "test",
+    "name": "it5",
+    "testId": 5,
+    "memberof": "test/assertion.js~describe0.describe4",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/assertion.js~describe0.describe4.it5",
+    "access": null,
     "description": "#constructor",
-    "lineNumber": 36,
+    "lineNumber": 69,
     "testTargets": [
       "AssertRule#constructor"
     ]
   },
   {
-    "__docId__": 132,
+    "__docId__": 137,
     "kind": "test",
-    "name": "it4",
-    "testId": 4,
-    "memberof": "test/assertion.js~describe0.describe2",
+    "name": "it6",
+    "testId": 6,
+    "memberof": "test/assertion.js~describe0.describe4",
     "testDepth": 2,
     "static": true,
-    "longname": "test/assertion.js~describe0.describe2.it4",
+    "longname": "test/assertion.js~describe0.describe4.it6",
     "access": null,
     "description": "#check",
-    "lineNumber": 61,
+    "lineNumber": 94,
     "testTargets": [
       "AssertRule#check"
     ]
   },
   {
-    "__docId__": 133,
+    "__docId__": 138,
     "kind": "test",
-    "name": "it5",
-    "testId": 5,
-    "memberof": "test/assertion.js~describe0.describe2",
+    "name": "describe7",
+    "testId": 7,
+    "memberof": "test/assertion.js~describe0.describe4",
     "testDepth": 2,
     "static": true,
-    "longname": "test/assertion.js~describe0.describe2.it5",
+    "longname": "test/assertion.js~describe0.describe4.describe7",
     "access": null,
     "description": "#assert",
-    "lineNumber": 78,
+    "lineNumber": 111,
     "testTargets": [
       "AssertRule#assert"
     ]
   },
   {
-    "__docId__": 134,
+    "__docId__": 139,
     "kind": "testFile",
     "name": "test/benchmark.js",
     "content": "import assert from 'power-assert';\n\nimport Benchmark, {Benchmark as Bench2, Result} from '../src';\n\n\n/**\n * @test {Benchmark}\n */\ndescribe('Benchmark', function() {\n    it('module exports', function() {\n        assert(Benchmark === Bench2);\n    });\n\n    /**\n     * @test {Benchmark#constructor}\n     */\n    describe('#constructor', function() {\n        it('default values', function() {\n            const b = new Benchmark();\n\n            assert(b.name === 'unnamed');\n            assert(b.targetErrorRate === 0.1);\n            assert(b.maxNumber === 10000);\n            assert(b.minNumber === 30);\n            assert(b.number === null);\n        });\n\n        it('function argument', function() {\n            let called = false;\n            const f = function() {\n                called = true;\n            }\n            const b = new Benchmark(f);\n\n            assert(b.fun === f);\n\n            assert(called === false);\n            b.fun();\n            assert(called === true);\n        });\n\n        describe('object argument', function() {\n            it('with auto number', function() {\n                const conf = {\n                    name: 'test name',\n                    targetErrorRate: 0.2,\n                    maxNumber: 100,\n                    minNumber: 10,\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.targetErrorRate === conf.targetErrorRate);\n                assert(b.maxNumber === conf.maxNumber);\n                assert(b.minNumber === conf.minNumber);\n            });\n\n            it('with specify number', function() {\n                const conf = {\n                    name: 'test name',\n                    number: 42,\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.number === conf.number);\n            });\n\n            it('functions', function() {\n                const called = {\n                    before: false,\n                    beforeEach: false,\n                    fun: false,\n                    afterEach: false,\n                    after: false,\n                };\n                const conf = {\n                    name: 'test name',\n                    number: 42,\n                    before() {\n                        called.before = true;\n                    },\n                    beforeEach() {\n                        called.beforeEach = true;\n                    },\n                    fun() {\n                        called.fun = true;\n                    },\n                    afterEach() {\n                        called.afterEach = true;\n                    },\n                    after() {\n                        called.after = true;\n                    },\n                };\n                const b = new Benchmark(conf);\n\n                assert(b.name === conf.name);\n                assert(b.number === conf.number);\n\n                assert(called.before === false);\n                b.before();\n                assert(called.before === true);\n\n                assert(called.beforeEach === false);\n                b.beforeEach();\n                assert(called.beforeEach === true);\n\n                assert(called.fun === false);\n                b.fun();\n                assert(called.fun === true);\n\n                assert(called.afterEach === false);\n                b.afterEach();\n                assert(called.afterEach === true);\n\n                assert(called.after === false);\n                b.after();\n                assert(called.after === true);\n            });\n        });\n    });\n\n    /**\n     * @test {Benchmark#fun}\n     */\n    describe('#fun', function() {\n        it('default behavior', async function() {\n            const b = new Benchmark();\n\n            const err = await b.fun().then(() => null).catch(e => e);\n            assert(err !== null, 'excepted error but not throwed');\n            assert(err.message === 'target function is not defined');\n        });\n    });\n\n    /**\n     * @test {Benchmark#after}\n     */\n    describe('#after', function() {\n        it('default behavior', async function() {\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                const b = new Benchmark();\n                const r = new Result('after_test', [1, 2, 3, 4, 5, 100])\n\n                await b.after(r);\n\n                assert.deepStrictEqual(messages, [new Result('after_test', [1, 2, 3, 4, 5]).toString()]);\n            } finally {\n                console.log = l;\n            }\n        });\n    });\n\n    /**\n     * @test {Benchmark#run}\n     */\n    describe('#run', function() {\n        it('call methods order', async function() {\n            const callLog = [];\n\n            const conf = {\n                number: 2,\n                before() { callLog.push('before'); },\n                beforeEach() { callLog.push('beforeEach'); },\n                fun() { callLog.push('fun'); },\n                afterEach() { callLog.push('afterEach'); },\n                after() { callLog.push('after'); },\n            };\n            const b = new Benchmark(conf);\n\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                await b.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'after',\n                ]);\n                assert.deepStrictEqual(messages, []);\n            } finally {\n                console.log = l;\n            }\n        });\n\n        it('call methods order (with callbacks)', async function() {\n            const callLog = [];\n\n            const conf = {\n                number: 2,\n                before() { callLog.push('before'); },\n                beforeEach() { callLog.push('beforeEach'); },\n                fun() { callLog.push('fun'); },\n                afterEach() { callLog.push('afterEach'); },\n                after() { callLog.push('after'); },\n            };\n            const b = new Benchmark(conf);\n\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                await b.run({}, {\n                    beforeTest() { callLog.push('beforeTest'); },\n                    afterTest() { callLog.push('afterTest'); },\n                });\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'beforeTest',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'afterTest',\n                    'beforeTest',\n                    'beforeEach',\n                    'fun',\n                    'afterEach',\n                    'afterTest',\n                    'after',\n                ]);\n                assert.deepStrictEqual(messages, []);\n            } finally {\n                console.log = l;\n            }\n        });\n\n        it('context handling', async function() {\n            const conf = {\n                number: 2,\n                before() {\n                    assert(this.inOuter === undefined);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inOuter = 123;\n                },\n                beforeEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inInner = 'abc';\n                },\n                fun() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inFunc = true;\n                },\n                afterEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inFunc === true);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outInner = 'cba';\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inFunc === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outOuter = 321;\n                },\n            };\n            const b = new Benchmark(conf);\n\n            const l = console.log;\n            const messages = [];\n            console.log = function() {\n                messages.push([...arguments].map(x => String(x)).join(' '));\n            }\n\n            try {\n                await b.run({}, {\n                    beforeTest() {\n                        assert(this.inOuter === 123);\n                        assert(this.inInner === undefined);\n                        assert(this.inFunc === undefined);\n                        assert(this.outInner === undefined);\n                        assert(this.outOuter === undefined);\n                    },\n                    afterTest() {\n                        assert(this.inOuter === 123);\n                        assert(this.inInner === 'abc');\n                        assert(this.inFunc === true);\n                        assert(this.outInner === 'cba');\n                        assert(this.outOuter === undefined);\n                    },\n                });\n                assert.deepStrictEqual(messages, []);\n            } finally {\n                console.log = l;\n            }\n        });\n\n        it('context sandboxing', async function() {\n            const b = new Benchmark({\n                number: 2,\n                fun() {\n                    assert(this.x === undefined);\n                    this.x = 'foobar';\n                    assert(this.x === 'foobar');\n                },\n                after() {},\n            });\n\n            b.run();\n            b.run();\n        });\n\n        it('arguments for methods', async function() {\n            const beforeCounts = [];\n            const afterCounts = [];\n\n            const b = new Benchmark({\n                number: 2,\n                before() {\n                    assert(arguments.length === 0);\n                },\n                beforeEach(count) {\n                    assert(arguments.length === 1);\n\n                    assert(typeof count === 'number');\n                    beforeCounts.push(count);\n                },\n                fun() {\n                    assert(arguments.length === 0);\n                },\n                afterEach(count, msec) {\n                    assert(arguments.length === 2);\n\n                    assert(typeof msec === 'number');\n                    assert(msec < 1);\n\n                    assert(typeof count === 'number');\n                    afterCounts.push(count);\n                },\n                after(result) {\n                    assert(arguments.length === 1);\n\n                    assert(result instanceof Result);\n                    assert(result.msecs.length === 2)\n                },\n            });\n\n            const result = await b.run({}, {\n                beforeTest(count, bench) {\n                    assert(typeof count === 'number');\n                    assert(bench instanceof Benchmark);\n                },\n                afterTest(count, bench, msec) {\n                    assert(typeof count === 'number');\n                    assert(bench instanceof Benchmark);\n                    assert(typeof msec === 'number');\n                    assert(msec < 1);\n                },\n            });\n            assert(result instanceof Result);\n            assert(result.msecs.length === 2);\n\n            assert.deepStrictEqual(beforeCounts, [0, 1]);\n            assert.deepStrictEqual(afterCounts, [0, 1]);\n        });\n\n        describe('loop and time', function() {\n            it('static number', async function() {\n                const r100 = await new Benchmark({\n                    number: 3,\n                    fun() {\n                        return new Promise((resolve, reject) => setTimeout(resolve, 100));\n                    },\n                    after() {}\n                }).run();\n                assert(Math.abs(r100.average - 100) <= 3);\n\n                const r42 = await new Benchmark({\n                    number: 3,\n                    fun() {\n                        return new Promise((resolve, reject) => setTimeout(resolve, 42));\n                    },\n                    after() {}\n                }).run();\n                assert(Math.abs(r42.average - 42) <= 3);\n            });\n\n            it('auto / rate 20%', async function() {\n                const r = await new Benchmark({\n                    minNumber: 5,\n                    maxNumber: 100,\n                    targetErrorRate: 0.2,\n                    fun() {\n                        return new Promise((resolve, reject) => setTimeout(resolve, 49 + Math.random() * 2));\n                    },\n                    after() {},\n                }).run();\n\n                assert(r.msecs.length >= 5);\n                assert(r.msecs.length <= 100);\n                assert(r.errorRate <= 0.2);\n            });\n\n            it('auto / rate 40%', async function() {\n                const r = await new Benchmark({\n                    minNumber: 5,\n                    maxNumber: 100,\n                    targetErrorRate: 0.4,\n                    fun() {\n                        return new Promise((resolve, reject) => setTimeout(resolve, 49 + Math.random() * 2));\n                    },\n                    after() {},\n                }).run();\n\n                assert(r.msecs.length >= 5);\n                assert(r.msecs.length <= 100);\n                assert(r.errorRate <= 0.4);\n            });\n        });\n    });\n});\n",
@@ -2791,14 +2953,14 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 135,
+    "__docId__": 140,
     "kind": "test",
-    "name": "describe6",
-    "testId": 6,
+    "name": "describe8",
+    "testId": 8,
     "memberof": "test/benchmark.js",
     "testDepth": 0,
     "static": true,
-    "longname": "test/benchmark.js~describe6",
+    "longname": "test/benchmark.js~describe8",
     "access": null,
     "description": "Benchmark",
     "lineNumber": 9,
@@ -2807,27 +2969,27 @@
     ]
   },
   {
-    "__docId__": 136,
+    "__docId__": 141,
     "kind": "test",
-    "name": "it7",
-    "testId": 7,
-    "memberof": "test/benchmark.js~describe6",
+    "name": "it9",
+    "testId": 9,
+    "memberof": "test/benchmark.js~describe8",
     "testDepth": 1,
     "static": true,
-    "longname": "test/benchmark.js~describe6.it7",
+    "longname": "test/benchmark.js~describe8.it9",
     "access": null,
     "description": "module exports",
     "lineNumber": 10
   },
   {
-    "__docId__": 137,
+    "__docId__": 142,
     "kind": "test",
-    "name": "describe8",
-    "testId": 8,
-    "memberof": "test/benchmark.js~describe6",
+    "name": "describe10",
+    "testId": 10,
+    "memberof": "test/benchmark.js~describe8",
     "testDepth": 1,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8",
+    "longname": "test/benchmark.js~describe8.describe10",
     "access": null,
     "description": "#constructor",
     "lineNumber": 17,
@@ -2836,92 +2998,92 @@
     ]
   },
   {
-    "__docId__": 138,
+    "__docId__": 143,
     "kind": "test",
-    "name": "it9",
-    "testId": 9,
-    "memberof": "test/benchmark.js~describe6.describe8",
+    "name": "it11",
+    "testId": 11,
+    "memberof": "test/benchmark.js~describe8.describe10",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.it9",
+    "longname": "test/benchmark.js~describe8.describe10.it11",
     "access": null,
     "description": "default values",
     "lineNumber": 18
   },
   {
-    "__docId__": 139,
+    "__docId__": 144,
     "kind": "test",
-    "name": "it10",
-    "testId": 10,
-    "memberof": "test/benchmark.js~describe6.describe8",
+    "name": "it12",
+    "testId": 12,
+    "memberof": "test/benchmark.js~describe8.describe10",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.it10",
+    "longname": "test/benchmark.js~describe8.describe10.it12",
     "access": null,
     "description": "function argument",
     "lineNumber": 28
   },
   {
-    "__docId__": 140,
+    "__docId__": 145,
     "kind": "test",
-    "name": "describe11",
-    "testId": 11,
-    "memberof": "test/benchmark.js~describe6.describe8",
+    "name": "describe13",
+    "testId": 13,
+    "memberof": "test/benchmark.js~describe8.describe10",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.describe11",
+    "longname": "test/benchmark.js~describe8.describe10.describe13",
     "access": null,
     "description": "object argument",
     "lineNumber": 42
   },
   {
-    "__docId__": 141,
+    "__docId__": 146,
     "kind": "test",
-    "name": "it12",
-    "testId": 12,
-    "memberof": "test/benchmark.js~describe6.describe8.describe11",
+    "name": "it14",
+    "testId": 14,
+    "memberof": "test/benchmark.js~describe8.describe10.describe13",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.describe11.it12",
+    "longname": "test/benchmark.js~describe8.describe10.describe13.it14",
     "access": null,
     "description": "with auto number",
     "lineNumber": 43
   },
   {
-    "__docId__": 142,
+    "__docId__": 147,
     "kind": "test",
-    "name": "it13",
-    "testId": 13,
-    "memberof": "test/benchmark.js~describe6.describe8.describe11",
+    "name": "it15",
+    "testId": 15,
+    "memberof": "test/benchmark.js~describe8.describe10.describe13",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.describe11.it13",
+    "longname": "test/benchmark.js~describe8.describe10.describe13.it15",
     "access": null,
     "description": "with specify number",
     "lineNumber": 58
   },
   {
-    "__docId__": 143,
+    "__docId__": 148,
     "kind": "test",
-    "name": "it14",
-    "testId": 14,
-    "memberof": "test/benchmark.js~describe6.describe8.describe11",
+    "name": "it16",
+    "testId": 16,
+    "memberof": "test/benchmark.js~describe8.describe10.describe13",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe8.describe11.it14",
+    "longname": "test/benchmark.js~describe8.describe10.describe13.it16",
     "access": null,
     "description": "functions",
     "lineNumber": 69
   },
   {
-    "__docId__": 144,
+    "__docId__": 149,
     "kind": "test",
-    "name": "describe15",
-    "testId": 15,
-    "memberof": "test/benchmark.js~describe6",
+    "name": "describe17",
+    "testId": 17,
+    "memberof": "test/benchmark.js~describe8",
     "testDepth": 1,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe15",
+    "longname": "test/benchmark.js~describe8.describe17",
     "access": null,
     "description": "#fun",
     "lineNumber": 127,
@@ -2930,27 +3092,27 @@
     ]
   },
   {
-    "__docId__": 145,
+    "__docId__": 150,
     "kind": "test",
-    "name": "it16",
-    "testId": 16,
-    "memberof": "test/benchmark.js~describe6.describe15",
+    "name": "it18",
+    "testId": 18,
+    "memberof": "test/benchmark.js~describe8.describe17",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe15.it16",
+    "longname": "test/benchmark.js~describe8.describe17.it18",
     "access": null,
     "description": "default behavior",
     "lineNumber": 128
   },
   {
-    "__docId__": 146,
+    "__docId__": 151,
     "kind": "test",
-    "name": "describe17",
-    "testId": 17,
-    "memberof": "test/benchmark.js~describe6",
+    "name": "describe19",
+    "testId": 19,
+    "memberof": "test/benchmark.js~describe8",
     "testDepth": 1,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe17",
+    "longname": "test/benchmark.js~describe8.describe19",
     "access": null,
     "description": "#after",
     "lineNumber": 140,
@@ -2959,27 +3121,27 @@
     ]
   },
   {
-    "__docId__": 147,
+    "__docId__": 152,
     "kind": "test",
-    "name": "it18",
-    "testId": 18,
-    "memberof": "test/benchmark.js~describe6.describe17",
+    "name": "it20",
+    "testId": 20,
+    "memberof": "test/benchmark.js~describe8.describe19",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe17.it18",
+    "longname": "test/benchmark.js~describe8.describe19.it20",
     "access": null,
     "description": "default behavior",
     "lineNumber": 141
   },
   {
-    "__docId__": 148,
+    "__docId__": 153,
     "kind": "test",
-    "name": "describe19",
-    "testId": 19,
-    "memberof": "test/benchmark.js~describe6",
+    "name": "describe21",
+    "testId": 21,
+    "memberof": "test/benchmark.js~describe8",
     "testDepth": 1,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19",
+    "longname": "test/benchmark.js~describe8.describe21",
     "access": null,
     "description": "#run",
     "lineNumber": 164,
@@ -2988,124 +3150,124 @@
     ]
   },
   {
-    "__docId__": 149,
+    "__docId__": 154,
     "kind": "test",
-    "name": "it20",
-    "testId": 20,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "it22",
+    "testId": 22,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.it20",
+    "longname": "test/benchmark.js~describe8.describe21.it22",
     "access": null,
     "description": "call methods order",
     "lineNumber": 165
   },
   {
-    "__docId__": 150,
+    "__docId__": 155,
     "kind": "test",
-    "name": "it21",
-    "testId": 21,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "it23",
+    "testId": 23,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.it21",
+    "longname": "test/benchmark.js~describe8.describe21.it23",
     "access": null,
     "description": "call methods order (with callbacks)",
     "lineNumber": 203
   },
   {
-    "__docId__": 151,
+    "__docId__": 156,
     "kind": "test",
-    "name": "it22",
-    "testId": 22,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "it24",
+    "testId": 24,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.it22",
+    "longname": "test/benchmark.js~describe8.describe21.it24",
     "access": null,
     "description": "context handling",
     "lineNumber": 248
   },
   {
-    "__docId__": 152,
+    "__docId__": 157,
     "kind": "test",
-    "name": "it23",
-    "testId": 23,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "it25",
+    "testId": 25,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.it23",
+    "longname": "test/benchmark.js~describe8.describe21.it25",
     "access": null,
     "description": "context sandboxing",
     "lineNumber": 328
   },
   {
-    "__docId__": 153,
+    "__docId__": 158,
     "kind": "test",
-    "name": "it24",
-    "testId": 24,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "it26",
+    "testId": 26,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.it24",
+    "longname": "test/benchmark.js~describe8.describe21.it26",
     "access": null,
     "description": "arguments for methods",
     "lineNumber": 343
   },
   {
-    "__docId__": 154,
+    "__docId__": 159,
     "kind": "test",
-    "name": "describe25",
-    "testId": 25,
-    "memberof": "test/benchmark.js~describe6.describe19",
+    "name": "describe27",
+    "testId": 27,
+    "memberof": "test/benchmark.js~describe8.describe21",
     "testDepth": 2,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.describe25",
+    "longname": "test/benchmark.js~describe8.describe21.describe27",
     "access": null,
     "description": "loop and time",
     "lineNumber": 397
   },
   {
-    "__docId__": 155,
+    "__docId__": 160,
     "kind": "test",
-    "name": "it26",
-    "testId": 26,
-    "memberof": "test/benchmark.js~describe6.describe19.describe25",
+    "name": "it28",
+    "testId": 28,
+    "memberof": "test/benchmark.js~describe8.describe21.describe27",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.describe25.it26",
+    "longname": "test/benchmark.js~describe8.describe21.describe27.it28",
     "access": null,
     "description": "static number",
     "lineNumber": 398
   },
   {
-    "__docId__": 156,
+    "__docId__": 161,
     "kind": "test",
-    "name": "it27",
-    "testId": 27,
-    "memberof": "test/benchmark.js~describe6.describe19.describe25",
+    "name": "it29",
+    "testId": 29,
+    "memberof": "test/benchmark.js~describe8.describe21.describe27",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.describe25.it27",
+    "longname": "test/benchmark.js~describe8.describe21.describe27.it29",
     "access": null,
     "description": "auto / rate 20%",
     "lineNumber": 418
   },
   {
-    "__docId__": 157,
+    "__docId__": 162,
     "kind": "test",
-    "name": "it28",
-    "testId": 28,
-    "memberof": "test/benchmark.js~describe6.describe19.describe25",
+    "name": "it30",
+    "testId": 30,
+    "memberof": "test/benchmark.js~describe8.describe21.describe27",
     "testDepth": 3,
     "static": true,
-    "longname": "test/benchmark.js~describe6.describe19.describe25.it28",
+    "longname": "test/benchmark.js~describe8.describe21.describe27.it30",
     "access": null,
     "description": "auto / rate 40%",
     "lineNumber": 434
   },
   {
-    "__docId__": 158,
+    "__docId__": 163,
     "kind": "testFile",
     "name": "test/result.js",
     "content": "import assert from 'power-assert';\nimport {AssertionError} from 'assert';\n\nimport {Result} from '../src';\n\n\n/**\n * @test {Result}\n */\ndescribe('Result', function() {\n    /**\n     * @test {Result#total}\n     */\n    it('#total', function() {\n        assert(new Result('test', [10, 20, 30]).total === 60);\n        assert(new Result('test', [11, 22, 33]).total === 66);\n    });\n\n    /**\n     * @test {Result#fastest}\n     */\n    it('#fastest', function() {\n        assert(new Result('test', [10, 20, 30]).fastest === 10);\n        assert(new Result('test', [33, 22, 11]).fastest === 11);\n    });\n\n    /**\n     * @test {Result#slowest}\n     */\n    it('#slowest', function() {\n        assert(new Result('test', [10, 20, 30]).slowest === 30);\n        assert(new Result('test', [33, 22, 11]).slowest === 33);\n    });\n\n    /**\n     * @test {Result#average}\n     */\n    it('#average', function() {\n        assert(new Result('test', [10, 20, 30]).average === 20);\n        assert(new Result('test', [11, 22, 33]).average === 22);\n    });\n\n    /**\n     * @test {Result#variance}\n     */\n    it('#variance', function() {\n        assert(new Result('test', [10, 20, 30]).variance === 100);\n        assert(new Result('test', [11, 22, 33]).variance === 121);\n    });\n\n    /**\n     * @test {Result#std}\n     */\n    it('#std', function() {\n        assert(new Result('test', [10, 20, 30]).std === 10);\n        assert(new Result('test', [11, 22, 33]).std === 11);\n    });\n\n    /**\n     * @test {Result#std}\n     */\n    it('#sem', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).sem - 5.7735) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).sem - 6.3509) < 0.001);\n    });\n\n    /**\n     * @test {Result#errorRange}\n     */\n    it('#errorRange', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).errorRange - 11.3161) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).errorRange - 12.4477) < 0.001);\n    });\n\n    /**\n     * @test {Result#errorRate}\n     */\n    it('#errorRate', function() {\n        assert(Math.abs(new Result('test', [10, 20, 30]).errorRate - 0.5658) < 0.001);\n        assert(Math.abs(new Result('test', [11, 22, 33]).errorRate - 0.5658) < 0.001);\n    });\n\n    /**\n     * @test {Result#opsPerSec}\n     */\n    it('#opsPerSec', function() {\n        assert(new Result('test', [1]).opsPerSec === 1000);\n        assert(new Result('test', [200]).opsPerSec === 5);\n    });\n\n    /**\n     * @test {Result#dropOutlier}\n     */\n    it('#opsPerSec', function() {\n        assert.deepStrictEqual(new Result('test', [10, 20, 30]).dropOutlier().msecs, [10, 20, 30]);\n        assert.deepStrictEqual(new Result('test', [10, 11, 12, 13, 14, 15, 100]).dropOutlier().msecs, [10, 11, 12, 13, 14, 15]);\n        assert.deepStrictEqual(new Result('test', [10, 11, 12, 13, 14, 15, 100]).dropOutlier(3).msecs, [10, 11, 12, 13, 14, 15, 100]);\n    });\n\n    /**\n     * @test {Result#toString}\n     */\n    it('#toString', function() {\n        assert(String(new Result('test', [10, 20, 30])) === 'test:\\t50ops/sec\\t20msec/op\\t+-11.3161msec/op (56.58%)\\t3 times tried');\n        assert(String(new Result('test', [1.234567, 2.345678])) === 'test:\\t558.621ops/sec\\t1.7901msec/op\\t+-1.0889msec/op (60.83%)\\t2 times tried');\n    });\n\n    /**\n     * @test {Result#assert}\n     */\n    it('#assert', function() {\n        const result = new Result('test', [100]);\n\n        assert.doesNotThrow(() => {\n            result.assert('>=100ms', '<=100ms');\n        });\n\n        assert.throws(() => {\n            result.assert('>100ms', '<=100ms');\n        }, AssertionError, 'benchmark \"test\": actual:100msec/op > expected:100msec/op');\n\n        assert.throws(() => {\n            result.assert('>=100ms', '<100ms');\n        }, AssertionError, 'benchmark \"test\": actual:100msec/op < expected:100msec/op');\n    });\n});\n",
@@ -3116,14 +3278,14 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 159,
+    "__docId__": 164,
     "kind": "test",
-    "name": "describe29",
-    "testId": 29,
+    "name": "describe31",
+    "testId": 31,
     "memberof": "test/result.js",
     "testDepth": 0,
     "static": true,
-    "longname": "test/result.js~describe29",
+    "longname": "test/result.js~describe31",
     "access": null,
     "description": "Result",
     "lineNumber": 10,
@@ -3132,14 +3294,14 @@
     ]
   },
   {
-    "__docId__": 160,
+    "__docId__": 165,
     "kind": "test",
-    "name": "it30",
-    "testId": 30,
-    "memberof": "test/result.js~describe29",
+    "name": "it32",
+    "testId": 32,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it30",
+    "longname": "test/result.js~describe31.it32",
     "access": null,
     "description": "#total",
     "lineNumber": 14,
@@ -3148,14 +3310,14 @@
     ]
   },
   {
-    "__docId__": 161,
+    "__docId__": 166,
     "kind": "test",
-    "name": "it31",
-    "testId": 31,
-    "memberof": "test/result.js~describe29",
+    "name": "it33",
+    "testId": 33,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it31",
+    "longname": "test/result.js~describe31.it33",
     "access": null,
     "description": "#fastest",
     "lineNumber": 22,
@@ -3164,14 +3326,14 @@
     ]
   },
   {
-    "__docId__": 162,
+    "__docId__": 167,
     "kind": "test",
-    "name": "it32",
-    "testId": 32,
-    "memberof": "test/result.js~describe29",
+    "name": "it34",
+    "testId": 34,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it32",
+    "longname": "test/result.js~describe31.it34",
     "access": null,
     "description": "#slowest",
     "lineNumber": 30,
@@ -3180,14 +3342,14 @@
     ]
   },
   {
-    "__docId__": 163,
+    "__docId__": 168,
     "kind": "test",
-    "name": "it33",
-    "testId": 33,
-    "memberof": "test/result.js~describe29",
+    "name": "it35",
+    "testId": 35,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it33",
+    "longname": "test/result.js~describe31.it35",
     "access": null,
     "description": "#average",
     "lineNumber": 38,
@@ -3196,14 +3358,14 @@
     ]
   },
   {
-    "__docId__": 164,
+    "__docId__": 169,
     "kind": "test",
-    "name": "it34",
-    "testId": 34,
-    "memberof": "test/result.js~describe29",
+    "name": "it36",
+    "testId": 36,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it34",
+    "longname": "test/result.js~describe31.it36",
     "access": null,
     "description": "#variance",
     "lineNumber": 46,
@@ -3212,14 +3374,14 @@
     ]
   },
   {
-    "__docId__": 165,
+    "__docId__": 170,
     "kind": "test",
-    "name": "it35",
-    "testId": 35,
-    "memberof": "test/result.js~describe29",
+    "name": "it37",
+    "testId": 37,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it35",
+    "longname": "test/result.js~describe31.it37",
     "access": null,
     "description": "#std",
     "lineNumber": 54,
@@ -3228,14 +3390,14 @@
     ]
   },
   {
-    "__docId__": 166,
+    "__docId__": 171,
     "kind": "test",
-    "name": "it36",
-    "testId": 36,
-    "memberof": "test/result.js~describe29",
+    "name": "it38",
+    "testId": 38,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it36",
+    "longname": "test/result.js~describe31.it38",
     "access": null,
     "description": "#sem",
     "lineNumber": 62,
@@ -3244,14 +3406,14 @@
     ]
   },
   {
-    "__docId__": 167,
+    "__docId__": 172,
     "kind": "test",
-    "name": "it37",
-    "testId": 37,
-    "memberof": "test/result.js~describe29",
+    "name": "it39",
+    "testId": 39,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it37",
+    "longname": "test/result.js~describe31.it39",
     "access": null,
     "description": "#errorRange",
     "lineNumber": 70,
@@ -3260,14 +3422,14 @@
     ]
   },
   {
-    "__docId__": 168,
+    "__docId__": 173,
     "kind": "test",
-    "name": "it38",
-    "testId": 38,
-    "memberof": "test/result.js~describe29",
+    "name": "it40",
+    "testId": 40,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it38",
+    "longname": "test/result.js~describe31.it40",
     "access": null,
     "description": "#errorRate",
     "lineNumber": 78,
@@ -3276,14 +3438,14 @@
     ]
   },
   {
-    "__docId__": 169,
+    "__docId__": 174,
     "kind": "test",
-    "name": "it39",
-    "testId": 39,
-    "memberof": "test/result.js~describe29",
+    "name": "it41",
+    "testId": 41,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it39",
+    "longname": "test/result.js~describe31.it41",
     "access": null,
     "description": "#opsPerSec",
     "lineNumber": 86,
@@ -3292,14 +3454,14 @@
     ]
   },
   {
-    "__docId__": 170,
+    "__docId__": 175,
     "kind": "test",
-    "name": "it40",
-    "testId": 40,
-    "memberof": "test/result.js~describe29",
+    "name": "it42",
+    "testId": 42,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it40",
+    "longname": "test/result.js~describe31.it42",
     "access": null,
     "description": "#opsPerSec",
     "lineNumber": 94,
@@ -3308,14 +3470,14 @@
     ]
   },
   {
-    "__docId__": 171,
+    "__docId__": 176,
     "kind": "test",
-    "name": "it41",
-    "testId": 41,
-    "memberof": "test/result.js~describe29",
+    "name": "it43",
+    "testId": 43,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it41",
+    "longname": "test/result.js~describe31.it43",
     "access": null,
     "description": "#toString",
     "lineNumber": 103,
@@ -3324,14 +3486,14 @@
     ]
   },
   {
-    "__docId__": 172,
+    "__docId__": 177,
     "kind": "test",
-    "name": "it42",
-    "testId": 42,
-    "memberof": "test/result.js~describe29",
+    "name": "it44",
+    "testId": 44,
+    "memberof": "test/result.js~describe31",
     "testDepth": 1,
     "static": true,
-    "longname": "test/result.js~describe29.it42",
+    "longname": "test/result.js~describe31.it44",
     "access": null,
     "description": "#assert",
     "lineNumber": 111,
@@ -3340,7 +3502,7 @@
     ]
   },
   {
-    "__docId__": 173,
+    "__docId__": 178,
     "kind": "testFile",
     "name": "test/suite.js",
     "content": "import assert from 'power-assert';\n\nimport Benchmark, {Suite, Result} from '../src';\n\n\n/**\n * @test {Suite}\n */\ndescribe('Suite', function() {\n    describe('#constructor', function() {\n        it('default values', function() {\n            const s = new Suite();\n\n            assert(s.name === 'unnamed');\n            assert(s.parallel === false);\n            assert.deepStrictEqual(s.benchmarkDefault, {});\n        });\n\n        it('options', function() {\n            const conf = {\n                name: 'foo',\n                parallel: true,\n                benchmarkDefault: {\n                    name: 'bar',\n                },\n            };\n            const s = new Suite(conf);\n\n            assert(s.name === 'foo');\n            assert(s.parallel === true);\n            assert.deepStrictEqual(s.benchmarkDefault, {name: 'bar'});\n        });\n\n        it('functions', function() {\n            const called = {\n                before: false,\n                beforeEach: false,\n                afterEach: false,\n                after: false,\n            };\n            const s = new Suite({\n                before() {\n                    called.before = true;\n                },\n                beforeEach() {\n                    called.beforeEach = true;\n                },\n                fun() {\n                    called.fun = true;\n                },\n                afterEach() {\n                    called.afterEach = true;\n                },\n                after() {\n                    called.after = true;\n                },\n            });\n\n            assert(called.before === false);\n            s.before();\n            assert(called.before === true);\n\n            assert(called.beforeEach === false);\n            s.beforeEach();\n            assert(called.beforeEach === true);\n\n            assert(called.afterEach === false);\n            s.afterEach();\n            assert(called.afterEach === true);\n\n            assert(called.after === false);\n            s.after();\n            assert(called.after === true);\n        });\n    });\n\n    /**\n     * @test {Suite#addBenchmark}\n     */\n    it('#addBenchmark', function() {\n        const s = new Suite();\n        const b1 = new Benchmark({name: 'a'});\n        const b2 = new Benchmark({name: 'b'});\n\n        assert.deepStrictEqual(s.benchmarks, []);\n        s.addBenchmark(b1);\n        assert.deepStrictEqual(s.benchmarks, [b1]);\n        s.addBenchmark(b2);\n        assert.deepStrictEqual(s.benchmarks, [b1, b2]);\n\n        assert(s.benchmarks[0].name === 'a');\n        assert(s.benchmarks[1].name === 'b');\n    });\n\n    /**\n     * @test {Suite#addSuite}\n     */\n    it('#addSuite', function() {\n        const p = new Suite();\n        const c1 = new Suite();\n        const c2 = new Suite();\n\n        assert(p !== c1);\n        assert(p !== c2);\n        assert(c1 !== c2);\n\n        assert.deepStrictEqual(p.benchmarks, []);\n        p.addBenchmark(c1);\n        assert.deepStrictEqual(p.benchmarks, [c1]);\n        p.addBenchmark(c2);\n        assert.deepStrictEqual(p.benchmarks, [c1, c2]);\n    });\n\n    /**\n     * @test {Suite#add}\n     */\n    describe('#add', function() {\n        it('Benchmark', function() {\n            const s = new Suite();\n            const b = new Benchmark({name: 'foobar'});\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(b);\n\n            assert.deepStrictEqual(s.benchmarks, [b]);\n            assert(s.benchmarks[0].name === 'foobar');\n        });\n\n        it('Suite', function() {\n            const p = new Suite();\n            const c = new Suite();\n\n            assert(p !== c);\n            assert.deepStrictEqual(p.benchmarks, []);\n\n            p.add(c);\n\n            assert.deepStrictEqual(p.benchmarks, [c]);\n            assert.deepStrictEqual(c.benchmarks, []);\n        });\n\n        it('function', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const fun = function() {\n                called.fun = true;\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(fun);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('function with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    fun() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].fun();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n\n        it('object', async function() {\n            const called = {\n                fun: false,\n                after: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.after = true;\n                    },\n                },\n            });\n\n            const conf = {\n                fun() {\n                    called.fun = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.fun === false);\n            await s.benchmarks[0].fun();\n            assert(called.fun === true);\n\n            assert(called.after === false);\n            await s.benchmarks[0].after();\n            assert(called.after === true);\n        });\n\n        it('object with override default', async function() {\n            const called = {\n                original: false,\n                overrided: false,\n            };\n            const s = new Suite({\n                benchmarkDefault: {\n                    after() {\n                        called.original = true;\n                    },\n                },\n            });\n\n            const conf = {\n                after() {\n                    called.overrided = true;\n                },\n            };\n\n            assert.deepStrictEqual(s.benchmarks, []);\n            s.add(conf);\n            assert(s.benchmarks.length === 1);\n\n            assert(called.original === false);\n            assert(called.overrided === false);\n            await s.benchmarks[0].after();\n            assert(called.original === false);\n            assert(called.overrided === true);\n        });\n    });\n\n    /**\n     * @test {Suite#run}\n     */\n    describe('#run', function() {\n        describe('call methods order', function() {\n            it('empty tests', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    beforeTest() {\n                        callLog.push('beforeTest');\n                    },\n                    afterTest() {\n                        callLog.push('afterTest');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('empty tests (enabled parallel)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    beforeTest() {\n                        callLog.push('beforeTest');\n                    },\n                    afterTest() {\n                        callLog.push('afterTest');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    parallel: true,\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n                    'after',\n                ]);\n            });\n\n            it('with test', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    beforeTest() {\n                        callLog.push('beforeTest');\n                    },\n                    afterTest() {\n                        callLog.push('afterTest');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await (new Suite({\n                    beforeTest() {\n                        callLog.push('beforeTest parent');\n                    },\n                    afterTest() {\n                        callLog.push('afterTest parent');\n                    },\n                })).add(s).run();\n\n                assert.deepStrictEqual(callLog, [\n                    'before',\n\n                    'beforeEach',\n\n                    'beforeTest parent',\n                    'beforeTest',\n                    'bench1',\n                    'afterTest',\n                    'afterTest parent',\n\n                    'beforeTest parent',\n                    'beforeTest',\n                    'bench1',\n                    'afterTest',\n                    'afterTest parent',\n\n                    'afterEach',\n\n                    'beforeEach',\n\n                    'beforeTest parent',\n                    'beforeTest',\n                    'bench2',\n                    'afterTest',\n                    'afterTest parent',\n\n                    'beforeTest parent',\n                    'beforeTest',\n                    'bench2',\n                    'afterTest',\n                    'afterTest parent',\n\n                    'beforeTest parent',\n                    'beforeTest',\n                    'bench2',\n                    'afterTest',\n                    'afterTest parent',\n\n                    'afterEach',\n\n                    'after',\n                ]);\n            });\n\n            it('with test (enabled parallel)', async function() {\n                const callLog = [];\n\n                const s = new Suite({\n                    before() {\n                        callLog.push('before');\n                    },\n                    beforeEach() {\n                        callLog.push('beforeEach');\n                    },\n                    beforeTest() {\n                        callLog.push('beforeTest');\n                    },\n                    afterTest() {\n                        callLog.push('afterTest');\n                    },\n                    afterEach() {\n                        callLog.push('afterEach');\n                    },\n                    after() {\n                        callLog.push('after');\n                    },\n                    benchmarkDefault: {\n                        after() {},\n                    },\n                    parallel: true,\n                });\n\n                s.add({\n                    number: 2,\n                    fun() {\n                        callLog.push('bench1');\n                    },\n                });\n\n                s.add({\n                    number: 3,\n                    fun() {\n                        callLog.push('bench2');\n                    },\n                });\n\n                assert.deepStrictEqual(callLog, []);\n\n                await s.run();\n\n                assert(callLog.length === 21);\n\n                assert(callLog[0] === 'before');\n                assert(callLog[1] === 'beforeEach');\n                assert(callLog[callLog.length - 2] === 'afterEach');\n                assert(callLog[callLog.length - 1] === 'after');\n\n                assert(callLog.filter(x => x === 'bench1').length === 2);\n                assert(callLog.filter(x => x === 'bench2').length === 3);\n                assert(callLog.filter(x => x === 'beforeEach').length === 2);\n                assert(callLog.filter(x => x === 'afterEach').length === 2);\n                assert(callLog.filter(x => x === 'beforeTest').length === 5);\n                assert(callLog.filter(x => x === 'afterTest').length === 5);\n            });\n        });\n\n        const contextTest = async function(options) {\n            options.__proto__ = {\n                before() {\n                    assert(this.inOuter === undefined);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inOuter = 123;\n                },\n                beforeEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inInner = 'abc';\n                },\n                afterEach() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outInner = 'cba';\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === undefined);\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.outOuter = 321;\n                },\n                benchmarkDefault: {\n                    fun() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({\n                number: 2,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 42;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 42);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            s.add({\n                number: 3,\n                before() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === undefined);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n\n                    this.inBench = 24;\n                },\n                after() {\n                    assert(this.inOuter === 123);\n                    assert(this.inInner === 'abc');\n                    assert(this.inBench === 24);\n                    assert(this.outInner === undefined);\n                    assert(this.outOuter === undefined);\n                },\n            });\n\n            await s.run();\n        };\n\n        it('context handling', function() {\n            return contextTest({parallel: false});\n        });\n\n        it('context handling (enabled parallel)', function() {\n            return contextTest({parallel: true});\n        });\n\n        const argumentsTest = async function(options) {\n            const beforeCounts = [];\n            const afterCounts = [];\n            const results = [];\n            const beforeTestCounts = [];\n            const afterTestCounts = [];\n\n            options.__proto__ = {\n                before() {\n                    assert(arguments.length === 0);\n                },\n                beforeEach(count, benchmark) {\n                    assert(arguments.length === 2);\n\n                    assert(typeof count === 'number');\n                    beforeCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n                },\n                beforeTest(suiteCount, benchCount, benchmark) {\n                    assert(arguments.length === 3);\n\n                    assert(typeof suiteCount === 'number');\n                    assert(typeof benchCount === 'number');\n                    assert(benchmark instanceof Benchmark);\n\n                    beforeTestCounts.push([benchmark.name, suiteCount, benchCount]);\n                },\n                afterTest(suiteCount, benchCount, benchmark, msec) {\n                    assert(arguments.length === 4);\n\n                    assert(typeof suiteCount === 'number');\n                    assert(typeof benchCount === 'number');\n                    assert(benchmark instanceof Benchmark);\n\n                    afterTestCounts.push([benchmark.name, suiteCount, benchCount]);\n\n                    assert(typeof msec === 'number');\n                    assert(msec < 1);\n                },\n                afterEach(count, benchmark, result) {\n                    assert(arguments.length === 3);\n\n                    assert(typeof count === 'number');\n                    afterCounts.push(count);\n\n                    assert(benchmark instanceof Benchmark);\n\n                    assert(result instanceof Result);\n                    results.push(result);\n                },\n                after(rs) {\n                    assert(arguments.length === 1);\n\n                    assert(rs[0].msecs.length === 2);\n                    assert(rs[1].msecs.length === 3);\n\n                    rs.forEach((x, i) => {\n                        assert(x instanceof Result);\n                        assert.deepStrictEqual(results[i].msecs, x.msecs);\n                    });\n                },\n                benchmarkDefault: {\n                    fun() {},\n                    after() {},\n                },\n            };\n\n            const s = new Suite(options);\n\n            s.add({name: 'a', number: 2});\n            s.add({name: 'b', number: 3});\n\n            const rs = await s.run();\n            assert(rs[0].msecs.length === 2);\n            assert(rs[1].msecs.length === 3);\n            rs.forEach((x, i) => {\n                assert(x instanceof Result);\n                assert.deepStrictEqual(results[i].msecs, x.msecs);\n            });\n\n            assert.deepStrictEqual(beforeCounts, [0, 1]);\n            assert.deepStrictEqual(afterCounts, [0, 1]);\n\n            beforeTestCounts.sort((x, y) => (x[1] - y[1]) * 10 + (x[2] - y[2]));\n            afterTestCounts.sort((x, y) => (x[1] - y[1]) * 10 + (x[2] - y[2]));\n            assert.deepStrictEqual(beforeTestCounts, [['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);\n            assert.deepStrictEqual(afterTestCounts,  [['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);\n        };\n\n        it('arguments for methods', function() {\n            return argumentsTest({parallel: false});\n        });\n\n        it('arguments for methods (enabled parallel)', function() {\n            return argumentsTest({parallel: true});\n        });\n    });\n});\n",
@@ -3351,14 +3513,14 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 174,
+    "__docId__": 179,
     "kind": "test",
-    "name": "describe43",
-    "testId": 43,
+    "name": "describe45",
+    "testId": 45,
     "memberof": "test/suite.js",
     "testDepth": 0,
     "static": true,
-    "longname": "test/suite.js~describe43",
+    "longname": "test/suite.js~describe45",
     "access": null,
     "description": "Suite",
     "lineNumber": 9,
@@ -3367,66 +3529,66 @@
     ]
   },
   {
-    "__docId__": 175,
+    "__docId__": 180,
     "kind": "test",
-    "name": "describe44",
-    "testId": 44,
-    "memberof": "test/suite.js~describe43",
+    "name": "describe46",
+    "testId": 46,
+    "memberof": "test/suite.js~describe45",
     "testDepth": 1,
     "static": true,
-    "longname": "test/suite.js~describe43.describe44",
+    "longname": "test/suite.js~describe45.describe46",
     "access": null,
     "description": "#constructor",
     "lineNumber": 10
   },
   {
-    "__docId__": 176,
+    "__docId__": 181,
     "kind": "test",
-    "name": "it45",
-    "testId": 45,
-    "memberof": "test/suite.js~describe43.describe44",
+    "name": "it47",
+    "testId": 47,
+    "memberof": "test/suite.js~describe45.describe46",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe44.it45",
+    "longname": "test/suite.js~describe45.describe46.it47",
     "access": null,
     "description": "default values",
     "lineNumber": 11
   },
   {
-    "__docId__": 177,
+    "__docId__": 182,
     "kind": "test",
-    "name": "it46",
-    "testId": 46,
-    "memberof": "test/suite.js~describe43.describe44",
+    "name": "it48",
+    "testId": 48,
+    "memberof": "test/suite.js~describe45.describe46",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe44.it46",
+    "longname": "test/suite.js~describe45.describe46.it48",
     "access": null,
     "description": "options",
     "lineNumber": 19
   },
   {
-    "__docId__": 178,
+    "__docId__": 183,
     "kind": "test",
-    "name": "it47",
-    "testId": 47,
-    "memberof": "test/suite.js~describe43.describe44",
+    "name": "it49",
+    "testId": 49,
+    "memberof": "test/suite.js~describe45.describe46",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe44.it47",
+    "longname": "test/suite.js~describe45.describe46.it49",
     "access": null,
     "description": "functions",
     "lineNumber": 34
   },
   {
-    "__docId__": 179,
+    "__docId__": 184,
     "kind": "test",
-    "name": "it48",
-    "testId": 48,
-    "memberof": "test/suite.js~describe43",
+    "name": "it50",
+    "testId": 50,
+    "memberof": "test/suite.js~describe45",
     "testDepth": 1,
     "static": true,
-    "longname": "test/suite.js~describe43.it48",
+    "longname": "test/suite.js~describe45.it50",
     "access": null,
     "description": "#addBenchmark",
     "lineNumber": 80,
@@ -3435,14 +3597,14 @@
     ]
   },
   {
-    "__docId__": 180,
+    "__docId__": 185,
     "kind": "test",
-    "name": "it49",
-    "testId": 49,
-    "memberof": "test/suite.js~describe43",
+    "name": "it51",
+    "testId": 51,
+    "memberof": "test/suite.js~describe45",
     "testDepth": 1,
     "static": true,
-    "longname": "test/suite.js~describe43.it49",
+    "longname": "test/suite.js~describe45.it51",
     "access": null,
     "description": "#addSuite",
     "lineNumber": 98,
@@ -3451,14 +3613,14 @@
     ]
   },
   {
-    "__docId__": 181,
+    "__docId__": 186,
     "kind": "test",
-    "name": "describe50",
-    "testId": 50,
-    "memberof": "test/suite.js~describe43",
+    "name": "describe52",
+    "testId": 52,
+    "memberof": "test/suite.js~describe45",
     "testDepth": 1,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50",
+    "longname": "test/suite.js~describe45.describe52",
     "access": null,
     "description": "#add",
     "lineNumber": 117,
@@ -3467,92 +3629,92 @@
     ]
   },
   {
-    "__docId__": 182,
+    "__docId__": 187,
     "kind": "test",
-    "name": "it51",
-    "testId": 51,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it53",
+    "testId": 53,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it51",
+    "longname": "test/suite.js~describe45.describe52.it53",
     "access": null,
     "description": "Benchmark",
     "lineNumber": 118
   },
   {
-    "__docId__": 183,
+    "__docId__": 188,
     "kind": "test",
-    "name": "it52",
-    "testId": 52,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it54",
+    "testId": 54,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it52",
+    "longname": "test/suite.js~describe45.describe52.it54",
     "access": null,
     "description": "Suite",
     "lineNumber": 129
   },
   {
-    "__docId__": 184,
+    "__docId__": 189,
     "kind": "test",
-    "name": "it53",
-    "testId": 53,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it55",
+    "testId": 55,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it53",
+    "longname": "test/suite.js~describe45.describe52.it55",
     "access": null,
     "description": "function",
     "lineNumber": 142
   },
   {
-    "__docId__": 185,
+    "__docId__": 190,
     "kind": "test",
-    "name": "it54",
-    "testId": 54,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it56",
+    "testId": 56,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it54",
+    "longname": "test/suite.js~describe45.describe52.it56",
     "access": null,
     "description": "function with override default",
     "lineNumber": 171
   },
   {
-    "__docId__": 186,
+    "__docId__": 191,
     "kind": "test",
-    "name": "it55",
-    "testId": 55,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it57",
+    "testId": 57,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it55",
+    "longname": "test/suite.js~describe45.describe52.it57",
     "access": null,
     "description": "object",
     "lineNumber": 201
   },
   {
-    "__docId__": 187,
+    "__docId__": 192,
     "kind": "test",
-    "name": "it56",
-    "testId": 56,
-    "memberof": "test/suite.js~describe43.describe50",
+    "name": "it58",
+    "testId": 58,
+    "memberof": "test/suite.js~describe45.describe52",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe50.it56",
+    "longname": "test/suite.js~describe45.describe52.it58",
     "access": null,
     "description": "object with override default",
     "lineNumber": 233
   },
   {
-    "__docId__": 188,
+    "__docId__": 193,
     "kind": "test",
-    "name": "describe57",
-    "testId": 57,
-    "memberof": "test/suite.js~describe43",
+    "name": "describe59",
+    "testId": 59,
+    "memberof": "test/suite.js~describe45",
     "testDepth": 1,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57",
+    "longname": "test/suite.js~describe45.describe59",
     "access": null,
     "description": "#run",
     "lineNumber": 267,
@@ -3561,124 +3723,124 @@
     ]
   },
   {
-    "__docId__": 189,
+    "__docId__": 194,
     "kind": "test",
-    "name": "describe58",
-    "testId": 58,
-    "memberof": "test/suite.js~describe43.describe57",
+    "name": "describe60",
+    "testId": 60,
+    "memberof": "test/suite.js~describe45.describe59",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.describe58",
+    "longname": "test/suite.js~describe45.describe59.describe60",
     "access": null,
     "description": "call methods order",
     "lineNumber": 268
   },
   {
-    "__docId__": 190,
+    "__docId__": 195,
     "kind": "test",
-    "name": "it59",
-    "testId": 59,
-    "memberof": "test/suite.js~describe43.describe57.describe58",
+    "name": "it61",
+    "testId": 61,
+    "memberof": "test/suite.js~describe45.describe59.describe60",
     "testDepth": 3,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.describe58.it59",
+    "longname": "test/suite.js~describe45.describe59.describe60.it61",
     "access": null,
     "description": "empty tests",
     "lineNumber": 269
   },
   {
-    "__docId__": 191,
+    "__docId__": 196,
     "kind": "test",
-    "name": "it60",
-    "testId": 60,
-    "memberof": "test/suite.js~describe43.describe57.describe58",
+    "name": "it62",
+    "testId": 62,
+    "memberof": "test/suite.js~describe45.describe59.describe60",
     "testDepth": 3,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.describe58.it60",
+    "longname": "test/suite.js~describe45.describe59.describe60.it62",
     "access": null,
     "description": "empty tests (enabled parallel)",
     "lineNumber": 303
   },
   {
-    "__docId__": 192,
+    "__docId__": 197,
     "kind": "test",
-    "name": "it61",
-    "testId": 61,
-    "memberof": "test/suite.js~describe43.describe57.describe58",
+    "name": "it63",
+    "testId": 63,
+    "memberof": "test/suite.js~describe45.describe59.describe60",
     "testDepth": 3,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.describe58.it61",
+    "longname": "test/suite.js~describe45.describe59.describe60.it63",
     "access": null,
     "description": "with test",
     "lineNumber": 338
   },
   {
-    "__docId__": 193,
+    "__docId__": 198,
     "kind": "test",
-    "name": "it62",
-    "testId": 62,
-    "memberof": "test/suite.js~describe43.describe57.describe58",
+    "name": "it64",
+    "testId": 64,
+    "memberof": "test/suite.js~describe45.describe59.describe60",
     "testDepth": 3,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.describe58.it62",
+    "longname": "test/suite.js~describe45.describe59.describe60.it64",
     "access": null,
     "description": "with test (enabled parallel)",
     "lineNumber": 435
   },
   {
-    "__docId__": 194,
+    "__docId__": 199,
     "kind": "test",
-    "name": "it63",
-    "testId": 63,
-    "memberof": "test/suite.js~describe43.describe57",
+    "name": "it65",
+    "testId": 65,
+    "memberof": "test/suite.js~describe45.describe59",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.it63",
+    "longname": "test/suite.js~describe45.describe59.it65",
     "access": null,
     "description": "context handling",
     "lineNumber": 585
   },
   {
-    "__docId__": 195,
+    "__docId__": 200,
     "kind": "test",
-    "name": "it64",
-    "testId": 64,
-    "memberof": "test/suite.js~describe43.describe57",
+    "name": "it66",
+    "testId": 66,
+    "memberof": "test/suite.js~describe45.describe59",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.it64",
+    "longname": "test/suite.js~describe45.describe59.it66",
     "access": null,
     "description": "context handling (enabled parallel)",
     "lineNumber": 589
   },
   {
-    "__docId__": 196,
+    "__docId__": 201,
     "kind": "test",
-    "name": "it65",
-    "testId": 65,
-    "memberof": "test/suite.js~describe43.describe57",
+    "name": "it67",
+    "testId": 67,
+    "memberof": "test/suite.js~describe45.describe59",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.it65",
+    "longname": "test/suite.js~describe45.describe59.it67",
     "access": null,
     "description": "arguments for methods",
     "lineNumber": 683
   },
   {
-    "__docId__": 197,
+    "__docId__": 202,
     "kind": "test",
-    "name": "it66",
-    "testId": 66,
-    "memberof": "test/suite.js~describe43.describe57",
+    "name": "it68",
+    "testId": 68,
+    "memberof": "test/suite.js~describe45.describe59",
     "testDepth": 2,
     "static": true,
-    "longname": "test/suite.js~describe43.describe57.it66",
+    "longname": "test/suite.js~describe45.describe59.it68",
     "access": null,
     "description": "arguments for methods (enabled parallel)",
     "lineNumber": 687
   },
   {
-    "__docId__": 198,
+    "__docId__": 203,
     "kind": "testFile",
     "name": "test/timer.js",
     "content": "import assert from 'power-assert';\n\nimport {timeit} from '../src';\nimport {now, now_date, now_now, now_hrtime} from '../src/timer.js';\n\n\ndescribe('timer', function() {\n    /**\n     * @test {timeit}\n     */\n    describe('timeit', function() {\n        it('measure', async function() {\n            let sum = 0;\n            for (let i=0; i<5; i++) {\n                sum += await timeit(function() {\n                    return new Promise((resolve, reject) => setTimeout(resolve, 42));\n                });\n            }\n            assert(Math.abs(sum/5 - 42) <= 3);\n        });\n        it('use context', async function() {\n            const ctx = {\n                count: 0,\n            };\n            for (let i=0; i<5; i++) {\n                await timeit(function() {\n                    this.count++;\n                    this.count2 = i;\n                }, ctx);\n                assert(ctx.count === i+1);\n                assert(ctx.count2 === i);\n            }\n        });\n        it('context sandboxing', async function() {\n            function f() {\n                assert(this.x === undefined);\n                this.x = 'foobar';\n                assert(this.x === 'foobar');\n            }\n\n            await timeit(f);\n            await timeit(f);\n        });\n        it('arguments', async function() {\n            const ctx = {};\n            function f(x, y) {\n                this.result = x + y;\n            }\n\n            await timeit(f, ctx, [11, 22])\n            assert(ctx.result === 33);\n\n            await timeit(f, ctx, [42, 84])\n            assert(ctx.result === 126);\n        });\n    });\n\n    /**\n     * @ignore\n     */\n    describe('timer function', function() {\n        const global = new Function('return this')();\n\n        function checkTimer(func, resolution) {\n            return function() {\n                assert(typeof func() === 'number');\n\n                const a = func();\n                const b = func();\n                assert(a <= b);\n                assert(b - a <= resolution);\n            };\n        }\n\n        /**\n         * @test {now}\n         */\n        it('now', checkTimer(now, 1e-2));\n\n        /**\n         * @test {now_date}\n         */\n        it('now_date', checkTimer(now_date, 1e-2));\n\n        /**\n         * @test {now_now}\n         */\n        describe('now_now', function() {\n            (typeof performance !== 'undefined' && performance.now ? it : it.skip)('simple execute', checkTimer(now_now, 1e-2));\n\n            it('with dummy function', function() {\n                const backup = global.performance;\n                try {\n                    global.performance = {now: () => 123.456};\n                    assert(now_now() === 123.456);\n                } finally {\n                    global.performance = backup;\n                }\n            });\n        });\n\n        /**\n         * @test {now_hrtime}\n         */\n        describe('now_hrtime', function() {\n            (typeof process !== 'undefined' && process.hrtime ? it : it.skip)('simple execute', checkTimer(now_hrtime, 1e-2));\n\n            it('with dummy function', function() {\n                const backup = global.process;\n                try {\n                    global.process = {hrtime: () => [123, 456]};\n                    assert(now_hrtime() === 123e3 + 456e-6);\n                } finally {\n                    global.process = backup;\n                }\n            });\n        });\n    });\n});\n",
@@ -3689,27 +3851,27 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 199,
+    "__docId__": 204,
     "kind": "test",
-    "name": "describe67",
-    "testId": 67,
+    "name": "describe69",
+    "testId": 69,
     "memberof": "test/timer.js",
     "testDepth": 0,
     "static": true,
-    "longname": "test/timer.js~describe67",
+    "longname": "test/timer.js~describe69",
     "access": null,
     "description": "timer",
     "lineNumber": 7
   },
   {
-    "__docId__": 200,
+    "__docId__": 205,
     "kind": "test",
-    "name": "describe68",
-    "testId": 68,
-    "memberof": "test/timer.js~describe67",
+    "name": "describe70",
+    "testId": 70,
+    "memberof": "test/timer.js~describe69",
     "testDepth": 1,
     "static": true,
-    "longname": "test/timer.js~describe67.describe68",
+    "longname": "test/timer.js~describe69.describe70",
     "access": null,
     "description": "timeit",
     "lineNumber": 11,
@@ -3718,80 +3880,80 @@
     ]
   },
   {
-    "__docId__": 201,
+    "__docId__": 206,
     "kind": "test",
-    "name": "it69",
-    "testId": 69,
-    "memberof": "test/timer.js~describe67.describe68",
+    "name": "it71",
+    "testId": 71,
+    "memberof": "test/timer.js~describe69.describe70",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe68.it69",
+    "longname": "test/timer.js~describe69.describe70.it71",
     "access": null,
     "description": "measure",
     "lineNumber": 12
   },
   {
-    "__docId__": 202,
+    "__docId__": 207,
     "kind": "test",
-    "name": "it70",
-    "testId": 70,
-    "memberof": "test/timer.js~describe67.describe68",
+    "name": "it72",
+    "testId": 72,
+    "memberof": "test/timer.js~describe69.describe70",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe68.it70",
+    "longname": "test/timer.js~describe69.describe70.it72",
     "access": null,
     "description": "use context",
     "lineNumber": 21
   },
   {
-    "__docId__": 203,
+    "__docId__": 208,
     "kind": "test",
-    "name": "it71",
-    "testId": 71,
-    "memberof": "test/timer.js~describe67.describe68",
+    "name": "it73",
+    "testId": 73,
+    "memberof": "test/timer.js~describe69.describe70",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe68.it71",
+    "longname": "test/timer.js~describe69.describe70.it73",
     "access": null,
     "description": "context sandboxing",
     "lineNumber": 34
   },
   {
-    "__docId__": 204,
+    "__docId__": 209,
     "kind": "test",
-    "name": "it72",
-    "testId": 72,
-    "memberof": "test/timer.js~describe67.describe68",
+    "name": "it74",
+    "testId": 74,
+    "memberof": "test/timer.js~describe69.describe70",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe68.it72",
+    "longname": "test/timer.js~describe69.describe70.it74",
     "access": null,
     "description": "arguments",
     "lineNumber": 44
   },
   {
-    "__docId__": 205,
+    "__docId__": 210,
     "kind": "test",
-    "name": "describe73",
-    "testId": 73,
-    "memberof": "test/timer.js~describe67",
+    "name": "describe75",
+    "testId": 75,
+    "memberof": "test/timer.js~describe69",
     "testDepth": 1,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73",
+    "longname": "test/timer.js~describe69.describe75",
     "access": null,
     "description": "timer function",
     "lineNumber": 61,
     "ignore": true
   },
   {
-    "__docId__": 206,
+    "__docId__": 211,
     "kind": "test",
-    "name": "it74",
-    "testId": 74,
-    "memberof": "test/timer.js~describe67.describe73",
+    "name": "it76",
+    "testId": 76,
+    "memberof": "test/timer.js~describe69.describe75",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.it74",
+    "longname": "test/timer.js~describe69.describe75.it76",
     "access": null,
     "description": "now",
     "lineNumber": 78,
@@ -3800,14 +3962,14 @@
     ]
   },
   {
-    "__docId__": 207,
+    "__docId__": 212,
     "kind": "test",
-    "name": "it75",
-    "testId": 75,
-    "memberof": "test/timer.js~describe67.describe73",
+    "name": "it77",
+    "testId": 77,
+    "memberof": "test/timer.js~describe69.describe75",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.it75",
+    "longname": "test/timer.js~describe69.describe75.it77",
     "access": null,
     "description": "now_date",
     "lineNumber": 83,
@@ -3816,14 +3978,14 @@
     ]
   },
   {
-    "__docId__": 208,
+    "__docId__": 213,
     "kind": "test",
-    "name": "describe76",
-    "testId": 76,
-    "memberof": "test/timer.js~describe67.describe73",
+    "name": "describe78",
+    "testId": 78,
+    "memberof": "test/timer.js~describe69.describe75",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.describe76",
+    "longname": "test/timer.js~describe69.describe75.describe78",
     "access": null,
     "description": "now_now",
     "lineNumber": 88,
@@ -3832,27 +3994,27 @@
     ]
   },
   {
-    "__docId__": 209,
+    "__docId__": 214,
     "kind": "test",
-    "name": "it77",
-    "testId": 77,
-    "memberof": "test/timer.js~describe67.describe73.describe76",
+    "name": "it79",
+    "testId": 79,
+    "memberof": "test/timer.js~describe69.describe75.describe78",
     "testDepth": 3,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.describe76.it77",
+    "longname": "test/timer.js~describe69.describe75.describe78.it79",
     "access": null,
     "description": "with dummy function",
     "lineNumber": 91
   },
   {
-    "__docId__": 210,
+    "__docId__": 215,
     "kind": "test",
-    "name": "describe78",
-    "testId": 78,
-    "memberof": "test/timer.js~describe67.describe73",
+    "name": "describe80",
+    "testId": 80,
+    "memberof": "test/timer.js~describe69.describe75",
     "testDepth": 2,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.describe78",
+    "longname": "test/timer.js~describe69.describe75.describe80",
     "access": null,
     "description": "now_hrtime",
     "lineNumber": 105,
@@ -3861,14 +4023,14 @@
     ]
   },
   {
-    "__docId__": 211,
+    "__docId__": 216,
     "kind": "test",
-    "name": "it79",
-    "testId": 79,
-    "memberof": "test/timer.js~describe67.describe73.describe78",
+    "name": "it81",
+    "testId": 81,
+    "memberof": "test/timer.js~describe69.describe75.describe80",
     "testDepth": 3,
     "static": true,
-    "longname": "test/timer.js~describe67.describe73.describe78.it79",
+    "longname": "test/timer.js~describe69.describe75.describe80.it81",
     "access": null,
     "description": "with dummy function",
     "lineNumber": 108

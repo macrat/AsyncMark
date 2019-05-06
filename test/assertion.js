@@ -1,7 +1,6 @@
 import assert from 'power-assert';
-import {AssertionError} from 'assert';
 
-import AssertRule, {unit} from '../src/assertion.js';
+import AssertRule, {unit, AssertionError, AlternateError} from '../src/assertion.js';
 import {Result} from '../src';
 
 
@@ -24,6 +23,40 @@ describe('assertion', function() {
         assert(unit('nsec') === 0.000001);
 
         assert.throws(() => unit('foobar'), Error, 'unknown unit name: "foobar"');
+    });
+
+    describe('error generator', function() {
+        [['AssertionError [ERR_ASSERTION]', AssertionError], ['Error', AlternateError]].map(([name, fn]) => {
+            /**
+             * @test {AssertionError}
+             * @test {AlternateError}
+             */
+            it(fn.name, function() {
+                assert.throws(
+                    () => {
+                        throw fn(new AssertRule('100'), new Result('hoge', [100.1]));
+                    }, {
+                        name: name,
+                        message: 'benchmark "hoge": actual:100.1msec/op <= expected:100msec/op',
+                        actual: '100.1 msec/op',
+                        expected: '100 msec/op',
+                        operator: '<=',
+                    },
+                );
+
+                assert.throws(
+                    () => {
+                        throw fn(new AssertRule('>0.1s'), new Result('fuga', [10]));
+                    }, {
+                        name: name,
+                        message: 'benchmark "fuga": actual:10msec/op > expected:100msec/op',
+                        actual: '10 msec/op',
+                        expected: '100 msec/op',
+                        operator: '>',
+                    },
+                );
+            });
+        });
     });
 
     /**
@@ -75,15 +108,20 @@ describe('assertion', function() {
         /**
          * @test {AssertRule#assert}
          */
-        it('#assert', function() {
+        describe('#assert', function() {
             const rule = new AssertRule('100');
 
             assert.doesNotThrow(() => rule.assert(new Result('hoge', [100])));
 
             assert.throws(
                 () => rule.assert(new Result('hoge', [100.1])),
-                AssertionError,
-                'benchmark "hoge": actual:100.1msec/op <= expected:100msec/op',
+                {
+                    name: 'AssertionError [ERR_ASSERTION]',
+                    message: 'benchmark "hoge": actual:100.1msec/op <= expected:100msec/op',
+                    actual: '100.1 msec/op',
+                    expected: '100 msec/op',
+                    operator: '<=',
+                },
             );
         });
     });

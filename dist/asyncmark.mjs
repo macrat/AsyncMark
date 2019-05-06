@@ -1,6 +1,49 @@
 import assert from 'assert';
 
 /**
+ * Generate {@link AssertionError}
+ *
+ * @param {AssertRule} rule - the rule that couses error.
+ * @param {Result} result - the result for assert.
+ * @param {function} [stackStartFn] - provided function will remove from stack trace.
+ *
+ * @return {assert.AssertionError} generated error
+ *
+ * @ignore
+ * @since 0.3.0
+ */
+
+function AssertionError(rule, result, stackStartFn) {
+  return new assert.AssertionError({
+    message: `benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`,
+    actual: `${result.average} msec/op`,
+    expected: `${rule.expected} msec/op`,
+    operator: rule.operator,
+    stackStartFn: stackStartFn || rule.assert
+  });
+}
+/**
+ * Generate alternate error with default {@link Error}
+ *
+ * @param {AssertRule} rule - the rule that couses error.
+ * @param {Result} result - the result for assert.
+ * @param {function} [stackStartFn] - provided function will remove from stack trace.
+ *
+ * @return {Error} generated error
+ *
+ * @ignore
+ * @since 0.3.0
+ */
+
+
+function AlternateError(rule, result, stackStartFn) {
+  return Object.assign(new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`), {
+    actual: `${result.average} msec/op`,
+    expected: `${rule.expected} msec/op`,
+    operator: rule.operator
+  });
+}
+/**
  * Convert unit to number
  *
  * @example
@@ -13,6 +56,7 @@ import assert from 'assert';
  * @since 0.3.0
  * @ignore
  */
+
 
 function unit(u) {
   switch (u) {
@@ -74,6 +118,7 @@ class AssertRule {
 
     this.operator = m[1] || '<=';
     this.expected = Number(m[2]) * unit(m[3]);
+    this.errorFn = assert !== undefined ? AssertionError : AlternateError;
   }
   /**
    * Checking benchmark result.
@@ -107,17 +152,7 @@ class AssertRule {
 
   assert(result, stackStartFn = null) {
     if (!this.check(result.average)) {
-      if (assert === undefined) {
-        throw new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`);
-      } else {
-        throw new assert.AssertionError({
-          message: `benchmark "${result.name}": actual:${result.average}msec/op ${this.operator} expected:${this.expected}msec/op`,
-          actual: `${result.average} msec/op`,
-          expected: `${this.expected} msec/op`,
-          operator: this.operator,
-          stackStartFn: stackStartFn || this.assert
-        });
-      }
+      throw this.errorFn(this, result, stackStartFn);
     }
   }
 

@@ -391,37 +391,49 @@ window.esdocSearchIndex = [
   ],
   [
     "",
-    "test-file/test/assertion.js.html#lineNumber8",
+    "test-file/test/assertion.js.html#lineNumber7",
     "assertion",
     "test"
   ],
   [
     "assertrule assertrule,assertrule",
-    "test-file/test/assertion.js.html#lineNumber32",
+    "test-file/test/assertion.js.html#lineNumber65",
     "assertion AssertRule",
     "test"
   ],
   [
     "assertrule#assert assertrule#assert,assertrule#assert",
-    "test-file/test/assertion.js.html#lineNumber78",
+    "test-file/test/assertion.js.html#lineNumber111",
     "assertion AssertRule #assert",
     "test"
   ],
   [
     "assertrule#check assertrule#check,assertrule#check",
-    "test-file/test/assertion.js.html#lineNumber61",
+    "test-file/test/assertion.js.html#lineNumber94",
     "assertion AssertRule #check",
     "test"
   ],
   [
     "assertrule#constructor assertrule#constructor,assertrule#constructor",
-    "test-file/test/assertion.js.html#lineNumber36",
+    "test-file/test/assertion.js.html#lineNumber69",
     "assertion AssertRule #constructor",
     "test"
   ],
   [
+    "",
+    "test-file/test/assertion.js.html#lineNumber28",
+    "assertion error generator",
+    "test"
+  ],
+  [
+    "assertionerror alternateerror assertionerror,assertionerror alternateerror,alternateerror",
+    "test-file/test/assertion.js.html#lineNumber34",
+    "assertion error generator ",
+    "test"
+  ],
+  [
     "unit unit,unit",
-    "test-file/test/assertion.js.html#lineNumber12",
+    "test-file/test/assertion.js.html#lineNumber11",
     "assertion unit converter",
     "test"
   ],

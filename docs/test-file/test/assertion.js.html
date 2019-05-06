@@ -39,9 +39,8 @@
 
 <div class="content" data-ice="content"><h1 data-ice="title">test/assertion.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
-import {AssertionError} from &apos;assert&apos;;
 
-import AssertRule, {unit} from &apos;../src/assertion.js&apos;;
+import AssertRule, {unit, AssertionError, AlternateError} from &apos;../src/assertion.js&apos;;
 import {Result} from &apos;../src&apos;;
 
 
@@ -64,6 +63,40 @@ describe(&apos;assertion&apos;, function() {
         assert(unit(&apos;nsec&apos;) === 0.000001);
 
         assert.throws(() =&gt; unit(&apos;foobar&apos;), Error, &apos;unknown unit name: &quot;foobar&quot;&apos;);
+    });
+
+    describe(&apos;error generator&apos;, function() {
+        [[&apos;AssertionError [ERR_ASSERTION]&apos;, AssertionError], [&apos;Error&apos;, AlternateError]].map(([name, fn]) =&gt; {
+            /**
+             * @test {AssertionError}
+             * @test {AlternateError}
+             */
+            it(fn.name, function() {
+                assert.throws(
+                    () =&gt; {
+                        throw fn(new AssertRule(&apos;100&apos;), new Result(&apos;hoge&apos;, [100.1]));
+                    }, {
+                        name: name,
+                        message: &apos;benchmark &quot;hoge&quot;: actual:100.1msec/op &lt;= expected:100msec/op&apos;,
+                        actual: &apos;100.1 msec/op&apos;,
+                        expected: &apos;100 msec/op&apos;,
+                        operator: &apos;&lt;=&apos;,
+                    },
+                );
+
+                assert.throws(
+                    () =&gt; {
+                        throw fn(new AssertRule(&apos;&gt;0.1s&apos;), new Result(&apos;fuga&apos;, [10]));
+                    }, {
+                        name: name,
+                        message: &apos;benchmark &quot;fuga&quot;: actual:10msec/op &gt; expected:100msec/op&apos;,
+                        actual: &apos;10 msec/op&apos;,
+                        expected: &apos;100 msec/op&apos;,
+                        operator: &apos;&gt;&apos;,
+                    },
+                );
+            });
+        });
     });
 
     /**
@@ -115,15 +148,20 @@ describe(&apos;assertion&apos;, function() {
         /**
          * @test {AssertRule#assert}
          */
-        it(&apos;#assert&apos;, function() {
+        describe(&apos;#assert&apos;, function() {
             const rule = new AssertRule(&apos;100&apos;);
 
             assert.doesNotThrow(() =&gt; rule.assert(new Result(&apos;hoge&apos;, [100])));
 
             assert.throws(
                 () =&gt; rule.assert(new Result(&apos;hoge&apos;, [100.1])),
-                AssertionError,
-                &apos;benchmark &quot;hoge&quot;: actual:100.1msec/op &lt;= expected:100msec/op&apos;,
+                {
+                    name: &apos;AssertionError [ERR_ASSERTION]&apos;,
+                    message: &apos;benchmark &quot;hoge&quot;: actual:100.1msec/op &lt;= expected:100msec/op&apos;,
+                    actual: &apos;100.1 msec/op&apos;,
+                    expected: &apos;100 msec/op&apos;,
+                    operator: &apos;&lt;=&apos;,
+                },
             );
         });
     });
