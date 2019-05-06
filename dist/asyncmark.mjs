@@ -115,9 +115,22 @@ class AssertRule {
     if (m === null) {
       throw Error(`Invalid rule format: "${rule}"`);
     }
+    /**
+     * @type {string} operator string that set in rule.
+     */
+
 
     this.operator = m[1] || '<=';
+    /**
+     * @type {number} the threshold time in milliseconds.
+     */
+
     this.expected = Number(m[2]) * unit(m[3]);
+    /**
+     * @type {function} error object generator.
+     * @ignore
+     */
+
     this.errorFn = assert !== undefined ? AssertionError : AlternateError;
   }
   /**

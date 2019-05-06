@@ -1,16 +1,12 @@
 {
-  "coverage": "95.31%",
+  "coverage": "100%",
   "expectCount": 64,
-  "actualCount": 61,
+  "actualCount": 64,
   "files": {
     "src/assertion.js": {
       "expectCount": 10,
-      "actualCount": 7,
-      "undocumentLines": [
-        121,
-        122,
-        124
-      ]
+      "actualCount": 10,
+      "undocumentLines": []
     },
     "src/benchmark.js": {
       "expectCount": 13,
