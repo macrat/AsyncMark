@@ -141,6 +141,7 @@ describe('Benchmark', function() {
         it('default behavior', async function() {
             const l = console.log;
             const messages = [];
+            // eslint-disable-next-line require-atomic-updates
             console.log = function() {
                 messages.push([...arguments].map(x => String(x)).join(' '));
             }
@@ -153,6 +154,7 @@ describe('Benchmark', function() {
 
                 assert.deepStrictEqual(messages, [new Result('after_test', [1, 2, 3, 4, 5]).toString()]);
             } finally {
+                // eslint-disable-next-line require-atomic-updates
                 console.log = l;
             }
         });
@@ -177,6 +179,7 @@ describe('Benchmark', function() {
 
             const l = console.log;
             const messages = [];
+            // eslint-disable-next-line require-atomic-updates
             console.log = function() {
                 messages.push([...arguments].map(x => String(x)).join(' '));
             }
@@ -196,6 +199,7 @@ describe('Benchmark', function() {
                 ]);
                 assert.deepStrictEqual(messages, []);
             } finally {
+                // eslint-disable-next-line require-atomic-updates
                 console.log = l;
             }
         });
@@ -215,6 +219,7 @@ describe('Benchmark', function() {
 
             const l = console.log;
             const messages = [];
+            // eslint-disable-next-line require-atomic-updates
             console.log = function() {
                 messages.push([...arguments].map(x => String(x)).join(' '));
             }
@@ -241,6 +246,7 @@ describe('Benchmark', function() {
                 ]);
                 assert.deepStrictEqual(messages, []);
             } finally {
+                // eslint-disable-next-line require-atomic-updates
                 console.log = l;
             }
         });
@@ -298,6 +304,7 @@ describe('Benchmark', function() {
 
             const l = console.log;
             const messages = [];
+            // eslint-disable-next-line require-atomic-updates
             console.log = function() {
                 messages.push([...arguments].map(x => String(x)).join(' '));
             }
@@ -321,6 +328,7 @@ describe('Benchmark', function() {
                 });
                 assert.deepStrictEqual(messages, []);
             } finally {
+                // eslint-disable-next-line require-atomic-updates
                 console.log = l;
             }
         });

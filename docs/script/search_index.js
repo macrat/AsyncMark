@@ -97,61 +97,61 @@ window.esdocSearchIndex = [
   ],
   [
     "benchmark#run src/benchmark.js~benchmark#run,benchmark#run",
-    "test-file/test/benchmark.js.html#lineNumber164",
+    "test-file/test/benchmark.js.html#lineNumber166",
     "Benchmark #run",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber343",
+    "test-file/test/benchmark.js.html#lineNumber351",
     "Benchmark #run arguments for methods",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber165",
+    "test-file/test/benchmark.js.html#lineNumber167",
     "Benchmark #run call methods order",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber203",
+    "test-file/test/benchmark.js.html#lineNumber207",
     "Benchmark #run call methods order (with callbacks)",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber248",
+    "test-file/test/benchmark.js.html#lineNumber254",
     "Benchmark #run context handling",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber328",
+    "test-file/test/benchmark.js.html#lineNumber336",
     "Benchmark #run context sandboxing",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber397",
+    "test-file/test/benchmark.js.html#lineNumber405",
     "Benchmark #run loop and time",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber418",
+    "test-file/test/benchmark.js.html#lineNumber426",
     "Benchmark #run loop and time auto / rate 20%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber434",
+    "test-file/test/benchmark.js.html#lineNumber442",
     "Benchmark #run loop and time auto / rate 40%",
     "test"
   ],
   [
     "",
-    "test-file/test/benchmark.js.html#lineNumber398",
+    "test-file/test/benchmark.js.html#lineNumber406",
     "Benchmark #run loop and time static number",
     "test"
   ],
