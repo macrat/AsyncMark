@@ -26,7 +26,7 @@ describe('assertion', function() {
     });
 
     describe('error generator', function() {
-        [['AssertionError [ERR_ASSERTION]', AssertionError], ['Error', AlternateError]].map(([name, fn]) => {
+        [['AssertionError', AssertionError], ['Error', AlternateError]].map(([name, fn]) => {
             /**
              * @test {AssertionError}
              * @test {AlternateError}
@@ -116,7 +116,7 @@ describe('assertion', function() {
             assert.throws(
                 () => rule.assert(new Result('hoge', [100.1])),
                 {
-                    name: 'AssertionError [ERR_ASSERTION]',
+                    name: 'AssertionError',
                     message: 'benchmark "hoge": actual:100.1msec/op <= expected:100msec/op',
                     actual: '100.1 msec/op',
                     expected: '100 msec/op',
