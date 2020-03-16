@@ -2,9 +2,9 @@
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('assert')) :
     typeof define === 'function' && define.amd ? define(['exports', 'assert'], factory) :
     (global = global || self, factory(global.AsyncMark = {}, global.assert));
-}(this, function (exports, assert) { 'use strict';
+}(this, (function (exports, assert) { 'use strict';
 
-    assert = assert && assert.hasOwnProperty('default') ? assert['default'] : assert;
+    assert = assert && Object.prototype.hasOwnProperty.call(assert, 'default') ? assert['default'] : assert;
 
     /**
      * Generate {@link AssertionError}
@@ -1088,4 +1088,4 @@
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
