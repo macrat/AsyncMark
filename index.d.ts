@@ -12,8 +12,8 @@ export class Result {
     readonly errorRate: number;
     readonly opsPerSec: number;
 
-    dropOutlier(threshold?: number) Result;
-    toString() string;
+    dropOutlier(threshold?: number): Result;
+    toString(): string;
 
     assert(...expected: number | string);
 }
@@ -69,22 +69,22 @@ export class Suite {
     benchmarks: Benchmark[];
     parallel: boolean;
 
-    before(count: number, benchmark: Benchmark) Promise<void>;
-    beforeEach(count: number, benchmark: Benchmark) Promise<void>;
-    beforeTest(suiteCount: number, benchCount: number, benchmark: Benchmark) Promise<void>;
-    afterTest(suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) Promise<void>;
-    afterEach(count: number, benchmark: Benchmark, result: Result) Promise<void>;
-    after(results: Result[]) Promise<void>;
+    before(count: number, benchmark: Benchmark): Promise<void>;
+    beforeEach(count: number, benchmark: Benchmark): Promise<void>;
+    beforeTest(suiteCount: number, benchCount: number, benchmark: Benchmark): Promise<void>;
+    afterTest(suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number): Promise<void>;
+    afterEach(count: number, benchmark: Benchmark, result: Result): Promise<void>;
+    after(results: Result[]): Promise<void>;
 
-    addBenchmark(benchmark: Benchmark) Suite;
-    addSuite(suite: Suite) Suite;
-    add(child: Benchmark | Suite | BenchmarkOptions | () => Promise<void>);
+    addBenchmark(benchmark: Benchmark): Suite;
+    addSuite(suite: Suite): Suite;
+    add(child: Benchmark | Suite | BenchmarkOptions | (() => Promise<void>));
 
-    run(context?: object, callbacks?: TestCallbacks) Promise<Result[]>;
+    run(context?: object, callbacks?: TestCallbacks): Promise<Result[]>;
 }
 
 
-export function timeit(fun: () => Promise<void>, context?: object, args?: any[]) Promise<number>;
+export function timeit(fun: () => Promise<void>, context?: object, args?: any[]): Promise<number>;
 
 
 export default Benchmark;
