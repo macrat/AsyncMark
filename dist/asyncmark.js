@@ -503,7 +503,7 @@
     class Benchmark {
       /**
        * @param {Object|function} [options] - options for this benchmark or benchmarking function.
-       * @param {Number} [options.name='unnamed'] - name of this benchmark.
+       * @param {String} [options.name='unnamed'] - name of this benchmark.
        * @param {Number} [options.targetErrorRate=0.1] - wanted maximum error rate. see {@link Benchmark#targetErrorRate}.
        * @param {Number} [options.maxNumber=10000] - maximum number of executing test. see {@link Benchmark#maxNumber}.
        * @param {Number} [options.minNumber=30] - minimal number of executing test. see {@link Benchmark#minNumber}.

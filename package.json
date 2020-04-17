@@ -3,6 +3,7 @@
   "version": "0.3.2",
   "description": "A benchmarking library that supports Promise.",
   "main": "dist/asyncmark",
+  "types": "index.d.ts",
   "unpkg": "dist/asyncmark.min.js",
   "files": [
     "README.md",
