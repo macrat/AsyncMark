@@ -1,6 +1,6 @@
 {
   "name": "asyncmark",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "A benchmarking library that supports Promise.",
   "main": "dist/asyncmark",
   "types": "index.d.ts",
