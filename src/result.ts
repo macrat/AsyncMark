@@ -8,24 +8,23 @@ import AssertRule from './assertion';
  */
 export default class Result {
     /**
+     * Name of this test.
+     */
+    readonly name: string;
+
+    /**
+     * Times of benchmark result in milliseconds.
+     */
+    readonly msecs: number[];
+
+    /**
      * @param {String} name - name of benchmark.
      * @param {Number[]} msecs - times of benchmark result.
      *
      * @ignore
      */
-    constructor(name, msecs) {
-        /**
-         * Name of this test.
-         *
-         * @type {String}
-         */
+    constructor(name: string, msecs: number[]) {
         this.name = name;
-
-        /**
-         * Times of benchmark result in milliseconds.
-         *
-         * @type {Number[]}
-         */
         this.msecs = msecs;
     }
 

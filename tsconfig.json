@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "esModuleInterop": true,
+    "isolatedModules": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

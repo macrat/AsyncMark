@@ -1,12 +1,12 @@
 /**
  * Get a timer value in milliseconds resolution with {@link Date} class.
  *
- * @return {Number} a timer value in milliseconds.
+ * @return a timer value in milliseconds.
  *
  * @ignore
  * @since 0.2.5
  */
-function now_date() {
+function now_date(): number {
     return Number(new Date());
 }
 
@@ -14,12 +14,12 @@ function now_date() {
 /**
  * Get a timer value in microseconds resolution with {@link Performance.now} function.
  *
- * @return {Number} a timer value in milliseconds. (microseconds resolution)
+ * @return a timer value in milliseconds. (microseconds resolution)
  *
  * @ignore
  * @since 0.2.5
  */
-function now_now() {
+function now_now(): number {
     return performance.now();
 }
 
@@ -27,12 +27,12 @@ function now_now() {
 /**
  * Get a timer value in nanoseconds resolution with {@link Process.hrtime} function.
  *
- * @return {Number} a timer value in milliseconds. (nanoseconds resolution)
+ * @return a timer value in milliseconds. (nanoseconds resolution)
  *
  * @ignore
  * @since 0.2.5
  */
-function now_hrtime() {
+function now_hrtime(): number {
     const hr = process.hrtime();
     return (hr[0] * 1e9 + hr[1]) / 1e6;
 }
@@ -41,11 +41,11 @@ function now_hrtime() {
 /**
  * Get the current time as high resolution as possible in the current platform.
  *
- * @return {Number} a timer value in milliseconds.
+ * @return a timer value in milliseconds.
  *
  * @ignore
  */
-let now = now_date;
+let now: (() => number) = now_date;
 if (typeof process !== 'undefined' && process.hrtime) {
     now = now_hrtime;
 } else if (typeof performance !== 'undefined' && performance.now) {
@@ -60,11 +60,11 @@ if (typeof process !== 'undefined' && process.hrtime) {
  *
  * NOTE: this function will execute target function only once.
  *
- * @param {function(): ?Promise} fun - the target function.
- * @param {Object} [context={}] - the `this` for target function.
- * @param {Object[]} [args=[]] - arguments to passing to target function.
+ * @param fun - the target function.
+ * @param [context] - the `this` for target function.
+ * @param [args] - arguments to passing to target function.
  *
- * @return {Promise<Number>} milliseconds taked executing.
+ * @return milliseconds taked executing.
  *
  * @example
  * const msec = await timeit(function() {
@@ -76,7 +76,7 @@ if (typeof process !== 'undefined' && process.hrtime) {
  *
  * @since 0.2.4
  */
-async function timeit(fun, context={}, args=[]) {
+async function timeit<T extends any[] = any[]>(fun: (() => Promise<void>), context: any = {}, args: T = [] as T): Promise<number> {
     const start = now();
     await fun.call(context, ...args);
     const end = now();

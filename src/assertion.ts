@@ -1,19 +1,21 @@
 import assert from 'assert';
 
+import Result from './result';
+
 
 /**
  * Generate {@link AssertionError}
  *
- * @param {AssertRule} rule - the rule that couses error.
- * @param {Result} result - the result for assert.
- * @param {function} [stackStartFn] - provided function will remove from stack trace.
+ * @param rule - the rule that couses error.
+ * @param result - the result for assert.
+ * @param [stackStartFn] - provided function will remove from stack trace.
  *
- * @return {assert.AssertionError} generated error
+ * @return generated error
  *
  * @ignore
  * @since 0.3.0
  */
-function AssertionError(rule, result, stackStartFn) {
+function AssertionError(rule: AssertRule, result: Result, stackStartFn?: Function): assert.AssertionError {
     return new assert.AssertionError({
         message: `benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`,
         actual: `${result.average} msec/op`,
@@ -27,16 +29,16 @@ function AssertionError(rule, result, stackStartFn) {
 /**
  * Generate alternate error with default {@link Error}
  *
- * @param {AssertRule} rule - the rule that couses error.
- * @param {Result} result - the result for assert.
- * @param {function} [stackStartFn] - provided function will remove from stack trace.
+ * @param rule - the rule that couses error.
+ * @param result - the result for assert.
+ * @param [stackStartFn] - provided function will remove from stack trace.
  *
- * @return {Error} generated error
+ * @return generated error
  *
  * @ignore
  * @since 0.3.0
  */
-function AlternateError(rule, result, stackStartFn) {
+function AlternateError(rule: AssertRule, result: Result, stackStartFn?: Function): Error {
     return Object.assign(
         new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`),
         {
@@ -48,20 +50,23 @@ function AlternateError(rule, result, stackStartFn) {
 }
 
 
+type UnitValue = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
+
+
 /**
  * Convert unit to number
  *
  * @example
  * assert(100 * unit('ms') == 0.1 * unit('sec'))
  *
- * @param {Number} u - unit name like 'ms', 'sec' or etc.
+ * @param u - unit name like 'ms', 'sec' or etc.
  *
- * @return {Number} number to convert milliseconds.
+ * @return number to convert milliseconds.
  *
  * @since 0.3.0
  * @ignore
  */
-function unit(u) {
+function unit(u: UnitValue): number {
     switch (u) {
     case 's':
     case 'sec':
@@ -86,12 +91,32 @@ function unit(u) {
 }
 
 
+type Operator = '<' | '<=' | '>' | '>=';
+
+
 /**
  * The assertion rule
  *
  * @since 0.3.0
  */
 class AssertRule {
+    /**
+     * Operator string that set in rule like '<' or '>='.
+     */
+    readonly operator: Operator;
+
+    /**
+     * The threshold time in milliseconds.
+     */
+    readonly expected: number;
+
+    /**
+     * Error object generator.
+     *
+     * @ignore
+     */
+    readonly errorFn: (rule: AssertRule, result: Result, stackStartFn?: Function) => Error;
+
     /**
      * Parse time rule for assertion.
      *
@@ -110,39 +135,27 @@ class AssertRule {
      * |`42us` or `42usec`|microseconds|
      * |`42ns` or `42nsec`|nanoseconds|
      *
-     * @param {Number|String} rule - assert rule that milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+     * @param rule - assert rule that milliseconds {@link Number} or {@link String} value like '<10ms' or '>=20s'.
      */
-    constructor(rule) {
+    constructor(rule: number | string) {
         const m = String(rule).match(/^(|[<>]=?)(\d+(?:\.\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);
         if (m === null) {
             throw Error(`Invalid rule format: "${rule}"`);
         }
 
-        /**
-         * @type {string} operator string that set in rule.
-         */
-        this.operator = m[1] || '<=';
-
-        /**
-         * @type {number} the threshold time in milliseconds.
-         */
-        this.expected = Number(m[2]) * unit(m[3]);
-
-        /**
-         * @type {function} error object generator.
-         * @ignore
-         */
+        this.operator = (m[1] ?? '<=') as Operator;
+        this.expected = Number(m[2]) * unit(m[3] as UnitValue);
         this.errorFn = assert !== undefined ? AssertionError : AlternateError;
     }
 
     /**
      * Checking benchmark result.
      *
-     * @param {Number} msec - target milliseconds.
+     * @param msec - target milliseconds.
      *
-     * @return {Boolean} returns true if msec is acceptable.
+     * @return returns true if msec is acceptable.
      */
-    check(msec) {
+    check(msec: number): boolean {
         return {
             '<': ms => ms < this.expected,
             '<=': ms => ms <= this.expected,
@@ -154,15 +167,14 @@ class AssertRule {
     /**
      * Assert with benchmark result.
      *
-     * @param {Result} result - result of benchmark.
-     * @param {function} [stackStartFn] - provided function will remove from stack trace.
+     * @param result - result of benchmark.
+     * @param [stackStartFn] - provided function will remove from stack trace.
      *
-     * @throw {assert.AssertionError} when result is unacceptable.
-     * @return {undefined}
+     * @throws when result is unacceptable.
      *
      * @since 0.3.0
      */
-    assert(result, stackStartFn=null) {
+    assert(result: Result, stackStartFn?: Function): void {
         if (!this.check(result.average)) {
             throw this.errorFn(this, result, stackStartFn);
         }
@@ -171,3 +183,4 @@ class AssertRule {
 
 
 export {AssertRule as default, unit, AssertionError, AlternateError};
+export type {Operator, UnitValue};

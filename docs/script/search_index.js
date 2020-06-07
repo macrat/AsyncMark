@@ -1,36 +1,12 @@
 window.esdocSearchIndex = [
   [
-    "asyncmark/dist/asyncmark.mjs~benchmark",
-    "class/src/benchmark.js~Benchmark.html",
-    "<span>Benchmark</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
-    "class"
-  ],
-  [
-    "asyncmark/dist/asyncmark.mjs~result",
-    "class/src/result.js~Result.html",
-    "<span>Result</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
-    "class"
-  ],
-  [
-    "asyncmark/dist/asyncmark.mjs~suite",
-    "class/src/suite.js~Suite.html",
-    "<span>Suite</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
-    "class"
-  ],
-  [
-    "asyncmark/dist/asyncmark.mjs~timeit",
-    "function/index.html#static-function-timeit",
-    "<span>timeit</span> <span class=\"search-result-import-path\">asyncmark/dist/asyncmark.mjs</span>",
-    "function"
-  ],
-  [
-    "benchmark src/benchmark.js~benchmark,benchmark",
+    "benchmark benchmark,benchmark",
     "test-file/test/benchmark.js.html#lineNumber9",
     "Benchmark",
     "test"
   ],
   [
-    "benchmark#after src/benchmark.js~benchmark#after,benchmark#after",
+    "benchmark#after benchmark#after,benchmark#after",
     "test-file/test/benchmark.js.html#lineNumber140",
     "Benchmark #after",
     "test"
@@ -42,7 +18,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#constructor src/benchmark.js~benchmark#constructor,benchmark#constructor",
+    "benchmark#constructor benchmark#constructor,benchmark#constructor",
     "test-file/test/benchmark.js.html#lineNumber17",
     "Benchmark #constructor",
     "test"
@@ -84,7 +60,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#fun src/benchmark.js~benchmark#fun,benchmark#fun",
+    "benchmark#fun benchmark#fun,benchmark#fun",
     "test-file/test/benchmark.js.html#lineNumber127",
     "Benchmark #fun",
     "test"
@@ -96,7 +72,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "benchmark#run src/benchmark.js~benchmark#run,benchmark#run",
+    "benchmark#run benchmark#run,benchmark#run",
     "test-file/test/benchmark.js.html#lineNumber166",
     "Benchmark #run",
     "test"
@@ -162,97 +138,97 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "result src/result.js~result,result",
+    "result result,result",
     "test-file/test/result.js.html#lineNumber10",
     "Result",
     "test"
   ],
   [
-    "result#assert src/result.js~result#assert,result#assert",
+    "result#assert result#assert,result#assert",
     "test-file/test/result.js.html#lineNumber111",
     "Result #assert",
     "test"
   ],
   [
-    "result#average src/result.js~result#average,result#average",
+    "result#average result#average,result#average",
     "test-file/test/result.js.html#lineNumber38",
     "Result #average",
     "test"
   ],
   [
-    "result#errorrange src/result.js~result#errorrange,result#errorrange",
+    "result#errorrange result#errorrange,result#errorrange",
     "test-file/test/result.js.html#lineNumber70",
     "Result #errorRange",
     "test"
   ],
   [
-    "result#errorrate src/result.js~result#errorrate,result#errorrate",
+    "result#errorrate result#errorrate,result#errorrate",
     "test-file/test/result.js.html#lineNumber78",
     "Result #errorRate",
     "test"
   ],
   [
-    "result#fastest src/result.js~result#fastest,result#fastest",
+    "result#fastest result#fastest,result#fastest",
     "test-file/test/result.js.html#lineNumber22",
     "Result #fastest",
     "test"
   ],
   [
-    "result#opspersec src/result.js~result#opspersec,result#opspersec",
+    "result#opspersec result#opspersec,result#opspersec",
     "test-file/test/result.js.html#lineNumber86",
     "Result #opsPerSec",
     "test"
   ],
   [
-    "result#dropoutlier src/result.js~result#dropoutlier,result#dropoutlier",
+    "result#dropoutlier result#dropoutlier,result#dropoutlier",
     "test-file/test/result.js.html#lineNumber94",
     "Result #opsPerSec",
     "test"
   ],
   [
-    "result#std src/result.js~result#std,result#std",
+    "result#std result#std,result#std",
     "test-file/test/result.js.html#lineNumber62",
     "Result #sem",
     "test"
   ],
   [
-    "result#slowest src/result.js~result#slowest,result#slowest",
+    "result#slowest result#slowest,result#slowest",
     "test-file/test/result.js.html#lineNumber30",
     "Result #slowest",
     "test"
   ],
   [
-    "result#std src/result.js~result#std,result#std",
+    "result#std result#std,result#std",
     "test-file/test/result.js.html#lineNumber54",
     "Result #std",
     "test"
   ],
   [
-    "result#tostring src/result.js~result#tostring,result#tostring",
+    "result#tostring result#tostring,result#tostring",
     "test-file/test/result.js.html#lineNumber103",
     "Result #toString",
     "test"
   ],
   [
-    "result#total src/result.js~result#total,result#total",
+    "result#total result#total,result#total",
     "test-file/test/result.js.html#lineNumber14",
     "Result #total",
     "test"
   ],
   [
-    "result#variance src/result.js~result#variance,result#variance",
+    "result#variance result#variance,result#variance",
     "test-file/test/result.js.html#lineNumber46",
     "Result #variance",
     "test"
   ],
   [
-    "suite src/suite.js~suite,suite",
+    "suite suite,suite",
     "test-file/test/suite.js.html#lineNumber9",
     "Suite",
     "test"
   ],
   [
-    "suite#add src/suite.js~suite#add,suite#add",
+    "suite#add suite#add,suite#add",
     "test-file/test/suite.js.html#lineNumber117",
     "Suite #add",
     "test"
@@ -294,13 +270,13 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#addbenchmark src/suite.js~suite#addbenchmark,suite#addbenchmark",
+    "suite#addbenchmark suite#addbenchmark,suite#addbenchmark",
     "test-file/test/suite.js.html#lineNumber80",
     "Suite #addBenchmark",
     "test"
   ],
   [
-    "suite#addsuite src/suite.js~suite#addsuite,suite#addsuite",
+    "suite#addsuite suite#addsuite,suite#addsuite",
     "test-file/test/suite.js.html#lineNumber98",
     "Suite #addSuite",
     "test"
@@ -330,7 +306,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "suite#run src/suite.js~suite#run,suite#run",
+    "suite#run suite#run,suite#run",
     "test-file/test/suite.js.html#lineNumber267",
     "Suite #run",
     "test"
@@ -720,294 +696,6 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
-    "src/assertion.js",
-    "file/src/assertion.js.html",
-    "src/assertion.js",
-    "file"
-  ],
-  [
-    "src/benchmark.js",
-    "file/src/benchmark.js.html",
-    "src/benchmark.js",
-    "file"
-  ],
-  [
-    "src/benchmark.js~benchmark#after",
-    "class/src/benchmark.js~Benchmark.html#instance-method-after",
-    "src/benchmark.js~Benchmark#after",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#aftereach",
-    "class/src/benchmark.js~Benchmark.html#instance-method-afterEach",
-    "src/benchmark.js~Benchmark#afterEach",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#before",
-    "class/src/benchmark.js~Benchmark.html#instance-method-before",
-    "src/benchmark.js~Benchmark#before",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#beforeeach",
-    "class/src/benchmark.js~Benchmark.html#instance-method-beforeEach",
-    "src/benchmark.js~Benchmark#beforeEach",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#constructor",
-    "class/src/benchmark.js~Benchmark.html#instance-constructor-constructor",
-    "src/benchmark.js~Benchmark#constructor",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#fun",
-    "class/src/benchmark.js~Benchmark.html#instance-method-fun",
-    "src/benchmark.js~Benchmark#fun",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#maxnumber",
-    "class/src/benchmark.js~Benchmark.html#instance-member-maxNumber",
-    "src/benchmark.js~Benchmark#maxNumber",
-    "member"
-  ],
-  [
-    "src/benchmark.js~benchmark#minnumber",
-    "class/src/benchmark.js~Benchmark.html#instance-member-minNumber",
-    "src/benchmark.js~Benchmark#minNumber",
-    "member"
-  ],
-  [
-    "src/benchmark.js~benchmark#name",
-    "class/src/benchmark.js~Benchmark.html#instance-member-name",
-    "src/benchmark.js~Benchmark#name",
-    "member"
-  ],
-  [
-    "src/benchmark.js~benchmark#number",
-    "class/src/benchmark.js~Benchmark.html#instance-member-number",
-    "src/benchmark.js~Benchmark#number",
-    "member"
-  ],
-  [
-    "src/benchmark.js~benchmark#run",
-    "class/src/benchmark.js~Benchmark.html#instance-method-run",
-    "src/benchmark.js~Benchmark#run",
-    "method"
-  ],
-  [
-    "src/benchmark.js~benchmark#targeterrorrate",
-    "class/src/benchmark.js~Benchmark.html#instance-member-targetErrorRate",
-    "src/benchmark.js~Benchmark#targetErrorRate",
-    "member"
-  ],
-  [
-    "src/index.js",
-    "file/src/index.js.html",
-    "src/index.js",
-    "file"
-  ],
-  [
-    "src/result.js",
-    "file/src/result.js.html",
-    "src/result.js",
-    "file"
-  ],
-  [
-    "src/result.js~result#assert",
-    "class/src/result.js~Result.html#instance-method-assert",
-    "src/result.js~Result#assert",
-    "method"
-  ],
-  [
-    "src/result.js~result#average",
-    "class/src/result.js~Result.html#instance-get-average",
-    "src/result.js~Result#average",
-    "member"
-  ],
-  [
-    "src/result.js~result#dropoutlier",
-    "class/src/result.js~Result.html#instance-method-dropOutlier",
-    "src/result.js~Result#dropOutlier",
-    "method"
-  ],
-  [
-    "src/result.js~result#errorrange",
-    "class/src/result.js~Result.html#instance-get-errorRange",
-    "src/result.js~Result#errorRange",
-    "member"
-  ],
-  [
-    "src/result.js~result#errorrate",
-    "class/src/result.js~Result.html#instance-get-errorRate",
-    "src/result.js~Result#errorRate",
-    "member"
-  ],
-  [
-    "src/result.js~result#fastest",
-    "class/src/result.js~Result.html#instance-get-fastest",
-    "src/result.js~Result#fastest",
-    "member"
-  ],
-  [
-    "src/result.js~result#msecs",
-    "class/src/result.js~Result.html#instance-member-msecs",
-    "src/result.js~Result#msecs",
-    "member"
-  ],
-  [
-    "src/result.js~result#name",
-    "class/src/result.js~Result.html#instance-member-name",
-    "src/result.js~Result#name",
-    "member"
-  ],
-  [
-    "src/result.js~result#opspersec",
-    "class/src/result.js~Result.html#instance-get-opsPerSec",
-    "src/result.js~Result#opsPerSec",
-    "member"
-  ],
-  [
-    "src/result.js~result#sem",
-    "class/src/result.js~Result.html#instance-get-sem",
-    "src/result.js~Result#sem",
-    "member"
-  ],
-  [
-    "src/result.js~result#slowest",
-    "class/src/result.js~Result.html#instance-get-slowest",
-    "src/result.js~Result#slowest",
-    "member"
-  ],
-  [
-    "src/result.js~result#std",
-    "class/src/result.js~Result.html#instance-get-std",
-    "src/result.js~Result#std",
-    "member"
-  ],
-  [
-    "src/result.js~result#tostring",
-    "class/src/result.js~Result.html#instance-method-toString",
-    "src/result.js~Result#toString",
-    "method"
-  ],
-  [
-    "src/result.js~result#total",
-    "class/src/result.js~Result.html#instance-get-total",
-    "src/result.js~Result#total",
-    "member"
-  ],
-  [
-    "src/result.js~result#variance",
-    "class/src/result.js~Result.html#instance-get-variance",
-    "src/result.js~Result#variance",
-    "member"
-  ],
-  [
-    "src/suite.js",
-    "file/src/suite.js.html",
-    "src/suite.js",
-    "file"
-  ],
-  [
-    "src/suite.js~suite#add",
-    "class/src/suite.js~Suite.html#instance-method-add",
-    "src/suite.js~Suite#add",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#addbenchmark",
-    "class/src/suite.js~Suite.html#instance-method-addBenchmark",
-    "src/suite.js~Suite#addBenchmark",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#addsuite",
-    "class/src/suite.js~Suite.html#instance-method-addSuite",
-    "src/suite.js~Suite#addSuite",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#after",
-    "class/src/suite.js~Suite.html#instance-method-after",
-    "src/suite.js~Suite#after",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#aftereach",
-    "class/src/suite.js~Suite.html#instance-method-afterEach",
-    "src/suite.js~Suite#afterEach",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#aftertest",
-    "class/src/suite.js~Suite.html#instance-method-afterTest",
-    "src/suite.js~Suite#afterTest",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#before",
-    "class/src/suite.js~Suite.html#instance-method-before",
-    "src/suite.js~Suite#before",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#beforeeach",
-    "class/src/suite.js~Suite.html#instance-method-beforeEach",
-    "src/suite.js~Suite#beforeEach",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#beforetest",
-    "class/src/suite.js~Suite.html#instance-method-beforeTest",
-    "src/suite.js~Suite#beforeTest",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#benchmarkdefault",
-    "class/src/suite.js~Suite.html#instance-member-benchmarkDefault",
-    "src/suite.js~Suite#benchmarkDefault",
-    "member"
-  ],
-  [
-    "src/suite.js~suite#benchmarks",
-    "class/src/suite.js~Suite.html#instance-member-benchmarks",
-    "src/suite.js~Suite#benchmarks",
-    "member"
-  ],
-  [
-    "src/suite.js~suite#constructor",
-    "class/src/suite.js~Suite.html#instance-constructor-constructor",
-    "src/suite.js~Suite#constructor",
-    "method"
-  ],
-  [
-    "src/suite.js~suite#name",
-    "class/src/suite.js~Suite.html#instance-member-name",
-    "src/suite.js~Suite#name",
-    "member"
-  ],
-  [
-    "src/suite.js~suite#parallel",
-    "class/src/suite.js~Suite.html#instance-member-parallel",
-    "src/suite.js~Suite#parallel",
-    "member"
-  ],
-  [
-    "src/suite.js~suite#run",
-    "class/src/suite.js~Suite.html#instance-method-run",
-    "src/suite.js~Suite#run",
-    "method"
-  ],
-  [
-    "src/timer.js",
-    "file/src/timer.js.html",
-    "src/timer.js",
-    "file"
-  ],
-  [
     "test/assertion.js",
     "test-file/test/assertion.js.html",
     "test/assertion.js",
@@ -1044,7 +732,7 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "timeit src/timer.js~timeit,timeit",
+    "timeit timeit,timeit",
     "test-file/test/timer.js.html#lineNumber11",
     "timer timeit",
     "test"

@@ -42,6 +42,7 @@
     "@babel/preset-env": "^7.10.2",
     "@babel/register": "^7.10.1",
     "@babel/runtime": "^7.10.2",
+    "@rollup/plugin-typescript": "^4.1.2",
     "babel-preset-power-assert": "^3.0.0",
     "cross-env": "^7.0.2",
     "esdoc": "^1.1.0",
@@ -54,7 +55,8 @@
     "power-assert": "^1.6.1",
     "rollup": "^2.13.1",
     "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-terser": "^6.1.0"
+    "rollup-plugin-terser": "^6.1.0",
+    "typescript": "^3.9.5"
   },
   "runkitExample": "const AsyncMark = require('asyncmark');\n\nnew AsyncMark.Benchmark(function() {\n    return new Promise((resolve, reject) => {\n        setTimeout(resolve, 100);\n    });\n}).run().catch(console.error);\n",
   "esdoc": {

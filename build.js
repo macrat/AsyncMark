@@ -1,12 +1,12 @@
 const rollup = require('rollup');
-const babel = require('rollup-plugin-babel');
+const typescript = require('@rollup/plugin-typescript');
 const {terser} = require('rollup-plugin-terser');
 
 
 rollup
     .rollup({
-        input: 'src/index.js',
-        plugins: [babel()],
+        input: 'src/index.ts',
+        plugins: [typescript()],
     })
     .then(bundle => Promise.all([
         bundle.write({format: 'es',  exports: 'named', file: 'dist/asyncmark.mjs'}),
@@ -17,8 +17,8 @@ rollup
 
 rollup
     .rollup({
-        input: 'src/index.js',
-        plugins: [babel(), terser()],
+        input: 'src/index.ts',
+        plugins: [typescript(), terser()],
     })
     .then(bundle => Promise.all([
         bundle.write({format: 'es',  exports: 'named', file: 'dist/asyncmark.min.mjs'}),
