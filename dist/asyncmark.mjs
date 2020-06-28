@@ -149,8 +149,8 @@ var AssertRule = /** @class */ (function () {
  */
 var Result = /** @class */ (function () {
     /**
-     * @param {String} name - name of benchmark.
-     * @param {Number[]} msecs - times of benchmark result.
+     * @param name - name of benchmark.
+     * @param msecs - times of benchmark result.
      *
      * @ignore
      */
@@ -161,8 +161,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "total", {
         /**
          * Total milliseconds of this benchmark.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.msecs.reduce(function (x, y) { return x + y; });
@@ -173,8 +171,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "fastest", {
         /**
          * The time of fastest test in milliseconds.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.msecs.reduce(function (x, y) { return Math.min(x, y); });
@@ -185,8 +181,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "slowest", {
         /**
          * The time of slowest test in milliseconds.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.msecs.reduce(function (x, y) { return Math.max(x, y); });
@@ -197,8 +191,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "average", {
         /**
          * Average time of this benchmark in milliseconds.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.total / this.msecs.length;
@@ -209,8 +201,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "variance", {
         /**
          * Time unbiased sample variance of times.
-         *
-         * @type {Number}
          */
         get: function () {
             var avg = this.average;
@@ -222,8 +212,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "std", {
         /**
          * Standard division of times.
-         *
-         * @type {Number}
          */
         get: function () {
             return Math.sqrt(this.variance);
@@ -234,8 +222,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "sem", {
         /**
          * Standard error of the mean of times.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.std / Math.sqrt(this.msecs.length);
@@ -246,8 +232,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "errorRange", {
         /**
          * Guessed error range of this benchmark.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.sem * 1.96;
@@ -258,8 +242,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "errorRate", {
         /**
          * Error range per average time.
-         *
-         * @type {Number}
          */
         get: function () {
             return this.errorRange / this.average;
@@ -270,8 +252,6 @@ var Result = /** @class */ (function () {
     Object.defineProperty(Result.prototype, "opsPerSec", {
         /**
          * Operations per seconds.
-         *
-         * @type {Number}
          */
         get: function () {
             return 1000 / this.average;
@@ -282,9 +262,9 @@ var Result = /** @class */ (function () {
     /**
      * Make new Result that droped outlier.
      *
-     * @param {Number} [threshold=2] the threshold of outlier testing.
+     * @param [threshold=2] the threshold of outlier testing.
      *
-     * @return {Result} new {@link Result} instance.
+     * @return new {@link Result} instance.
      */
     Result.prototype.dropOutlier = function (threshold) {
         if (threshold === void 0) { threshold = 2; }
@@ -295,7 +275,7 @@ var Result = /** @class */ (function () {
     /**
      * Convert to string for printing.
      *
-     * @return {String} human redable string
+     * @return human redable string
      */
     Result.prototype.toString = function () {
         var avg = Math.round(this.average * 10000) / 10000;
@@ -326,10 +306,9 @@ var Result = /** @class */ (function () {
      * |"42us" or "42usec"|microseconds|
      * |"42ns" or "42nsec"|nanoseconds |
      *
-     * @param {Number|String} expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+     * @param expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
      *
      * @throw {assert.AssertionError} when result is unacceptable.
-     * @return {undefined}
      *
      * @example
      * const result = await Benchmark(function() {
