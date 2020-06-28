@@ -2,6 +2,11 @@ import Result from './result';
 import {timeit} from './timer';
 
 
+interface Context extends Record<string, unknown> {
+    __proto__?: Benchmark;
+}
+
+
 /**
  * The options for this benchmark.
  */
@@ -174,7 +179,9 @@ export default class Benchmark {
      *
      * @return  {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async before(): Promise<void> {}
+    async before(): Promise<void> {
+        return Promise.resolve();
+    }
 
     /**
      * Setup before each tests.
@@ -189,7 +196,9 @@ export default class Benchmark {
      *
      * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async beforeEach(count: number): Promise<void> {}
+    async beforeEach(count: number): Promise<void> {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        return Promise.resolve();
+    }
 
     /**
      * The target function for benchmarking.
@@ -222,7 +231,9 @@ export default class Benchmark {
      *
      * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async afterEach(count: number, msec: number): Promise<void> {}
+    async afterEach(count: number, msec: number): Promise<void> {  // eslint-disable-line @typescript-eslint/no-unused-vars
+        return Promise.resolve();
+    }
 
     /**
      * Teardown after execute benchmark.
@@ -249,7 +260,7 @@ export default class Benchmark {
      *
      * @return A result of benchmark.
      */
-    async run(context: any = {}, callbacks: TestCallbacks = {}): Promise<Result> {
+    async run<T extends Context>(context: T = {} as T, callbacks: TestCallbacks = {}): Promise<Result> {
         context = Object.assign({}, context);
         context.__proto__ = this;
 
@@ -267,7 +278,7 @@ export default class Benchmark {
 
             await this.beforeEach.call(ctx, i);
 
-            const msec = await timeit(this.fun, ctx)
+            const msec = await timeit(this.fun, [], ctx)
             msecs.push(msec);
 
             await this.afterEach.call(ctx, i, msec);

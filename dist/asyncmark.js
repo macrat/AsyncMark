@@ -581,9 +581,11 @@
          * @return  {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
          */
         Benchmark.prototype.before = function () {
-            return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-                return [2 /*return*/];
-            }); });
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, Promise.resolve()];
+                });
+            });
         };
         /**
          * Setup before each tests.
@@ -599,9 +601,11 @@
          * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
          */
         Benchmark.prototype.beforeEach = function (count) {
-            return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-                return [2 /*return*/];
-            }); });
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, Promise.resolve()];
+                });
+            });
         };
         /**
          * The target function for benchmarking.
@@ -638,9 +642,11 @@
          * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
          */
         Benchmark.prototype.afterEach = function (count, msec) {
-            return __awaiter(this, void 0, void 0, function () { return __generator(this, function (_a) {
-                return [2 /*return*/];
-            }); });
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, Promise.resolve()];
+                });
+            });
         };
         /**
          * Teardown after execute benchmark.
@@ -699,7 +705,7 @@
                         case 4: return [4 /*yield*/, this.beforeEach.call(ctx, i)];
                         case 5:
                             _a.sent();
-                            return [4 /*yield*/, timeit(this.fun, ctx)];
+                            return [4 /*yield*/, timeit(this.fun, [], ctx)];
                         case 6:
                             msec = _a.sent();
                             msecs.push(msec);
