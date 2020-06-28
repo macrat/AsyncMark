@@ -15,7 +15,7 @@ import Result from './result';
  * @ignore
  * @since 0.3.0
  */
-function AssertionError(rule: AssertRule, result: Result, stackStartFn?: Function): assert.AssertionError {
+function AssertionError(rule: AssertRule, result: Result, stackStartFn?: Function): assert.AssertionError {  // eslint-disable-line @typescript-eslint/ban-types
     return new assert.AssertionError({
         message: `benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`,
         actual: `${result.average} msec/op`,
@@ -38,8 +38,8 @@ function AssertionError(rule: AssertRule, result: Result, stackStartFn?: Functio
  * @ignore
  * @since 0.3.0
  */
-function AlternateError(rule: AssertRule, result: Result, stackStartFn?: Function): Error {
-    return Object.assign(
+function AlternateError(rule: AssertRule, result: Result, stackStartFn?: Function): Error {  // eslint-disable-line @typescript-eslint/ban-types
+    const err = Object.assign(
         new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`),
         {
             actual: `${result.average} msec/op`,
@@ -47,6 +47,12 @@ function AlternateError(rule: AssertRule, result: Result, stackStartFn?: Functio
             operator: rule.operator,
         }
     );
+
+    if (Error.captureStackTrace !== undefined && stackStartFn !== undefined) {
+        Error.captureStackTrace(err, stackStartFn);
+    }
+
+    return err;
 }
 
 
@@ -115,7 +121,7 @@ class AssertRule {
      *
      * @ignore
      */
-    readonly errorFn: (rule: AssertRule, result: Result, stackStartFn?: Function) => Error;
+    readonly errorFn: (rule: AssertRule, result: Result, stackStartFn?: Function) => Error;  // eslint-disable-line @typescript-eslint/ban-types
 
     /**
      * Parse time rule for assertion.
@@ -174,7 +180,7 @@ class AssertRule {
      *
      * @since 0.3.0
      */
-    assert(result: Result, stackStartFn?: Function): void {
+    assert(result: Result, stackStartFn?: Function): void {  // eslint-disable-line @typescript-eslint/ban-types
         if (!this.check(result.average)) {
             throw this.errorFn(this, result, stackStartFn);
         }

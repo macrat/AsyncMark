@@ -34,11 +34,15 @@ function AssertionError(rule, result, stackStartFn) {
  * @since 0.3.0
  */
 function AlternateError(rule, result, stackStartFn) {
-    return Object.assign(new Error("benchmark \"" + result.name + "\": actual:" + result.average + "msec/op " + rule.operator + " expected:" + rule.expected + "msec/op"), {
+    var err = Object.assign(new Error("benchmark \"" + result.name + "\": actual:" + result.average + "msec/op " + rule.operator + " expected:" + rule.expected + "msec/op"), {
         actual: result.average + " msec/op",
         expected: rule.expected + " msec/op",
         operator: rule.operator,
     });
+    if (Error.captureStackTrace !== undefined && stackStartFn !== undefined) {
+        Error.captureStackTrace(err, stackStartFn);
+    }
+    return err;
 }
 /**
  * Convert unit to number
