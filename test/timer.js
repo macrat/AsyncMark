@@ -26,7 +26,7 @@ describe('timer', function() {
                 await timeit(function() {
                     this.count++;
                     this.count2 = i;
-                }, ctx);
+                }, [], ctx);
                 assert(ctx.count === i+1);
                 assert(ctx.count2 === i);
             }
@@ -47,10 +47,10 @@ describe('timer', function() {
                 this.result = x + y;
             }
 
-            await timeit(f, ctx, [11, 22])
+            await timeit(f, [11, 22], ctx);
             assert(ctx.result === 33);
 
-            await timeit(f, ctx, [42, 84])
+            await timeit(f, [42, 84], ctx);
             assert(ctx.result === 126);
         });
     });

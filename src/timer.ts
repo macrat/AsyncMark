@@ -61,8 +61,8 @@ if (typeof process !== 'undefined' && process.hrtime) {
  * NOTE: this function will execute target function only once.
  *
  * @param fun - the target function.
- * @param [context] - the `this` for target function.
  * @param [args] - arguments to passing to target function.
+ * @param [context] - the `this` for target function.
  *
  * @return milliseconds taked executing.
  *
@@ -72,11 +72,16 @@ if (typeof process !== 'undefined' && process.hrtime) {
  * });
  *
  * @example
- * console.log(await timeit(axios.get, args=['http://example.com']));
+ * console.log(await timeit(axios.get, ['http://example.com']));
  *
- * @since 0.2.4
+ * @since 1.0.0
  */
-async function timeit<T extends any[] = any[]>(fun: (() => Promise<void>), context: any = {}, args: T = [] as T): Promise<number> {
+async function timeit<T extends unknown[], U extends Record<string, unknown>>(
+    fun: ((...args: T) => Promise<void> | void),
+    args: T = [] as unknown as T,
+    context: U = {} as U,
+): Promise<number> {
+
     const start = now();
     await fun.call(context, ...args);
     const end = now();

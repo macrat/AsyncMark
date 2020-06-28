@@ -476,8 +476,8 @@ else if (typeof performance !== 'undefined' && performance.now) {
  * NOTE: this function will execute target function only once.
  *
  * @param fun - the target function.
- * @param [context] - the `this` for target function.
  * @param [args] - arguments to passing to target function.
+ * @param [context] - the `this` for target function.
  *
  * @return milliseconds taked executing.
  *
@@ -487,13 +487,13 @@ else if (typeof performance !== 'undefined' && performance.now) {
  * });
  *
  * @example
- * console.log(await timeit(axios.get, args=['http://example.com']));
+ * console.log(await timeit(axios.get, ['http://example.com']));
  *
- * @since 0.2.4
+ * @since 1.0.0
  */
-function timeit(fun, context, args) {
-    if (context === void 0) { context = {}; }
+function timeit(fun, args, context) {
     if (args === void 0) { args = []; }
+    if (context === void 0) { context = {}; }
     return __awaiter(this, void 0, void 0, function () {
         var start, end;
         return __generator(this, function (_a) {
