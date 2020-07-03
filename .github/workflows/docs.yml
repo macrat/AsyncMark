@@ -16,6 +16,7 @@ jobs:
           node-version: '14'
       - run: npm ci
       - run: npm run build:docs
+      - run: cp -r on-web docs/
       - uses: peaceiris/actions-gh-pages@v3.6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
