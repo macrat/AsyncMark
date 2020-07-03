@@ -1,0 +1,21 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm ci
+      - uses: paambaati/codeclimate-actions@v2
+        env:
+          CC_TEST_REPORTER_ID: e91ee223eaf14422aa9099af9fae2ca230e934f4c48c955a4506b19be7897b64
+        with:
+          coverageCommand: npm run test
