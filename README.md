@@ -5,7 +5,7 @@ A benchmarking library for javascript that supports Promise.
 
 [![NPM](https://nodei.co/npm/asyncmark.png)](https://nodei.co/npm/asyncmark/)
 
-[![Build Status](https://travis-ci.org/macrat/AsyncMark.svg?branch=master)](https://travis-ci.org/macrat/AsyncMark)
+[![Test Status](https://github.com/macrat/AsyncMark/workflows/test/badge.svg)](https://github.com/macrat/AsyncMark/actions?query=workflow%3Atest)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/test_coverage)](https://codeclimate.com/github/macrat/AsyncMark/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/maintainability)](https://codeclimate.com/github/macrat/AsyncMark/maintainability)
 [![devDependencies Status](https://david-dm.org/macrat/asyncmark/dev-status.svg)](https://david-dm.org/macrat/asyncmark?type=dev)
