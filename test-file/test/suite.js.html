@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/suite.js | asyncmark</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/suite.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
+
+import Benchmark, {Suite, Result} from &apos;../src&apos;;
+
+
+/**
+ * @test {Suite}
+ */
+describe(&apos;Suite&apos;, function() {
+    describe(&apos;#constructor&apos;, function() {
+        it(&apos;default values&apos;, function() {
+            const s = new Suite();
+
+            assert(s.name === &apos;unnamed&apos;);
+            assert(s.parallel === false);
+            assert.deepStrictEqual(s.benchmarkDefault, {});
+        });
+
+        it(&apos;options&apos;, function() {
+            const conf = {
+                name: &apos;foo&apos;,
+                parallel: true,
+                benchmarkDefault: {
+                    name: &apos;bar&apos;,
+                },
+            };
+            const s = new Suite(conf);
+
+            assert(s.name === &apos;foo&apos;);
+            assert(s.parallel === true);
+            assert.deepStrictEqual(s.benchmarkDefault, {name: &apos;bar&apos;});
+        });
+
+        it(&apos;functions&apos;, function() {
+            const called = {
+                before: false,
+                beforeEach: false,
+                afterEach: false,
+                after: false,
+            };
+            const s = new Suite({
+                before() {
+                    called.before = true;
+                },
+                beforeEach() {
+                    called.beforeEach = true;
+                },
+                fun() {
+                    called.fun = true;
+                },
+                afterEach() {
+                    called.afterEach = true;
+                },
+                after() {
+                    called.after = true;
+                },
+            });
+
+            assert(called.before === false);
+            s.before();
+            assert(called.before === true);
+
+            assert(called.beforeEach === false);
+            s.beforeEach();
+            assert(called.beforeEach === true);
+
+            assert(called.afterEach === false);
+            s.afterEach();
+            assert(called.afterEach === true);
+
+            assert(called.after === false);
+            s.after();
+            assert(called.after === true);
+        });
+    });
+
+    /**
+     * @test {Suite#addBenchmark}
+     */
+    it(&apos;#addBenchmark&apos;, function() {
+        const s = new Suite();
+        const b1 = new Benchmark({name: &apos;a&apos;});
+        const b2 = new Benchmark({name: &apos;b&apos;});
+
+        assert.deepStrictEqual(s.benchmarks, []);
+        s.addBenchmark(b1);
+        assert.deepStrictEqual(s.benchmarks, [b1]);
+        s.addBenchmark(b2);
+        assert.deepStrictEqual(s.benchmarks, [b1, b2]);
+
+        assert(s.benchmarks[0].name === &apos;a&apos;);
+        assert(s.benchmarks[1].name === &apos;b&apos;);
+    });
+
+    /**
+     * @test {Suite#addSuite}
+     */
+    it(&apos;#addSuite&apos;, function() {
+        const p = new Suite();
+        const c1 = new Suite();
+        const c2 = new Suite();
+
+        assert(p !== c1);
+        assert(p !== c2);
+        assert(c1 !== c2);
+
+        assert.deepStrictEqual(p.benchmarks, []);
+        p.addBenchmark(c1);
+        assert.deepStrictEqual(p.benchmarks, [c1]);
+        p.addBenchmark(c2);
+        assert.deepStrictEqual(p.benchmarks, [c1, c2]);
+    });
+
+    /**
+     * @test {Suite#add}
+     */
+    describe(&apos;#add&apos;, function() {
+        it(&apos;Benchmark&apos;, function() {
+            const s = new Suite();
+            const b = new Benchmark({name: &apos;foobar&apos;});
+
+            assert.deepStrictEqual(s.benchmarks, []);
+            s.add(b);
+
+            assert.deepStrictEqual(s.benchmarks, [b]);
+            assert(s.benchmarks[0].name === &apos;foobar&apos;);
+        });
+
+        it(&apos;Suite&apos;, function() {
+            const p = new Suite();
+            const c = new Suite();
+
+            assert(p !== c);
+            assert.deepStrictEqual(p.benchmarks, []);
+
+            p.add(c);
+
+            assert.deepStrictEqual(p.benchmarks, [c]);
+            assert.deepStrictEqual(c.benchmarks, []);
+        });
+
+        it(&apos;function&apos;, async function() {
+            const called = {
+                fun: false,
+                after: false,
+            };
+            const fun = function() {
+                called.fun = true;
+            };
+            const s = new Suite({
+                benchmarkDefault: {
+                    after() {
+                        called.after = true;
+                    },
+                },
+            });
+
+            assert.deepStrictEqual(s.benchmarks, []);
+            s.add(fun);
+            assert(s.benchmarks.length === 1);
+
+            assert(called.fun === false);
+            await s.benchmarks[0].fun();
+            assert(called.fun === true);
+
+            assert(called.after === false);
+            await s.benchmarks[0].after();
+            assert(called.after === true);
+        });
+
+        it(&apos;function with override default&apos;, async function() {
+            const called = {
+                original: false,
+                overrided: false,
+            };
+            const s = new Suite({
+                benchmarkDefault: {
+                    fun() {
+                        called.original = true;
+                    },
+                },
+            });
+
+            const conf = {
+                fun() {
+                    called.overrided = true;
+                },
+            };
+
+            assert.deepStrictEqual(s.benchmarks, []);
+            s.add(conf);
+            assert(s.benchmarks.length === 1);
+
+            assert(called.original === false);
+            assert(called.overrided === false);
+            await s.benchmarks[0].fun();
+            assert(called.original === false);
+            assert(called.overrided === true);
+        });
+
+        it(&apos;object&apos;, async function() {
+            const called = {
+                fun: false,
+                after: false,
+            };
+            const s = new Suite({
+                benchmarkDefault: {
+                    after() {
+                        called.after = true;
+                    },
+                },
+            });
+
+            const conf = {
+                fun() {
+                    called.fun = true;
+                },
+            };
+
+            assert.deepStrictEqual(s.benchmarks, []);
+            s.add(conf);
+            assert(s.benchmarks.length === 1);
+
+            assert(called.fun === false);
+            await s.benchmarks[0].fun();
+            assert(called.fun === true);
+
+            assert(called.after === false);
+            await s.benchmarks[0].after();
+            assert(called.after === true);
+        });
+
+        it(&apos;object with override default&apos;, async function() {
+            const called = {
+                original: false,
+                overrided: false,
+            };
+            const s = new Suite({
+                benchmarkDefault: {
+                    after() {
+                        called.original = true;
+                    },
+                },
+            });
+
+            const conf = {
+                after() {
+                    called.overrided = true;
+                },
+            };
+
+            assert.deepStrictEqual(s.benchmarks, []);
+            s.add(conf);
+            assert(s.benchmarks.length === 1);
+
+            assert(called.original === false);
+            assert(called.overrided === false);
+            await s.benchmarks[0].after();
+            assert(called.original === false);
+            assert(called.overrided === true);
+        });
+    });
+
+    /**
+     * @test {Suite#run}
+     */
+    describe(&apos;#run&apos;, function() {
+        describe(&apos;call methods order&apos;, function() {
+            it(&apos;empty tests&apos;, async function() {
+                const callLog = [];
+
+                const s = new Suite({
+                    before() {
+                        callLog.push(&apos;before&apos;);
+                    },
+                    beforeEach() {
+                        callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
+                    afterEach() {
+                        callLog.push(&apos;afterEach&apos;);
+                    },
+                    after() {
+                        callLog.push(&apos;after&apos;);
+                    },
+                });
+
+                assert.deepStrictEqual(callLog, []);
+
+                await s.run();
+
+                assert.deepStrictEqual(callLog, [
+                    &apos;before&apos;,
+                    &apos;after&apos;,
+                ]);
+            });
+
+            it(&apos;empty tests (enabled parallel)&apos;, async function() {
+                const callLog = [];
+
+                const s = new Suite({
+                    before() {
+                        callLog.push(&apos;before&apos;);
+                    },
+                    beforeEach() {
+                        callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
+                    afterEach() {
+                        callLog.push(&apos;afterEach&apos;);
+                    },
+                    after() {
+                        callLog.push(&apos;after&apos;);
+                    },
+                    parallel: true,
+                });
+
+                assert.deepStrictEqual(callLog, []);
+
+                await s.run();
+
+                assert.deepStrictEqual(callLog, [
+                    &apos;before&apos;,
+                    &apos;after&apos;,
+                ]);
+            });
+
+            it(&apos;with test&apos;, async function() {
+                const callLog = [];
+
+                const s = new Suite({
+                    before() {
+                        callLog.push(&apos;before&apos;);
+                    },
+                    beforeEach() {
+                        callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
+                    afterEach() {
+                        callLog.push(&apos;afterEach&apos;);
+                    },
+                    after() {
+                        callLog.push(&apos;after&apos;);
+                    },
+                    benchmarkDefault: {
+                        after() {},
+                    },
+                });
+
+                s.add({
+                    number: 2,
+                    fun() {
+                        callLog.push(&apos;bench1&apos;);
+                    },
+                });
+
+                s.add({
+                    number: 3,
+                    fun() {
+                        callLog.push(&apos;bench2&apos;);
+                    },
+                });
+
+                assert.deepStrictEqual(callLog, []);
+
+                await (new Suite({
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest parent&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest parent&apos;);
+                    },
+                })).add(s).run();
+
+                assert.deepStrictEqual(callLog, [
+                    &apos;before&apos;,
+
+                    &apos;beforeEach&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;bench1&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;bench1&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;afterEach&apos;,
+
+                    &apos;beforeEach&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;beforeTest parent&apos;,
+                    &apos;beforeTest&apos;,
+                    &apos;bench2&apos;,
+                    &apos;afterTest&apos;,
+                    &apos;afterTest parent&apos;,
+
+                    &apos;afterEach&apos;,
+
+                    &apos;after&apos;,
+                ]);
+            });
+
+            it(&apos;with test (enabled parallel)&apos;, async function() {
+                const callLog = [];
+
+                const s = new Suite({
+                    before() {
+                        callLog.push(&apos;before&apos;);
+                    },
+                    beforeEach() {
+                        callLog.push(&apos;beforeEach&apos;);
+                    },
+                    beforeTest() {
+                        callLog.push(&apos;beforeTest&apos;);
+                    },
+                    afterTest() {
+                        callLog.push(&apos;afterTest&apos;);
+                    },
+                    afterEach() {
+                        callLog.push(&apos;afterEach&apos;);
+                    },
+                    after() {
+                        callLog.push(&apos;after&apos;);
+                    },
+                    benchmarkDefault: {
+                        after() {},
+                    },
+                    parallel: true,
+                });
+
+                s.add({
+                    number: 2,
+                    fun() {
+                        callLog.push(&apos;bench1&apos;);
+                    },
+                });
+
+                s.add({
+                    number: 3,
+                    fun() {
+                        callLog.push(&apos;bench2&apos;);
+                    },
+                });
+
+                assert.deepStrictEqual(callLog, []);
+
+                await s.run();
+
+                assert(callLog.length === 21);
+
+                assert(callLog[0] === &apos;before&apos;);
+                assert(callLog[1] === &apos;beforeEach&apos;);
+                assert(callLog[callLog.length - 2] === &apos;afterEach&apos;);
+                assert(callLog[callLog.length - 1] === &apos;after&apos;);
+
+                assert(callLog.filter(x =&gt; x === &apos;bench1&apos;).length === 2);
+                assert(callLog.filter(x =&gt; x === &apos;bench2&apos;).length === 3);
+                assert(callLog.filter(x =&gt; x === &apos;beforeEach&apos;).length === 2);
+                assert(callLog.filter(x =&gt; x === &apos;afterEach&apos;).length === 2);
+                assert(callLog.filter(x =&gt; x === &apos;beforeTest&apos;).length === 5);
+                assert(callLog.filter(x =&gt; x === &apos;afterTest&apos;).length === 5);
+            });
+        });
+
+        const contextTest = async function(options) {
+            options.__proto__ = {
+                before() {
+                    assert(this.inOuter === undefined);
+                    assert(this.inInner === undefined);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.inOuter = 123;
+                },
+                beforeEach() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === undefined);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.inInner = &apos;abc&apos;;
+                },
+                afterEach() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === &apos;abc&apos;);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.outInner = &apos;cba&apos;;
+                },
+                after() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === undefined);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.outOuter = 321;
+                },
+                benchmarkDefault: {
+                    fun() {},
+                },
+            };
+
+            const s = new Suite(options);
+
+            s.add({
+                number: 2,
+                before() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === &apos;abc&apos;);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.inBench = 42;
+                },
+                after() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === &apos;abc&apos;);
+                    assert(this.inBench === 42);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+                },
+            });
+
+            s.add({
+                number: 3,
+                before() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === &apos;abc&apos;);
+                    assert(this.inBench === undefined);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+
+                    this.inBench = 24;
+                },
+                after() {
+                    assert(this.inOuter === 123);
+                    assert(this.inInner === &apos;abc&apos;);
+                    assert(this.inBench === 24);
+                    assert(this.outInner === undefined);
+                    assert(this.outOuter === undefined);
+                },
+            });
+
+            await s.run();
+        };
+
+        it(&apos;context handling&apos;, function() {
+            return contextTest({parallel: false});
+        });
+
+        it(&apos;context handling (enabled parallel)&apos;, function() {
+            return contextTest({parallel: true});
+        });
+
+        const argumentsTest = async function(options) {
+            const beforeCounts = [];
+            const afterCounts = [];
+            const results = [];
+            const beforeTestCounts = [];
+            const afterTestCounts = [];
+
+            options.__proto__ = {
+                before() {
+                    assert(arguments.length === 0);
+                },
+                beforeEach(count, benchmark) {
+                    assert(arguments.length === 2);
+
+                    assert(typeof count === &apos;number&apos;);
+                    beforeCounts.push(count);
+
+                    assert(benchmark instanceof Benchmark);
+                },
+                beforeTest(suiteCount, benchCount, benchmark) {
+                    assert(arguments.length === 3);
+
+                    assert(typeof suiteCount === &apos;number&apos;);
+                    assert(typeof benchCount === &apos;number&apos;);
+                    assert(benchmark instanceof Benchmark);
+
+                    beforeTestCounts.push([benchmark.name, suiteCount, benchCount]);
+                },
+                afterTest(suiteCount, benchCount, benchmark, msec) {
+                    assert(arguments.length === 4);
+
+                    assert(typeof suiteCount === &apos;number&apos;);
+                    assert(typeof benchCount === &apos;number&apos;);
+                    assert(benchmark instanceof Benchmark);
+
+                    afterTestCounts.push([benchmark.name, suiteCount, benchCount]);
+
+                    assert(typeof msec === &apos;number&apos;);
+                    assert(msec &lt; 1);
+                },
+                afterEach(count, benchmark, result) {
+                    assert(arguments.length === 3);
+
+                    assert(typeof count === &apos;number&apos;);
+                    afterCounts.push(count);
+
+                    assert(benchmark instanceof Benchmark);
+
+                    assert(result instanceof Result);
+                    results.push(result);
+                },
+                after(rs) {
+                    assert(arguments.length === 1);
+
+                    assert(rs[0].msecs.length === 2);
+                    assert(rs[1].msecs.length === 3);
+
+                    rs.forEach((x, i) =&gt; {
+                        assert(x instanceof Result);
+                        assert.deepStrictEqual(results[i].msecs, x.msecs);
+                    });
+                },
+                benchmarkDefault: {
+                    fun() {},
+                    after() {},
+                },
+            };
+
+            const s = new Suite(options);
+
+            s.add({name: &apos;a&apos;, number: 2});
+            s.add({name: &apos;b&apos;, number: 3});
+
+            const rs = await s.run();
+            assert(rs[0].msecs.length === 2);
+            assert(rs[1].msecs.length === 3);
+            rs.forEach((x, i) =&gt; {
+                assert(x instanceof Result);
+                assert.deepStrictEqual(results[i].msecs, x.msecs);
+            });
+
+            assert.deepStrictEqual(beforeCounts, [0, 1]);
+            assert.deepStrictEqual(afterCounts, [0, 1]);
+
+            beforeTestCounts.sort((x, y) =&gt; (x[1] - y[1]) * 10 + (x[2] - y[2]));
+            afterTestCounts.sort((x, y) =&gt; (x[1] - y[1]) * 10 + (x[2] - y[2]));
+            assert.deepStrictEqual(beforeTestCounts, [[&apos;a&apos;, 0, 0], [&apos;a&apos;, 0, 1], [&apos;b&apos;, 1, 0], [&apos;b&apos;, 1, 1], [&apos;b&apos;, 1, 2]]);
+            assert.deepStrictEqual(afterTestCounts,  [[&apos;a&apos;, 0, 0], [&apos;a&apos;, 0, 1], [&apos;b&apos;, 1, 0], [&apos;b&apos;, 1, 1], [&apos;b&apos;, 1, 2]]);
+        };
+
+        it(&apos;arguments for methods&apos;, function() {
+            return argumentsTest({parallel: false});
+        });
+
+        it(&apos;arguments for methods (enabled parallel)&apos;, function() {
+            return argumentsTest({parallel: true});
+        });
+    });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

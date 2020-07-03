@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/timer.js | asyncmark</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/timer.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
+
+import {timeit} from &apos;../src&apos;;
+import {now, now_date, now_now, now_hrtime} from &apos;../src/timer.js&apos;;
+
+
+describe(&apos;timer&apos;, function() {
+    /**
+     * @test {timeit}
+     */
+    describe(&apos;timeit&apos;, function() {
+        it(&apos;measure&apos;, async function() {
+            let sum = 0;
+            for (let i=0; i&lt;5; i++) {
+                sum += await timeit(function() {
+                    return new Promise((resolve, reject) =&gt; setTimeout(resolve, 42));
+                });
+            }
+            assert(Math.abs(sum/5 - 42) &lt;= 3);
+        });
+        it(&apos;use context&apos;, async function() {
+            const ctx = {
+                count: 0,
+            };
+            for (let i=0; i&lt;5; i++) {
+                await timeit(function() {
+                    this.count++;
+                    this.count2 = i;
+                }, ctx);
+                assert(ctx.count === i+1);
+                assert(ctx.count2 === i);
+            }
+        });
+        it(&apos;context sandboxing&apos;, async function() {
+            function f() {
+                assert(this.x === undefined);
+                this.x = &apos;foobar&apos;;
+                assert(this.x === &apos;foobar&apos;);
+            }
+
+            await timeit(f);
+            await timeit(f);
+        });
+        it(&apos;arguments&apos;, async function() {
+            const ctx = {};
+            function f(x, y) {
+                this.result = x + y;
+            }
+
+            await timeit(f, ctx, [11, 22])
+            assert(ctx.result === 33);
+
+            await timeit(f, ctx, [42, 84])
+            assert(ctx.result === 126);
+        });
+    });
+
+    /**
+     * @ignore
+     */
+    describe(&apos;timer function&apos;, function() {
+        const global = new Function(&apos;return this&apos;)();
+
+        function checkTimer(func, resolution) {
+            return function() {
+                assert(typeof func() === &apos;number&apos;);
+
+                const a = func();
+                const b = func();
+                assert(a &lt;= b);
+                assert(b - a &lt;= resolution);
+            };
+        }
+
+        /**
+         * @test {now}
+         */
+        it(&apos;now&apos;, checkTimer(now, 1e-2));
+
+        /**
+         * @test {now_date}
+         */
+        it(&apos;now_date&apos;, checkTimer(now_date, 1e-2));
+
+        /**
+         * @test {now_now}
+         */
+        describe(&apos;now_now&apos;, function() {
+            (typeof performance !== &apos;undefined&apos; &amp;&amp; performance.now ? it : it.skip)(&apos;simple execute&apos;, checkTimer(now_now, 1e-2));
+
+            it(&apos;with dummy function&apos;, function() {
+                const backup = global.performance;
+                try {
+                    global.performance = {now: () =&gt; 123.456};
+                    assert(now_now() === 123.456);
+                } finally {
+                    global.performance = backup;
+                }
+            });
+        });
+
+        /**
+         * @test {now_hrtime}
+         */
+        describe(&apos;now_hrtime&apos;, function() {
+            (typeof process !== &apos;undefined&apos; &amp;&amp; process.hrtime ? it : it.skip)(&apos;simple execute&apos;, checkTimer(now_hrtime, 1e-2));
+
+            it(&apos;with dummy function&apos;, function() {
+                const backup = global.process;
+                try {
+                    global.process = {hrtime: () =&gt; [123, 456]};
+                    assert(now_hrtime() === 123e3 + 456e-6);
+                } finally {
+                    global.process = backup;
+                }
+            });
+        });
+    });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

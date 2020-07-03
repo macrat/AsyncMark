@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">test/assertion.js | asyncmark</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/assertion.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import assert from &apos;power-assert&apos;;
+
+import AssertRule, {unit, AssertionError, AlternateError} from &apos;../src/assertion.js&apos;;
+import {Result} from &apos;../src&apos;;
+
+
+describe(&apos;assertion&apos;, function() {
+    /**
+     * @test {unit}
+     */
+    it(&apos;unit converter&apos;, function() {
+        assert(unit(&apos;s&apos;) === 1000);
+        assert(unit(&apos;sec&apos;) === 1000);
+
+        assert(unit(&apos;&apos;) === 1);
+        assert(unit(&apos;ms&apos;) === 1);
+        assert(unit(&apos;msec&apos;) === 1);
+
+        assert(unit(&apos;us&apos;) === 0.001);
+        assert(unit(&apos;usec&apos;) === 0.001);
+
+        assert(unit(&apos;ns&apos;) === 0.000001);
+        assert(unit(&apos;nsec&apos;) === 0.000001);
+
+        assert.throws(() =&gt; unit(&apos;foobar&apos;), Error, &apos;unknown unit name: &quot;foobar&quot;&apos;);
+    });
+
+    describe(&apos;error generator&apos;, function() {
+        [[&apos;AssertionError&apos;, AssertionError], [&apos;Error&apos;, AlternateError]].map(([name, fn]) =&gt; {
+            /**
+             * @test {AssertionError}
+             * @test {AlternateError}
+             */
+            it(fn.name, function() {
+                assert.throws(
+                    () =&gt; {
+                        throw fn(new AssertRule(&apos;100&apos;), new Result(&apos;hoge&apos;, [100.1]));
+                    }, {
+                        name: name,
+                        message: &apos;benchmark &quot;hoge&quot;: actual:100.1msec/op &lt;= expected:100msec/op&apos;,
+                        actual: &apos;100.1 msec/op&apos;,
+                        expected: &apos;100 msec/op&apos;,
+                        operator: &apos;&lt;=&apos;,
+                    },
+                );
+
+                assert.throws(
+                    () =&gt; {
+                        throw fn(new AssertRule(&apos;&gt;0.1s&apos;), new Result(&apos;fuga&apos;, [10]));
+                    }, {
+                        name: name,
+                        message: &apos;benchmark &quot;fuga&quot;: actual:10msec/op &gt; expected:100msec/op&apos;,
+                        actual: &apos;10 msec/op&apos;,
+                        expected: &apos;100 msec/op&apos;,
+                        operator: &apos;&gt;&apos;,
+                    },
+                );
+            });
+        });
+    });
+
+    /**
+     * @test {AssertRule}
+     */
+    describe(&apos;AssertRule&apos;, function() {
+        /**
+         * @test {AssertRule#constructor}
+         */
+        it(&apos;#constructor&apos;, function() {
+            function parseTest(expr, expect, unit_) {
+                const x = new AssertRule(`${expr}${expect}${unit_}`)
+
+                assert(x.operator === (expr || &apos;&lt;=&apos;));
+                assert(x.expected === expect * unit(unit_));
+            }
+
+            assert.throws(function() { new AssertRule(&apos;=100&apos;) }, Error, &apos;Invalid rule format: &quot;=100&quot;&apos;);
+            assert.throws(function() { new AssertRule(&apos;&gt;1h&apos;) }, Error, &apos;Invalid rule format: &quot;&gt;1h&quot;&apos;);
+
+            parseTest(&apos;&apos;, 100, &apos;&apos;);
+
+            parseTest(&apos;&gt;&apos;, 12.3, &apos;&apos;);
+            parseTest(&apos;&gt;=&apos;, 12.3, &apos;&apos;);
+            parseTest(&apos;&lt;&apos;, 12.3, &apos;&apos;);
+            parseTest(&apos;&lt;=&apos;, 12.3, &apos;&apos;);
+
+            parseTest(&apos;&apos;, 1234, &apos;us&apos;);
+            parseTest(&apos;&apos;, 1.234, &apos;s&apos;);
+        });
+
+        /**
+         * @test {AssertRule#check}
+         */
+        it(&apos;#check&apos;, function() {
+            assert(new AssertRule(&apos;&lt;100&apos;).check(99.9) === true);
+            assert(new AssertRule(&apos;&lt;100&apos;).check(100.0) === false);
+
+            assert(new AssertRule(&apos;&lt;=100&apos;).check(100.0) === true);
+            assert(new AssertRule(&apos;&lt;=100&apos;).check(100.1) === false);
+
+            assert(new AssertRule(&apos;&gt;100&apos;).check(100.1) === true);
+            assert(new AssertRule(&apos;&gt;100&apos;).check(100.0) === false);
+
+            assert(new AssertRule(&apos;&gt;=100&apos;).check(100.0) === true);
+            assert(new AssertRule(&apos;&gt;=100&apos;).check(99.9) === false);
+        });
+
+        /**
+         * @test {AssertRule#assert}
+         */
+        describe(&apos;#assert&apos;, function() {
+            const rule = new AssertRule(&apos;100&apos;);
+
+            assert.doesNotThrow(() =&gt; rule.assert(new Result(&apos;hoge&apos;, [100])));
+
+            assert.throws(
+                () =&gt; rule.assert(new Result(&apos;hoge&apos;, [100.1])),
+                {
+                    name: &apos;AssertionError&apos;,
+                    message: &apos;benchmark &quot;hoge&quot;: actual:100.1msec/op &lt;= expected:100msec/op&apos;,
+                    actual: &apos;100.1 msec/op&apos;,
+                    expected: &apos;100 msec/op&apos;,
+                    operator: &apos;&lt;=&apos;,
+                },
+            );
+        });
+    });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
