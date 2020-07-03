@@ -3,6 +3,6 @@
     "config:base"
   ],
   "patch": {
-    "automerge": "true"
+    "automerge": true
   }
 }
