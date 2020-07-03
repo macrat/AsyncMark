@@ -10,9 +10,14 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['12', '13', '14']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
       - run: npm ci
       - uses: paambaati/codeclimate-action@v2.6.0
         env:
