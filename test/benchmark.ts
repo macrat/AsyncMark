@@ -14,7 +14,7 @@ describe('Benchmark', () => {
      */
     describe('#constructor', () => {
         test('default values', () => {
-            const b = new Benchmark();
+            const b = new Benchmark({});
 
             expect(b.name).toBe('unnamed');
             expect(b.targetErrorRate).toBe(0.1);
@@ -124,7 +124,7 @@ describe('Benchmark', () => {
      */
     describe('#fun', () => {
         test('default behavior', async () => {
-            const b = new Benchmark();
+            const b = new Benchmark({});
 
             await expect(async () => {
                 await b.fun();
@@ -145,7 +145,7 @@ describe('Benchmark', () => {
             }
 
             try {
-                const b = new Benchmark();
+                const b = new Benchmark({});
                 const r = new Result('after_test', [1, 2, 3, 4, 5, 100])
 
                 await b.after(r);
