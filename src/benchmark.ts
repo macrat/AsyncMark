@@ -233,7 +233,7 @@ export default class Benchmark {
 
         if (typeof options === 'function') {
             this.fun = options;
-        } else if (options) {
+        } else {
             if (options.name)            this.name = options.name;
             if (options.targetErrorRate) this.targetErrorRate = options.targetErrorRate;
             if (options.maxNumber)       this.maxNumber = options.maxNumber;
