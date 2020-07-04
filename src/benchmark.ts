@@ -223,7 +223,7 @@ export default class Benchmark {
         this.minNumber       = 30;
         this.number          = null;
 
-        this.before = this.beforeEach = this.afterEach = () => {};
+        this.before = this.beforeEach = this.afterEach = () => void 0;
         this.fun = () => {
             throw new Error('target function is not defined');
         };

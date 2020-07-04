@@ -248,12 +248,12 @@ export default class Suite {
 
         this.benchmarks = [];
 
-        this.before = options.before || (() => {});
-        this.beforeEach = options.beforeEach || (() => {});
-        this.beforeTest = options.beforeTest || (() => {});
-        this.afterTest = options.afterTest || (() => {});
-        this.afterEach = options.afterEach || (() => {});
-        this.after = options.after || (() => {});
+        this.before = options.before || (() => void 0);
+        this.beforeEach = options.beforeEach || (() => void 0);
+        this.beforeTest = options.beforeTest || (() => void 0);
+        this.afterTest = options.afterTest || (() => void 0);
+        this.afterEach = options.afterEach || (() => void 0);
+        this.after = options.after || (() => void 0);
     }
 
     /**
@@ -315,17 +315,18 @@ export default class Suite {
      * @ignore
      */
     _makeCallbacks(count: number, parentCallbacks: TestCallbacks): TestCallbacks {
-        const that = this;
+        const beforeTest = this.beforeTest;
+        const afterTest = this.afterTest;
 
         return {
             async beforeTest(c, b) {
                 if (parentCallbacks.beforeTest) {
                     parentCallbacks.beforeTest.call(this, c, b);
                 }
-                that.beforeTest.call(this, count, c, b);
+                beforeTest.call(this, count, c, b);
             },
             async afterTest(c, b, r) {
-                that.afterTest.call(this, count, c, b, r);
+                afterTest.call(this, count, c, b, r);
                 if (parentCallbacks.afterTest) {
                     parentCallbacks.afterTest.call(this, c, b, r);
                 }
