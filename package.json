@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "jest --coverage",
-    "lint": "eslint --ext .ts,.js ./",
+    "lint": "eslint --ext .ts,.js --ignore-pattern '/examples' --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
     "build:dist": "cross-env NODE_ENV=production node build.js",
     "build:docs": "cross-env NODE_ENV=production esdoc"
