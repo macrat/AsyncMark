@@ -43,9 +43,6 @@ describe('Suite', function() {
                 beforeEach() {
                     called.beforeEach = true;
                 },
-                fun() {
-                    called.fun = true;
-                },
                 afterEach() {
                     called.afterEach = true;
                 },
@@ -59,15 +56,19 @@ describe('Suite', function() {
             expect(called.before).toBe(true);
 
             expect(called.beforeEach).toBe(false);
-            s.beforeEach();
+            s.beforeEach(0, new Benchmark({}));
             expect(called.beforeEach).toBe(true);
 
             expect(called.afterEach).toBe(false);
-            s.afterEach();
+            s.afterEach(
+                0,
+                new Benchmark({}),
+                new Result('dummy', [1, 2, 3]),
+            );
             expect(called.afterEach).toBe(true);
 
             expect(called.after).toBe(false);
-            s.after();
+            s.after([new Result('dummy', [1, 2, 3])]);
             expect(called.after).toBe(true);
         });
     });
@@ -103,9 +104,9 @@ describe('Suite', function() {
         expect(c1).not.toBe(c2);
 
         expect(p.benchmarks).toEqual([]);
-        p.addBenchmark(c1);
+        p.addSuite(c1);
         expect(p.benchmarks).toEqual([c1]);
-        p.addBenchmark(c2);
+        p.addSuite(c2);
         expect(p.benchmarks).toEqual([c1, c2]);
     });
 
@@ -158,11 +159,11 @@ describe('Suite', function() {
             expect(s.benchmarks.length).toBe(1);
 
             expect(called.fun).toBe(false);
-            await s.benchmarks[0].fun();
+            await (s.benchmarks[0] as Benchmark).fun();
             expect(called.fun).toBe(true);
 
             expect(called.after).toBe(false);
-            await s.benchmarks[0].after();
+            await (s.benchmarks[0] as Benchmark).after(new Result('dummy', [1, 2, 3]));
             expect(called.after).toBe(true);
         });
 
@@ -191,7 +192,7 @@ describe('Suite', function() {
 
             expect(called.original).toBe(false);
             expect(called.overrided).toBe(false);
-            await s.benchmarks[0].fun();
+            await (s.benchmarks[0] as Benchmark).fun();
             expect(called.original).toBe(false);
             expect(called.overrided).toBe(true);
         });
@@ -220,11 +221,11 @@ describe('Suite', function() {
             expect(s.benchmarks.length).toBe(1);
 
             expect(called.fun).toBe(false);
-            await s.benchmarks[0].fun();
+            await (s.benchmarks[0] as Benchmark).fun();
             expect(called.fun).toBe(true);
 
             expect(called.after).toBe(false);
-            await s.benchmarks[0].after();
+            await (s.benchmarks[0] as Benchmark).after(new Result('dummy', [1, 2, 3]));
             expect(called.after).toBe(true);
         });
 
@@ -253,7 +254,7 @@ describe('Suite', function() {
 
             expect(called.original).toBe(false);
             expect(called.overrided).toBe(false);
-            await s.benchmarks[0].after();
+            await (s.benchmarks[0] as Benchmark).after(new Result('dummy', [1, 2, 3]));
             expect(called.original).toBe(false);
             expect(called.overrided).toBe(true);
         });
@@ -605,7 +606,7 @@ describe('Suite', function() {
                 afterTest(suiteCount, benchCount, benchmark, msec) {
                     afterTestCounts.push([benchmark.name, suiteCount, benchCount]);
 
-                    expect(msec).toLessThan(1);
+                    expect(msec).toBeLessThan(1);
                 },
                 afterEach(count, benchmark, result) {
                     afterCounts.push(count);
