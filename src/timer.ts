@@ -42,13 +42,15 @@ function nowHrtime(): number {
  *
  * @ignore
  */
-let now = (typeof process !== 'undefined' && process.hrtime) ? (
-  nowHrtime
-) : (typeof performance !== 'undefined' && performance.now) ? (
-  nowNow
-) : (
-  nowDate
-);
+const now = (() => {
+  if (typeof process !== 'undefined' && process.hrtime) {
+    return nowHrtime;
+  }
+  if (typeof performance !== 'undefined' && performance.now) {
+    return nowNow;
+  }
+  return nowDate;
+})();
 
 /**
  * Measure tiem to execute a function.

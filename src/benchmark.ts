@@ -5,6 +5,29 @@ interface Context extends Record<string, unknown> {
   __proto__?: Benchmark;
 }
 
+type BeforeTestFunc = (
+  ((count: number, benchmark: Benchmark) => Promise<void>)
+  | ((count: number, benchmark: Benchmark) => void)
+);
+
+type BeforeFunc = (() => Promise<void>) | (() => void);
+
+type BeforeEachFunc = ((count: number) => Promise<void>) | ((count: number) => void);
+
+type TargetFunc = (() => Promise<void>) | (() => void);
+
+type AfterEachFunc = (
+  ((count: number, msec: number) => Promise<void>)
+  | ((count: number, msec: number) => void)
+);
+
+type AfterFunc = ((result: Result) => Promise<void>) | ((result: Result) => void);
+
+type AfterTestFunc = (
+  ((count: number, benchmark: Benchmark, msec: number) => Promise<void>)
+  | ((count: number, benchmark: Benchmark, msec: number) => void)
+);
+
 /**
  * The options for this benchmark.
  */
@@ -42,27 +65,27 @@ export type BenchmarkOptions = {
   /**
    * setup function. see {@link Benchmark#before}.
    */
-  before?: (() => Promise<void>) | (() => void);
+  before?: BeforeFunc;
 
   /**
    * setup function. see {@link Benchmark#beforeEach}.
    */
-  beforeEach?: ((count: number) => Promise<void>) | ((count: number) => void);
+  beforeEach?: BeforeEachFunc;
 
   /**
    * target function for benchmarking. see {@link Benchmark#fun}.
    */
-  fun?: (() => Promise<void>) | (() => void);
+  fun?: TargetFunc;
 
   /**
    * teardown function. see {@link Benchmark#afterEach}.
    */
-  afterEach?: ((count: number, msec: number) => Promise<void>) | ((count: number, msec: number) => void);
+  afterEach?: AfterEachFunc;
 
   /**
    * teardown function. see {@link Benchmark#after}.
    */
-  after?: ((result: Result) => Promise<void>) | ((result: Result) => void);
+  after?: AfterFunc;
 };
 
 /**
@@ -72,12 +95,12 @@ export type TestCallbacks = {
   /**
    * callback function that will be called when before executing each test.
    */
-  beforeTest?: ((count: number, benchmark: Benchmark) => Promise<void>) | ((count: number, benchmark: Benchmark) => void);
+  beforeTest?: BeforeTestFunc;
 
   /**
    * callback function that will be called when after executing each test.
    */
-  afterTest?: ((count: number, benchmark: Benchmark, msec: number) => Promise<void>) | ((count: number, benchmark: Benchmark, msec: number) => void);
+  afterTest?: AfterTestFunc;
 };
 
 /**
@@ -133,7 +156,8 @@ export default class Benchmark {
 
   /**
    * The number of executing the test.
-   * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber} if set null.
+   * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber}
+   * if set null.
    */
   readonly number: number;
 
@@ -146,9 +170,9 @@ export default class Benchmark {
    *
    * In default, do nothing.
    *
-   * @return  {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+   * @return  {@link Benchmark} will await if returns {@link Promise}.
    */
-  before: (() => Promise<void>) | (() => void);
+  before: BeforeFunc;
 
   /**
    * Setup before each tests.
@@ -161,9 +185,9 @@ export default class Benchmark {
    *
    * @param count - count of done tests in this benchmark.
    *
-   * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  beforeEach: ((count: number) => Promise<void>) | ((count: number) => void);
+  beforeEach: BeforeEachFunc;
 
   /**
    * The target function for benchmarking.
@@ -174,9 +198,10 @@ export default class Benchmark {
    *
    * In default, couses error that `Error('target function is not defined')`.
    *
-   * @return If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
+   * @return  If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the
+   *          Promise to resolve. Otherwise will measure the time it to method return.
    */
-  fun: (() => Promise<void>) | (() => void);
+  fun: TargetFunc;
 
   /**
    * Teardown after each tests.
@@ -190,9 +215,9 @@ export default class Benchmark {
    * @param count - count of done tests in this benchmark.
    * @param msec - duration of this execution.
    *
-   * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  afterEach: ((count: number, msec: number) => Promise<void>) | ((count: number, msec: number) => void);
+  afterEach: AfterEachFunc;
 
   /**
    * Teardown after execute benchmark.
@@ -205,26 +230,28 @@ export default class Benchmark {
    *
    * @param result - result of this benchmark.
    *
-   * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  after: ((result: Result) => Promise<void>) | ((result: Result) => void);
+  after: AfterFunc;
 
   /**
    * @param options - The options for this benchmark or benchmarking function.
    */
-  constructor(options: BenchmarkOptions | (() => Promise<void>) | (() => void)) {
+  constructor(options: BenchmarkOptions | TargetFunc) {
     this.name = 'unnamed';
     this.targetErrorRate = 0.1;
     this.maxNumber = 10000;
     this.minNumber = 30;
     this.number = null;
 
-    this.before = this.beforeEach = this.afterEach = () => void 0;
+    this.before = () => undefined;
+    this.beforeEach = () => undefined;
     this.fun = () => {
       throw new Error('target function is not defined');
     };
+    this.afterEach = () => undefined;
     this.after = (result: Result) => {
-      console.log(String(result.dropOutlier()));
+      console.log(String(result.dropOutlier())); // eslint-disable-line no-console
     };
 
     if (typeof options === 'function') {
@@ -247,45 +274,57 @@ export default class Benchmark {
   /**
    * Execute benchmark.
    *
-   * @param [context] - the `this` for each benchmarking functions. `__proto__` will override with this instance.
+   * @param [context] - the `this` for each benchmarking functions.
+   *                    `__proto__` will override with this instance.
    * @param [callbacks] - callback functions.
    *
    * @return A result of benchmark.
    */
-  async run<T extends Context>(context: T = {} as T, callbacks: TestCallbacks = {}): Promise<Result> {
-    context = { ...context };
-    context.__proto__ = this;
+  async run<T extends Context>(
+    context: T = {} as T,
+    callbacks: TestCallbacks = {},
+  ): Promise<Result> {
+    const ctxInTest = { ...context };
+    ctxInTest.__proto__ = this;
 
-    await this.before.call(context);
+    await this.before.call(ctxInTest);
 
     const loopNum = this.number || this.maxNumber;
 
+    /* eslint-disable no-await-in-loop */
+
     const msecs = [];
     for (let i = 0; i < loopNum; i += 1) {
-      const ctx = { ...context };
+      const ctxInLoop = { ...ctxInTest };
 
       if (callbacks.beforeTest) {
-        await callbacks.beforeTest.call(ctx, i, this);
+        await callbacks.beforeTest.call(ctxInLoop, i, this);
       }
 
-      await this.beforeEach.call(ctx, i);
+      await this.beforeEach.call(ctxInLoop, i);
 
-      const msec = await timeit(this.fun, [], ctx);
+      const msec = await timeit(this.fun, [], ctxInLoop);
       msecs.push(msec);
 
-      await this.afterEach.call(ctx, i, msec);
+      await this.afterEach.call(ctxInLoop, i, msec);
 
       if (callbacks.afterTest) {
-        await callbacks.afterTest.call(ctx, i, this, msec);
+        await callbacks.afterTest.call(ctxInLoop, i, this, msec);
       }
 
-      if (!this.number && i + 1 >= this.minNumber && (new Result(this.name, msecs)).errorRate <= this.targetErrorRate) {
+      if (
+        !this.number
+        && i + 1 >= this.minNumber
+        && new Result(this.name, msecs).errorRate <= this.targetErrorRate
+      ) {
         break;
       }
     }
 
+    /* eslint-enable no-await-in-loop */
+
     const result = new Result(this.name, msecs);
-    await this.after.call(context, result);
+    await this.after.call(ctxInTest, result);
     return result;
   }
 }

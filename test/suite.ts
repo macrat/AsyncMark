@@ -493,7 +493,7 @@ describe('Suite', () => {
     });
 
     const contextTest = async (options) => {
-      /* eslint-disable-next-line no-proto, no-param-reassign */
+      /* eslint-disable-next-line no-param-reassign */
       options.__proto__ = {
         before() {
           expect(this.inOuter).toBe(undefined);
@@ -592,7 +592,7 @@ describe('Suite', () => {
       const beforeTestCounts = [];
       const afterTestCounts = [];
 
-      /* eslint-disable-next-line no-proto, no-param-reassign */
+      /* eslint-disable-next-line no-param-reassign */
       options.__proto__ = {
         beforeEach(count) {
           beforeCounts.push(count);

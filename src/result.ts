@@ -60,7 +60,7 @@ export default class Result {
    */
   get variance(): number {
     const avg = this.average;
-    return this.msecs.map((x) => Math.pow(x - avg, 2)).reduce((x, y) => x + y) / (this.msecs.length - 1);
+    return this.msecs.reduce((total, x) => total + (x - avg) ** 2, 0) / (this.msecs.length - 1);
   }
 
   /**
@@ -147,7 +147,8 @@ export default class Result {
    * |"42us" or "42usec"|microseconds|
    * |"42ns" or "42nsec"|nanoseconds |
    *
-   * @param expected - expected time in milliseconds {@link Number} or {@String} value like '<10ms' or '>=20s'.
+   * @param expected - expected time in milliseconds {@link Number} or {@String} value.
+   *                   e.g. '<10ms' or '>=20s'.
    *
    * @throw {assert.AssertionError} when result is unacceptable.
    *

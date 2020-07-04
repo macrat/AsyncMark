@@ -17,3 +17,7 @@ overrides:
       - airbnb-typescript/base
     parserOptions:
       project: ./tsconfig.json
+    rules:
+      no-proto: off
+      no-underscore-dangle: [error, {allowAfterThis: true}]
+      import/no-cycle: off

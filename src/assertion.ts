@@ -1,38 +1,5 @@
 import Result from './result';
-
-/**
- * Error class for benchmark result assertion.
- *
- * @since 1.0.0
- */
-class AsyncMarkAssertionError extends Error {
-  readonly name = 'AsyncMarkAssertionError';
-
-  readonly actual: string;
-
-  readonly expected: string;
-
-  readonly operator: string;
-
-  /**
-   * @param rule - the rule that couses error.
-   * @param result - the result for assert.
-   * @param [stackStartFn] - provided function will remove from stack trace.
-   */
-  constructor(rule: AssertRule, result: Result, stackStartFn?: Function) { // eslint-disable-line @typescript-eslint/ban-types
-    super(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`);
-
-    this.actual = `${result.average} msec/op`,
-    this.expected = `${rule.expected} msec/op`,
-    this.operator = rule.operator,
-
-    Object.setPrototypeOf(this, new.target.prototype);
-
-    if (Error.captureStackTrace !== undefined && stackStartFn !== undefined) {
-      Error.captureStackTrace(this, stackStartFn);
-    }
-  }
-}
+import AsyncMarkAssertionError from './error';
 
 type UnitValue = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
 
@@ -109,7 +76,8 @@ class AssertRule {
    * |`42us` or `42usec`|microseconds|
    * |`42ns` or `42nsec`|nanoseconds|
    *
-   * @param rule - assert rule that milliseconds {@link Number} or {@link String} value like '<10ms' or '>=20s'.
+   * @param rule - assert rule that milliseconds {@link Number} or {@link String} value
+   *               like '<10ms' or '>=20s'.
    */
   constructor(rule: number | string) {
     const m = String(rule).match(/^(|[<>]=?)(\d+(?:\.\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);
@@ -147,12 +115,12 @@ class AssertRule {
    *
    * @since 0.3.0
    */
-  assert(result: Result, stackStartFn?: Function): void { // eslint-disable-line @typescript-eslint/ban-types
+  assert(result: Result, stackStartFn?: Function): void {
     if (!this.check(result.average)) {
       throw new AsyncMarkAssertionError(this, result, stackStartFn);
     }
   }
 }
 
-export { AssertRule as default, unit, AsyncMarkAssertionError };
+export { AssertRule as default, unit };
 export type { Operator, UnitValue };

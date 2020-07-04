@@ -1,5 +1,7 @@
 import Bench2, { Benchmark, Result } from '../src';
 
+/* eslint-disable no-console */
+
 /**
  * @test {Benchmark}
  */
@@ -24,7 +26,7 @@ describe('Benchmark', () => {
 
     test('function argument', () => {
       let called = false;
-      const f = function () {
+      const f = () => {
         called = true;
       };
       const b = new Benchmark(f);
