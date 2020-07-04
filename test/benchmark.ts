@@ -150,9 +150,9 @@ describe('Benchmark', () => {
 
                 await b.after(r);
 
-                expect(messages).toEqual(
-                    [new Result('after_test', [1, 2, 3, 4, 5]).toString()]
-                );
+                expect(messages).toEqual([
+                    new Result('after_test', [1, 2, 3, 4, 5]).toString(),
+                ]);
             } finally {
                 // eslint-disable-next-line require-atomic-updates
                 console.log = l;
