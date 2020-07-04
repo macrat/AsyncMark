@@ -6,10 +6,9 @@
  * @ignore
  * @since 0.2.5
  */
-function now_date(): number {
-    return Number(new Date());
+function nowDate(): number {
+  return Number(new Date());
 }
-
 
 /**
  * Get a timer value in microseconds resolution with {@link Performance.now} function.
@@ -19,10 +18,9 @@ function now_date(): number {
  * @ignore
  * @since 0.2.5
  */
-function now_now(): number {
-    return performance.now();
+function nowNow(): number {
+  return performance.now();
 }
-
 
 /**
  * Get a timer value in nanoseconds resolution with {@link Process.hrtime} function.
@@ -32,11 +30,10 @@ function now_now(): number {
  * @ignore
  * @since 0.2.5
  */
-function now_hrtime(): number {
-    const hr = process.hrtime();
-    return (hr[0] * 1e9 + hr[1]) / 1e6;
+function nowHrtime(): number {
+  const hr = process.hrtime();
+  return (hr[0] * 1e9 + hr[1]) / 1e6;
 }
-
 
 /**
  * Get the current time as high resolution as possible in the current platform.
@@ -45,13 +42,15 @@ function now_hrtime(): number {
  *
  * @ignore
  */
-let now: (() => number) = now_date;
-if (typeof process !== 'undefined' && process.hrtime) {
-    now = now_hrtime;
-} else if (typeof performance !== 'undefined' && performance.now) {
-    now = now_now;
-}
-
+const now = (() => {
+  if (typeof process !== 'undefined' && process.hrtime) {
+    return nowHrtime;
+  }
+  if (typeof performance !== 'undefined' && performance.now) {
+    return nowNow;
+  }
+  return nowDate;
+})();
 
 /**
  * Measure tiem to execute a function.
@@ -77,17 +76,17 @@ if (typeof process !== 'undefined' && process.hrtime) {
  * @since 1.0.0
  */
 async function timeit<T extends unknown[], U extends Record<string, unknown>>(
-    fun: ((...args: T) => Promise<void> | void),
-    args: T = [] as unknown as T,
-    context: U = {} as U,
+  fun: ((...args: T) => Promise<void> | void),
+  args: T = [] as unknown as T,
+  context: U = {} as U,
 ): Promise<number> {
+  const start = now();
+  await fun.call(context, ...args);
+  const end = now();
 
-    const start = now();
-    await fun.call(context, ...args);
-    const end = now();
-
-    return end - start;
+  return end - start;
 }
 
-
-export {timeit, now, now_date, now_now, now_hrtime};
+export {
+  timeit, now, nowDate, nowNow, nowHrtime,
+};
