@@ -1,5 +1,3 @@
-import assert from 'power-assert';
-
 import Benchmark, {Suite, Result} from '../src';
 
 
@@ -8,15 +6,15 @@ import Benchmark, {Suite, Result} from '../src';
  */
 describe('Suite', function() {
     describe('#constructor', function() {
-        it('default values', function() {
+        test('default values', function() {
             const s = new Suite();
 
-            assert(s.name === 'unnamed');
-            assert(s.parallel === false);
-            assert.deepStrictEqual(s.benchmarkDefault, {});
+            expect(s.name).toBe('unnamed');
+            expect(s.parallel).toBe(false);
+            expect(s.benchmarkDefault).toEqual({});
         });
 
-        it('options', function() {
+        test('options', function() {
             const conf = {
                 name: 'foo',
                 parallel: true,
@@ -26,12 +24,12 @@ describe('Suite', function() {
             };
             const s = new Suite(conf);
 
-            assert(s.name === 'foo');
-            assert(s.parallel === true);
-            assert.deepStrictEqual(s.benchmarkDefault, {name: 'bar'});
+            expect(s.name).toBe('foo');
+            expect(s.parallel).toBe(true);
+            expect(s.benchmarkDefault).toEqual({name: 'bar'});
         });
 
-        it('functions', function() {
+        test('functions', function() {
             const called = {
                 before: false,
                 beforeEach: false,
@@ -56,90 +54,90 @@ describe('Suite', function() {
                 },
             });
 
-            assert(called.before === false);
+            expect(called.before).toBe(false);
             s.before();
-            assert(called.before === true);
+            expect(called.before).toBe(true);
 
-            assert(called.beforeEach === false);
+            expect(called.beforeEach).toBe(false);
             s.beforeEach();
-            assert(called.beforeEach === true);
+            expect(called.beforeEach).toBe(true);
 
-            assert(called.afterEach === false);
+            expect(called.afterEach).toBe(false);
             s.afterEach();
-            assert(called.afterEach === true);
+            expect(called.afterEach).toBe(true);
 
-            assert(called.after === false);
+            expect(called.after).toBe(false);
             s.after();
-            assert(called.after === true);
+            expect(called.after).toBe(true);
         });
     });
 
     /**
      * @test {Suite#addBenchmark}
      */
-    it('#addBenchmark', function() {
+    test('#addBenchmark', function() {
         const s = new Suite();
         const b1 = new Benchmark({name: 'a'});
         const b2 = new Benchmark({name: 'b'});
 
-        assert.deepStrictEqual(s.benchmarks, []);
+        expect(s.benchmarks).toEqual([]);
         s.addBenchmark(b1);
-        assert.deepStrictEqual(s.benchmarks, [b1]);
+        expect(s.benchmarks).toEqual([b1]);
         s.addBenchmark(b2);
-        assert.deepStrictEqual(s.benchmarks, [b1, b2]);
+        expect(s.benchmarks).toEqual([b1, b2]);
 
-        assert(s.benchmarks[0].name === 'a');
-        assert(s.benchmarks[1].name === 'b');
+        expect(s.benchmarks[0].name).toBe('a');
+        expect(s.benchmarks[1].name).toBe('b');
     });
 
     /**
      * @test {Suite#addSuite}
      */
-    it('#addSuite', function() {
+    test('#addSuite', function() {
         const p = new Suite();
         const c1 = new Suite();
         const c2 = new Suite();
 
-        assert(p !== c1);
-        assert(p !== c2);
-        assert(c1 !== c2);
+        expect(p).not.toBe(c1);
+        expect(p).not.toBe(c2);
+        expect(c1).not.toBe(c2);
 
-        assert.deepStrictEqual(p.benchmarks, []);
+        expect(p.benchmarks).toEqual([]);
         p.addBenchmark(c1);
-        assert.deepStrictEqual(p.benchmarks, [c1]);
+        expect(p.benchmarks).toEqual([c1]);
         p.addBenchmark(c2);
-        assert.deepStrictEqual(p.benchmarks, [c1, c2]);
+        expect(p.benchmarks).toEqual([c1, c2]);
     });
 
     /**
      * @test {Suite#add}
      */
     describe('#add', function() {
-        it('Benchmark', function() {
+        test('Benchmark', function() {
             const s = new Suite();
             const b = new Benchmark({name: 'foobar'});
 
-            assert.deepStrictEqual(s.benchmarks, []);
+            expect(s.benchmarks).toEqual([]);
             s.add(b);
 
-            assert.deepStrictEqual(s.benchmarks, [b]);
-            assert(s.benchmarks[0].name === 'foobar');
+            expect(s.benchmarks).toEqual([b]);
+            expect(s.benchmarks[0].name).toBe('foobar');
         });
 
-        it('Suite', function() {
+        test('Suite', function() {
             const p = new Suite();
             const c = new Suite();
 
-            assert(p !== c);
-            assert.deepStrictEqual(p.benchmarks, []);
+            expect(p).not.toBe(c);
+            expect(p.benchmarks).toEqual([]);
 
             p.add(c);
 
-            assert.deepStrictEqual(p.benchmarks, [c]);
-            assert.deepStrictEqual(c.benchmarks, []);
+            expect(p.benchmarks).toEqual([c]);
+            expect(c.benchmarks).toEqual([]);
         });
 
-        it('function', async function() {
+        test('function', async function() {
             const called = {
                 fun: false,
                 after: false,
@@ -155,20 +153,20 @@ describe('Suite', function() {
                 },
             });
 
-            assert.deepStrictEqual(s.benchmarks, []);
+            expect(s.benchmarks).toEqual([]);
             s.add(fun);
-            assert(s.benchmarks.length === 1);
+            expect(s.benchmarks.length).toBe(1);
 
-            assert(called.fun === false);
+            expect(called.fun).toBe(false);
             await s.benchmarks[0].fun();
-            assert(called.fun === true);
+            expect(called.fun).toBe(true);
 
-            assert(called.after === false);
+            expect(called.after).toBe(false);
             await s.benchmarks[0].after();
-            assert(called.after === true);
+            expect(called.after).toBe(true);
         });
 
-        it('function with override default', async function() {
+        test('function with override default', async function() {
             const called = {
                 original: false,
                 overrided: false,
@@ -187,18 +185,18 @@ describe('Suite', function() {
                 },
             };
 
-            assert.deepStrictEqual(s.benchmarks, []);
+            expect(s.benchmarks).toEqual([]);
             s.add(conf);
-            assert(s.benchmarks.length === 1);
+            expect(s.benchmarks.length).toBe(1);
 
-            assert(called.original === false);
-            assert(called.overrided === false);
+            expect(called.original).toBe(false);
+            expect(called.overrided).toBe(false);
             await s.benchmarks[0].fun();
-            assert(called.original === false);
-            assert(called.overrided === true);
+            expect(called.original).toBe(false);
+            expect(called.overrided).toBe(true);
         });
 
-        it('object', async function() {
+        test('object', async function() {
             const called = {
                 fun: false,
                 after: false,
@@ -217,20 +215,20 @@ describe('Suite', function() {
                 },
             };
 
-            assert.deepStrictEqual(s.benchmarks, []);
+            expect(s.benchmarks).toEqual([]);
             s.add(conf);
-            assert(s.benchmarks.length === 1);
+            expect(s.benchmarks.length).toBe(1);
 
-            assert(called.fun === false);
+            expect(called.fun).toBe(false);
             await s.benchmarks[0].fun();
-            assert(called.fun === true);
+            expect(called.fun).toBe(true);
 
-            assert(called.after === false);
+            expect(called.after).toBe(false);
             await s.benchmarks[0].after();
-            assert(called.after === true);
+            expect(called.after).toBe(true);
         });
 
-        it('object with override default', async function() {
+        test('object with override default', async function() {
             const called = {
                 original: false,
                 overrided: false,
@@ -249,15 +247,15 @@ describe('Suite', function() {
                 },
             };
 
-            assert.deepStrictEqual(s.benchmarks, []);
+            expect(s.benchmarks).toEqual([]);
             s.add(conf);
-            assert(s.benchmarks.length === 1);
+            expect(s.benchmarks.length).toBe(1);
 
-            assert(called.original === false);
-            assert(called.overrided === false);
+            expect(called.original).toBe(false);
+            expect(called.overrided).toBe(false);
             await s.benchmarks[0].after();
-            assert(called.original === false);
-            assert(called.overrided === true);
+            expect(called.original).toBe(false);
+            expect(called.overrided).toBe(true);
         });
     });
 
@@ -266,7 +264,7 @@ describe('Suite', function() {
      */
     describe('#run', function() {
         describe('call methods order', function() {
-            it('empty tests', async function() {
+            test('empty tests', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -290,17 +288,17 @@ describe('Suite', function() {
                     },
                 });
 
-                assert.deepStrictEqual(callLog, []);
+                expect(callLog).toEqual([]);
 
                 await s.run();
 
-                assert.deepStrictEqual(callLog, [
+                expect(callLog).toEqual([
                     'before',
                     'after',
                 ]);
             });
 
-            it('empty tests (enabled parallel)', async function() {
+            test('empty tests (enabled parallel)', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -325,17 +323,17 @@ describe('Suite', function() {
                     parallel: true,
                 });
 
-                assert.deepStrictEqual(callLog, []);
+                expect(callLog).toEqual([]);
 
                 await s.run();
 
-                assert.deepStrictEqual(callLog, [
+                expect(callLog).toEqual([
                     'before',
                     'after',
                 ]);
             });
 
-            it('with test', async function() {
+            test('with test', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -376,7 +374,7 @@ describe('Suite', function() {
                     },
                 });
 
-                assert.deepStrictEqual(callLog, []);
+                expect(callLog).toEqual([]);
 
                 await (new Suite({
                     beforeTest() {
@@ -387,7 +385,7 @@ describe('Suite', function() {
                     },
                 })).add(s).run();
 
-                assert.deepStrictEqual(callLog, [
+                expect(callLog).toEqual([
                     'before',
 
                     'beforeEach',
@@ -432,7 +430,7 @@ describe('Suite', function() {
                 ]);
             });
 
-            it('with test (enabled parallel)', async function() {
+            test('with test (enabled parallel)', async function() {
                 const callLog = [];
 
                 const s = new Suite({
@@ -474,61 +472,61 @@ describe('Suite', function() {
                     },
                 });
 
-                assert.deepStrictEqual(callLog, []);
+                expect(callLog).toEqual([]);
 
                 await s.run();
 
-                assert(callLog.length === 21);
+                expect(callLog.length).toBe(21);
 
-                assert(callLog[0] === 'before');
-                assert(callLog[1] === 'beforeEach');
-                assert(callLog[callLog.length - 2] === 'afterEach');
-                assert(callLog[callLog.length - 1] === 'after');
+                expect(callLog[0]).toBe('before');
+                expect(callLog[1]).toBe('beforeEach');
+                expect(callLog[callLog.length - 2]).toBe('afterEach');
+                expect(callLog[callLog.length - 1]).toBe('after');
 
-                assert(callLog.filter(x => x === 'bench1').length === 2);
-                assert(callLog.filter(x => x === 'bench2').length === 3);
-                assert(callLog.filter(x => x === 'beforeEach').length === 2);
-                assert(callLog.filter(x => x === 'afterEach').length === 2);
-                assert(callLog.filter(x => x === 'beforeTest').length === 5);
-                assert(callLog.filter(x => x === 'afterTest').length === 5);
+                expect(callLog.filter(x => x === 'bench1').length).toBe(2);
+                expect(callLog.filter(x => x === 'bench2').length).toBe(3);
+                expect(callLog.filter(x => x === 'beforeEach').length).toBe(2);
+                expect(callLog.filter(x => x === 'afterEach').length).toBe(2);
+                expect(callLog.filter(x => x === 'beforeTest').length).toBe(5);
+                expect(callLog.filter(x => x === 'afterTest').length).toBe(5);
             });
         });
 
         const contextTest = async function(options) {
             options.__proto__ = {
                 before() {
-                    assert(this.inOuter === undefined);
-                    assert(this.inInner === undefined);
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(undefined);
+                    expect(this.inInner).toBe(undefined);
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.inOuter = 123;
                 },
                 beforeEach() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === undefined);
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe(undefined);
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.inInner = 'abc';
                 },
                 afterEach() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === 'abc');
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe('abc');
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.outInner = 'cba';
                 },
                 after() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === undefined);
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe(undefined);
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.outOuter = 321;
                 },
@@ -542,51 +540,51 @@ describe('Suite', function() {
             s.add({
                 number: 2,
                 before() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === 'abc');
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe('abc');
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.inBench = 42;
                 },
                 after() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === 'abc');
-                    assert(this.inBench === 42);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe('abc');
+                    expect(this.inBench).toBe(42);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
                 },
             });
 
             s.add({
                 number: 3,
                 before() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === 'abc');
-                    assert(this.inBench === undefined);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe('abc');
+                    expect(this.inBench).toBe(undefined);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
 
                     this.inBench = 24;
                 },
                 after() {
-                    assert(this.inOuter === 123);
-                    assert(this.inInner === 'abc');
-                    assert(this.inBench === 24);
-                    assert(this.outInner === undefined);
-                    assert(this.outOuter === undefined);
+                    expect(this.inOuter).toBe(123);
+                    expect(this.inInner).toBe('abc');
+                    expect(this.inBench).toBe(24);
+                    expect(this.outInner).toBe(undefined);
+                    expect(this.outOuter).toBe(undefined);
                 },
             });
 
             await s.run();
         };
 
-        it('context handling', function() {
+        test('context handling', function() {
             return contextTest({parallel: false});
         });
 
-        it('context handling (enabled parallel)', function() {
+        test('context handling (enabled parallel)', function() {
             return contextTest({parallel: true});
         });
 
@@ -598,58 +596,27 @@ describe('Suite', function() {
             const afterTestCounts = [];
 
             options.__proto__ = {
-                before() {
-                    assert(arguments.length === 0);
-                },
                 beforeEach(count, benchmark) {
-                    assert(arguments.length === 2);
-
-                    assert(typeof count === 'number');
                     beforeCounts.push(count);
-
-                    assert(benchmark instanceof Benchmark);
                 },
                 beforeTest(suiteCount, benchCount, benchmark) {
-                    assert(arguments.length === 3);
-
-                    assert(typeof suiteCount === 'number');
-                    assert(typeof benchCount === 'number');
-                    assert(benchmark instanceof Benchmark);
-
                     beforeTestCounts.push([benchmark.name, suiteCount, benchCount]);
                 },
                 afterTest(suiteCount, benchCount, benchmark, msec) {
-                    assert(arguments.length === 4);
-
-                    assert(typeof suiteCount === 'number');
-                    assert(typeof benchCount === 'number');
-                    assert(benchmark instanceof Benchmark);
-
                     afterTestCounts.push([benchmark.name, suiteCount, benchCount]);
 
-                    assert(typeof msec === 'number');
-                    assert(msec < 1);
+                    expect(msec).toLessThan(1);
                 },
                 afterEach(count, benchmark, result) {
-                    assert(arguments.length === 3);
-
-                    assert(typeof count === 'number');
                     afterCounts.push(count);
-
-                    assert(benchmark instanceof Benchmark);
-
-                    assert(result instanceof Result);
                     results.push(result);
                 },
                 after(rs) {
-                    assert(arguments.length === 1);
-
-                    assert(rs[0].msecs.length === 2);
-                    assert(rs[1].msecs.length === 3);
+                    expect(rs[0].msecs.length).toBe(2);
+                    expect(rs[1].msecs.length).toBe(3);
 
                     rs.forEach((x, i) => {
-                        assert(x instanceof Result);
-                        assert.deepStrictEqual(results[i].msecs, x.msecs);
+                        expect(results[i].msecs).toEqual(x.msecs);
                     });
                 },
                 benchmarkDefault: {
@@ -664,27 +631,26 @@ describe('Suite', function() {
             s.add({name: 'b', number: 3});
 
             const rs = await s.run();
-            assert(rs[0].msecs.length === 2);
-            assert(rs[1].msecs.length === 3);
+            expect(rs[0].msecs.length).toBe(2);
+            expect(rs[1].msecs.length).toBe(3);
             rs.forEach((x, i) => {
-                assert(x instanceof Result);
-                assert.deepStrictEqual(results[i].msecs, x.msecs);
+                expect(results[i].msecs).toEqual(x.msecs);
             });
 
-            assert.deepStrictEqual(beforeCounts, [0, 1]);
-            assert.deepStrictEqual(afterCounts, [0, 1]);
+            expect(beforeCounts).toEqual([0, 1]);
+            expect(afterCounts).toEqual([0, 1]);
 
             beforeTestCounts.sort((x, y) => (x[1] - y[1]) * 10 + (x[2] - y[2]));
             afterTestCounts.sort((x, y) => (x[1] - y[1]) * 10 + (x[2] - y[2]));
-            assert.deepStrictEqual(beforeTestCounts, [['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);
-            assert.deepStrictEqual(afterTestCounts,  [['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);
+            expect(beforeTestCounts).toEqual([['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);
+            expect(afterTestCounts).toEqual( [['a', 0, 0], ['a', 0, 1], ['b', 1, 0], ['b', 1, 1], ['b', 1, 2]]);
         };
 
-        it('arguments for methods', function() {
+        test('arguments for methods', function() {
             return argumentsTest({parallel: false});
         });
 
-        it('arguments for methods (enabled parallel)', function() {
+        test('arguments for methods (enabled parallel)', function() {
             return argumentsTest({parallel: true});
         });
     });
