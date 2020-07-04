@@ -44,27 +44,27 @@ export type BenchmarkOptions = {
     /**
      * setup function. see {@link Benchmark#before}.
      */
-    before?: () => Promise<void>;
+    before?: (() => Promise<void>) | (() => void);
 
     /**
      * setup function. see {@link Benchmark#beforeEach}.
      */
-    beforeEach?: (count: number) => Promise<void>;
+    beforeEach?: ((count: number) => Promise<void>) | ((count: number) => void);
 
     /**
      * target function for benchmarking. see {@link Benchmark#fun}.
      */
-    fun?: () => Promise<void>;
+    fun?: (() => Promise<void>) | (() => void);
 
     /**
      * teardown function. see {@link Benchmark#afterEach}.
      */
-    afterEach?: (count: number, msec: number) => Promise<void>;
+    afterEach?: ((count: number, msec: number) => Promise<void>) | ((count: number, msec: number) => void);
 
     /**
      * teardown function. see {@link Benchmark#after}.
      */
-    after?: (result: Result) => Promise<void>;
+    after?: ((result: Result) => Promise<void>) | ((result: Result) => void);
 };
 
 
@@ -75,12 +75,12 @@ export type TestCallbacks = {
     /**
      * callback function that will be called when before executing each test.
      */
-    beforeTest?: (count: number, benchmark: Benchmark) => Promise<void>;
+    beforeTest?: ((count: number, benchmark: Benchmark) => Promise<void>) | ((count: number, benchmark: Benchmark) => void);
 
     /**
      * callback function that will be called when after executing each test.
      */
-    afterTest?: (count: number, benchmark: Benchmark, msec: number) => Promise<void>;
+    afterTest?: ((count: number, benchmark: Benchmark, msec: number) => Promise<void>) | ((count: number, benchmark: Benchmark, msec: number) => void);
 };
 
 
@@ -142,14 +142,94 @@ export default class Benchmark {
     readonly number: number;
 
     /**
+     * Setup before execute benchmark.
+     *
+     * At the time executing this method, `this` is the unique object for the benchmark.
+     * So you can use `this` for storing testing data like a database.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#after}
+     *
+     * In default, do nothing.
+     *
+     * @return  {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    before: (() => Promise<void>) | (() => void);
+
+    /**
+     * Setup before each tests.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+     *
+     * In default, do nothing.
+     *
+     * @param count - count of done tests in this benchmark.
+     *
+     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    beforeEach: ((count: number) => Promise<void>) | ((count: number) => void);
+
+    /**
+     * The target function for benchmarking.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+     *
+     * In default, couses error that `Error('target function is not defined')`.
+     *
+     * @return If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
+     */
+    fun: (() => Promise<void>) | (() => void);
+
+    /**
+     * Teardown after each tests.
+     *
+     * At the time executing this method, `this` is the unique object for the test.
+     * So you can use `this` for storing testing data.
+     * Data of `this` that set in this method will discard after call this method.
+     *
+     * In default, do nothing.
+     *
+     * @param count - count of done tests in this benchmark.
+     * @param msec - duration of this execution.
+     *
+     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    afterEach: ((count: number, msec: number) => Promise<void>) | ((count: number, msec: number) => void);
+
+    /**
+     * Teardown after execute benchmark.
+     *
+     * At the time executing this method, `this` is the unique object for the benchmark.
+     * So you can use `this` for storing testing data like a database.
+     * Data of `this` that set in this method will discard after call this method.
+     *
+     * In default, shows test result.
+     *
+     * @param result - result of this benchmark.
+     *
+     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
+     */
+    after: ((result: Result) => Promise<void>) | ((result: Result) => void);
+
+    /**
      * @param options - The options for this benchmark or benchmarking function.
      */
-    constructor(options?: BenchmarkOptions | (() => Promise<void>)) {
+    constructor(options?: BenchmarkOptions | (() => Promise<void>) | (() => void)) {
         this.name            = 'unnamed';
         this.targetErrorRate = 0.1;
         this.maxNumber       = 10000;
         this.minNumber       = 30;
         this.number          = null;
+
+        this.before = this.beforeEach = this.afterEach = () => {};
+        this.fun = () => {
+            throw new Error('target function is not defined');
+        };
+        this.after = (result: Result) => {
+            console.log(String(result.dropOutlier()));
+        }
 
         if (typeof options === 'function') {
             this.fun = options;
@@ -166,90 +246,6 @@ export default class Benchmark {
             if (options.afterEach)  this.afterEach = options.afterEach;
             if (options.after)      this.after = options.after;
         }
-    }
-
-    /**
-     * Setup before execute benchmark.
-     *
-     * At the time executing this method, `this` is the unique object for the benchmark.
-     * So you can use `this` for storing testing data like a database.
-     * Data of `this` that set in this method will discard after call {@link Benchmark#after}
-     *
-     * In default, do nothing.
-     *
-     * @return  {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
-     */
-    async before(): Promise<void> {
-        return Promise.resolve();
-    }
-
-    /**
-     * Setup before each tests.
-     *
-     * At the time executing this method, `this` is the unique object for the test.
-     * So you can use `this` for storing testing data.
-     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
-     *
-     * In default, do nothing.
-     *
-     * @param count - count of done tests in this benchmark.
-     *
-     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
-     */
-    async beforeEach(count: number): Promise<void> {  // eslint-disable-line @typescript-eslint/no-unused-vars
-        return Promise.resolve();
-    }
-
-    /**
-     * The target function for benchmarking.
-     *
-     * At the time executing this method, `this` is the unique object for the test.
-     * So you can use `this` for storing testing data.
-     * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
-     *
-     * In default, couses error that `Error('target function is not defined')`.
-     *
-     * @abstract
-     *
-     * @return If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the Promise to resolve. Otherwise will measure the time it to method return.
-     */
-    async fun(): Promise<void> {
-        throw new Error('target function is not defined');
-    }
-
-    /**
-     * Teardown after each tests.
-     *
-     * At the time executing this method, `this` is the unique object for the test.
-     * So you can use `this` for storing testing data.
-     * Data of `this` that set in this method will discard after call this method.
-     *
-     * In default, do nothing.
-     *
-     * @param count - count of done tests in this benchmark.
-     * @param msec - duration of this execution.
-     *
-     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
-     */
-    async afterEach(count: number, msec: number): Promise<void> {  // eslint-disable-line @typescript-eslint/no-unused-vars
-        return Promise.resolve();
-    }
-
-    /**
-     * Teardown after execute benchmark.
-     *
-     * At the time executing this method, `this` is the unique object for the benchmark.
-     * So you can use `this` for storing testing data like a database.
-     * Data of `this` that set in this method will discard after call this method.
-     *
-     * In default, shows test result.
-     *
-     * @param result - result of this benchmark.
-     *
-     * @return {@link Benchmark} will await if returns {@link Promise}. Resolved value never evaluation.
-     */
-    async after(result: Result): Promise<void> {
-        console.log(String(result.dropOutlier()));
     }
 
     /**
