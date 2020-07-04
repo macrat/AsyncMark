@@ -216,7 +216,7 @@ export default class Benchmark {
     /**
      * @param options - The options for this benchmark or benchmarking function.
      */
-    constructor(options?: BenchmarkOptions | (() => Promise<void>) | (() => void)) {
+    constructor(options: BenchmarkOptions | (() => Promise<void>) | (() => void)) {
         this.name            = 'unnamed';
         this.targetErrorRate = 0.1;
         this.maxNumber       = 10000;
