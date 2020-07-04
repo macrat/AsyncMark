@@ -19,32 +19,32 @@ export type SuiteOptions = {
     /**
      * setup function. see {@link Suite#before}.
      */
-    before?: () => Promise<void>;
+    before?: (() => Promise<void>) | (() => void);
 
     /**
      * setup function. see {@link Suite#beforeEach}.
      */
-    beforeEach?: (count: number, benchmark: Benchmark) => Promise<void>;
+    beforeEach?: ((count: number, benchmark: Benchmark) => Promise<void>) | ((count: number, benchmark: Benchmark) => void);
 
     /**
      * setup function. see {@link Suite#beforeTest}.
      */
-    beforeTest?: (suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void>;
+    beforeTest?: ((suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void>) | ((suiteCount: number, benchCount: number, benchmark: Benchmark) => void);
 
     /**
      * teardown function. see {@link Suite#afterTest}.
      */
-    afterTest?: (suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => Promise<void>;
+    afterTest?: ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => Promise<void>) | ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => void);
 
     /**
      * teardown function. see {@link Suite#afterEach}.
      */
-    afterEach?: (count: number, benchmark: Benchmark, result: Result) => Promise<void>;
+    afterEach?: ((count: number, benchmark: Benchmark, result: Result) => Promise<void>) | ((count: number, benchmark: Benchmark, result: Result) => void);
 
     /**
      * teardown function. see {@link Suite#after}.
      */
-    after?: (results: Result[]) => Promise<void>;
+    after?: ((results: Result[]) => Promise<void>) | ((results: Result[]) => void);
 
     /**
      * default options for {@link Suite#add}.
@@ -143,24 +143,6 @@ export default class Suite {
     benchmarks: (Benchmark | Suite)[];
 
     /**
-     * @param [options] - options for this suite.
-     */
-    constructor(options: SuiteOptions = {}) {
-        this.name = options.name || 'unnamed';
-        this.benchmarkDefault = options.benchmarkDefault || {};
-        this.parallel = options.parallel || false;
-
-        this.benchmarks = [];
-
-        this.before = options.before || this.before;
-        this.beforeEach = options.beforeEach || this.beforeEach;
-        this.beforeTest = options.beforeTest || this.beforeTest;
-        this.afterTest = options.afterTest || this.afterTest;
-        this.afterEach = options.afterEach || this.afterEach;
-        this.after = options.after || this.after;
-    }
-
-    /**
      * Setup before execute all benchmarks.
      *
      * At the time executing this method, `this` is the unique object for the suite.
@@ -171,7 +153,7 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async before(): Promise<void> {}
+    before: (() => Promise<void>) | (() => void);
 
     /**
      * Setup before execute each benchmark.
@@ -187,7 +169,7 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async beforeEach(count: number, benchmark: Benchmark): Promise<void> {}
+    beforeEach: ((count: number, benchmark: Benchmark) => Promise<void>) | ((count: number, benchmark: Benchmark) => void);
 
     /**
      * Setup before execute each test of benchmarks.
@@ -204,7 +186,7 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async beforeTest(suiteCount: number, benchCount: number, benchmark: Benchmark): Promise<void> {}
+    beforeTest: ((suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void>) | ((suiteCount: number, benchCount: number, benchmark: Benchmark) => void);
 
     /**
      * Teardown after execute each test of benchmarks.
@@ -222,7 +204,7 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async afterTest(suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number): Promise<void> {}
+    afterTest: ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => Promise<void>) | ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => void);
 
     /**
      * Teardown after execute each benchmark.
@@ -239,7 +221,7 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async afterEach(count: number, benchmark: Benchmark, result: Result): Promise<void> {}
+    afterEach: ((count: number, benchmark: Benchmark, result: Result) => Promise<void>) | ((count: number, benchmark: Benchmark, result: Result) => void);
 
     /**
      * Teardown after execute all benchmarks.
@@ -254,7 +236,25 @@ export default class Suite {
      *
      * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
      */
-    async after(resultso: Result[]): Promise<void> {}
+    after: ((results: Result[]) => Promise<void>) | ((results: Result[]) => void);
+
+    /**
+     * @param [options] - options for this suite.
+     */
+    constructor(options: SuiteOptions = {}) {
+        this.name = options.name || 'unnamed';
+        this.benchmarkDefault = options.benchmarkDefault || {};
+        this.parallel = options.parallel || false;
+
+        this.benchmarks = [];
+
+        this.before = options.before || (() => {});
+        this.beforeEach = options.beforeEach || (() => {});
+        this.beforeTest = options.beforeTest || (() => {});
+        this.afterTest = options.afterTest || (() => {});
+        this.afterEach = options.afterEach || (() => {});
+        this.after = options.after || (() => {});
+    }
 
     /**
      * Adding {@link Benchmark} instance into this {@link Suite}.
@@ -287,7 +287,7 @@ export default class Suite {
      *
      * @return returns this suite for method chain.
      */
-    add(child: Benchmark | Suite | BenchmarkOptions | (() => Promise<void>)): Suite {
+    add(child: Benchmark | Suite | BenchmarkOptions | (() => Promise<void>) | (() => void)): Suite {
         if (child instanceof Benchmark) {
             this.addBenchmark(child);
         } else if (child instanceof Suite) {
