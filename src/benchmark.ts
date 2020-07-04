@@ -144,27 +144,27 @@ export default class Benchmark {
     /**
      * @param options - The options for this benchmark or benchmarking function.
      */
-    constructor(options: BenchmarkOptions | (() => Promise<void>)) {
+    constructor(options?: BenchmarkOptions | (() => Promise<void>)) {
+        this.name            = 'unnamed';
+        this.targetErrorRate = 0.1;
+        this.maxNumber       = 10000;
+        this.minNumber       = 30;
+        this.number          = null;
+
         if (typeof options === 'function') {
-            this.name = 'unnamed';
-            this.targetErrorRate = 0.1;
-            this.maxNumber = 10000;
-            this.minNumber = 30;
-            this.number = null;
-
             this.fun = options;
-        } else {
-            this.name = options.name || 'unnamed';
-            this.targetErrorRate = options.targetErrorRate || 0.1;
-            this.maxNumber = options.maxNumber || 10000;
-            this.minNumber = options.minNumber || 30;
-            this.number = options.number || null;
+        } else if (options) {
+            if (options.name)            this.name = options.name;
+            if (options.targetErrorRate) this.targetErrorRate = options.targetErrorRate;
+            if (options.maxNumber)       this.maxNumber = options.maxNumber;
+            if (options.minNumber)       this.minNumber = options.minNumber;
+            if (options.number)          this.number = options.number;
 
-            this.before = options.before || this.before;
-            this.beforeEach = options.beforeEach || this.beforeEach;
-            this.fun = options.fun || this.fun;
-            this.afterEach = options.afterEach || this.afterEach;
-            this.after = options.after || this.after;
+            if (options.before)     this.before = options.before;
+            if (options.beforeEach) this.beforeEach = options.beforeEach;
+            if (options.fun)        this.fun = options.fun;
+            if (options.afterEach)  this.afterEach = options.afterEach;
+            if (options.after)      this.after = options.after;
         }
     }
 
