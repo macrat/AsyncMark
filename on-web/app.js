@@ -343,7 +343,7 @@ function __execute__() {
 
 __update_graph__();
 window.addEventListener('resize', __update_graph__);
-document.getElementById('executebtn').addEventListener('click', __execute__);;
+document.getElementById('executebtn').addEventListener('click', __execute__);
 
 document.querySelectorAll('thead th').forEach(elm => {
     elm.addEventListener('click', () => {

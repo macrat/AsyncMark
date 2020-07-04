@@ -1,6 +1,3 @@
-extends:
-  - eslint:recommended
-
 env:
   browser: true
   es6: true
@@ -10,11 +7,13 @@ parserOptions:
   ecmaVersion: 2017
   sourceType: module
 
-rules:
-  indent: [error, 4]
-
 overrides:
+  - files: "**/*.js"
+    extends:
+      - eslint:recommended
+
   - files: "**/*.ts"
     extends:
-      - plugin:@typescript-eslint/eslint-recommended
-      - plugin:@typescript-eslint/recommended
+      - airbnb-typescript/base
+    parserOptions:
+      project: ./tsconfig.json
