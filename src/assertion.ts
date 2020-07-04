@@ -1,58 +1,36 @@
-import assert from 'assert';
-
 import Result from './result';
 
 
 /**
- * Generate {@link AssertionError}
+ * Error class for benchmark result assertion.
  *
- * @param rule - the rule that couses error.
- * @param result - the result for assert.
- * @param [stackStartFn] - provided function will remove from stack trace.
- *
- * @return generated error
- *
- * @ignore
- * @since 0.3.0
+ * @since 1.0.0
  */
-function AssertionError(rule: AssertRule, result: Result, stackStartFn?: Function): assert.AssertionError {  // eslint-disable-line @typescript-eslint/ban-types
-    return new assert.AssertionError({
-        message: `benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`,
-        actual: `${result.average} msec/op`,
-        expected: `${rule.expected} msec/op`,
-        operator: rule.operator,
-        stackStartFn: stackStartFn || rule.assert,
-    });
-}
+class AsyncMarkAssertionError extends Error {
+    readonly name = 'AsyncMarkAssertionError';
 
+    readonly actual: string;
+    readonly expected: string;
+    readonly operator: string;
 
-/**
- * Generate alternate error with default {@link Error}
- *
- * @param rule - the rule that couses error.
- * @param result - the result for assert.
- * @param [stackStartFn] - provided function will remove from stack trace.
- *
- * @return generated error
- *
- * @ignore
- * @since 0.3.0
- */
-function AlternateError(rule: AssertRule, result: Result, stackStartFn?: Function): Error {  // eslint-disable-line @typescript-eslint/ban-types
-    const err = Object.assign(
-        new Error(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`),
-        {
-            actual: `${result.average} msec/op`,
-            expected: `${rule.expected} msec/op`,
-            operator: rule.operator,
+    /**
+     * @param rule - the rule that couses error.
+     * @param result - the result for assert.
+     * @param [stackStartFn] - provided function will remove from stack trace.
+     */
+    constructor(rule: AssertRule, result: Result, stackStartFn?: Function) {  // eslint-disable-line @typescript-eslint/ban-types
+        super(`benchmark "${result.name}": actual:${result.average}msec/op ${rule.operator} expected:${rule.expected}msec/op`);
+
+        this.actual = `${result.average} msec/op`,
+        this.expected = `${rule.expected} msec/op`,
+        this.operator = rule.operator,
+
+        Object.setPrototypeOf(this, new.target.prototype);
+
+        if (Error.captureStackTrace !== undefined && stackStartFn !== undefined) {
+            Error.captureStackTrace(this, stackStartFn);
         }
-    );
-
-    if (Error.captureStackTrace !== undefined && stackStartFn !== undefined) {
-        Error.captureStackTrace(err, stackStartFn);
     }
-
-    return err;
 }
 
 
@@ -117,13 +95,6 @@ class AssertRule {
     readonly expected: number;
 
     /**
-     * Error object generator.
-     *
-     * @ignore
-     */
-    readonly errorFn: (rule: AssertRule, result: Result, stackStartFn?: Function) => Error;  // eslint-disable-line @typescript-eslint/ban-types
-
-    /**
      * Parse time rule for assertion.
      *
      * Rule format is `{operator}{number}{unit}`; use like `<=10msec`.
@@ -149,9 +120,8 @@ class AssertRule {
             throw Error(`Invalid rule format: "${rule}"`);
         }
 
-        this.operator = (m[1] ?? '<=') as Operator;
+        this.operator = (m[1] || '<=') as Operator;
         this.expected = Number(m[2]) * unit(m[3] as UnitValue);
-        this.errorFn = assert !== undefined ? AssertionError : AlternateError;
     }
 
     /**
@@ -182,11 +152,11 @@ class AssertRule {
      */
     assert(result: Result, stackStartFn?: Function): void {  // eslint-disable-line @typescript-eslint/ban-types
         if (!this.check(result.average)) {
-            throw this.errorFn(this, result, stackStartFn);
+            throw new AsyncMarkAssertionError(this, result, stackStartFn);
         }
     }
 }
 
 
-export {AssertRule as default, unit, AssertionError, AlternateError};
+export {AssertRule as default, unit, AsyncMarkAssertionError};
 export type {Operator, UnitValue};
