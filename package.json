@@ -8,8 +8,7 @@
   "files": [
     "README.md",
     "LICESNSE",
-    "dist",
-    "index.d.ts"
+    "dist"
   ],
   "scripts": {
     "test": "jest --coverage",
