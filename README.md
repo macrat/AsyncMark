@@ -8,12 +8,15 @@ A benchmarking library for javascript that supports Promise.
 [![Test Status](https://github.com/macrat/AsyncMark/workflows/test/badge.svg)](https://github.com/macrat/AsyncMark/actions?query=workflow%3Atest)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/test_coverage)](https://codeclimate.com/github/macrat/AsyncMark/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/maintainability)](https://codeclimate.com/github/macrat/AsyncMark/maintainability)
+
+[![dependencies Status](https://david-dm.org/macrat/asyncmark/status.svg)](https://david-dm.org/macrat/asyncmark)
 [![devDependencies Status](https://david-dm.org/macrat/asyncmark/dev-status.svg)](https://david-dm.org/macrat/asyncmark?type=dev)
 [![optionalDependencies Status](https://david-dm.org/macrat/asyncmark/optional-status.svg)](https://david-dm.org/macrat/asyncmark?type=optional)
+
 [![license](https://img.shields.io/github/license/macrat/AsyncMark.svg)](https://github.com/macrat/AsyncMark/blob/master/LICENSE)
 [![document](https://macrat.github.io/AsyncMark/badge.svg)](https://macrat.github.io/AsyncMark/)
 
-You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/index.html).
+You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/).
 
 ## be simple
 ``` javascript
