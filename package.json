@@ -15,7 +15,7 @@
     "test": "jest --coverage",
     "lint": "eslint --ext .ts,.js --ignore-pattern '/examples' --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
-    "build:dist": "node build.js",
+    "build:dist": "rollup -c rollup.config.js",
     "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/"
   },
   "repository": {
