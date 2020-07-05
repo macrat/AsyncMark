@@ -292,16 +292,16 @@ export default class Suite { // eslint-disable-line no-redeclare
    * @param options  Options for this suite.
    */
   constructor(options: SuiteOptions = {}) {
-    this.name = options.name || 'unnamed';
-    this.benchmarkDefault = options.benchmarkDefault || {};
-    this.parallel = options.parallel || false;
+    this.name = options.name ?? 'unnamed';
+    this.benchmarkDefault = options.benchmarkDefault ?? {};
+    this.parallel = options.parallel ?? false;
 
-    this.before = options.before || (() => undefined);
-    this.beforeEach = options.beforeEach || (() => undefined);
-    this.beforeTest = options.beforeTest || (() => undefined);
-    this.afterTest = options.afterTest || (() => undefined);
-    this.afterEach = options.afterEach || (() => undefined);
-    this.after = options.after || (() => undefined);
+    this.before = options.before ?? (() => undefined);
+    this.beforeEach = options.beforeEach ?? (() => undefined);
+    this.beforeTest = options.beforeTest ?? (() => undefined);
+    this.afterTest = options.afterTest ?? (() => undefined);
+    this.afterEach = options.afterEach ?? (() => undefined);
+    this.after = options.after ?? (() => undefined);
   }
 
   /**

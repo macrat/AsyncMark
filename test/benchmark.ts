@@ -65,6 +65,17 @@ describe('Benchmark', () => {
         expect(b.number).toBe(conf.number);
       });
 
+      test('with falsy number', () => {
+        const conf = {
+          name: 'test name',
+          number: 0,
+        };
+        const b = new Benchmark(conf);
+
+        expect(b.name).toBe(conf.name);
+        expect(b.number).toBe(conf.number);
+      });
+
       test('functions', () => {
         const called = {
           before: false,
@@ -433,6 +444,34 @@ describe('Benchmark', () => {
         expect(r.msecs.length).toBeGreaterThanOrEqual(5);
         expect(r.msecs.length).toBeLessThanOrEqual(100);
         expect(r.errorRate).toBeLessThanOrEqual(0.4);
+      });
+
+      test('auto / minimum loop', async () => {
+        const r = await new Benchmark({
+          minNumber: 5,
+          maxNumber: 10,
+          targetErrorRate: 1,
+          fun() {
+            return Promise.resolve();
+          },
+          after() {},
+        }).run();
+
+        expect(r.msecs.length).toBe(5);
+      });
+
+      test('auto / maximum loop', async () => {
+        const r = await new Benchmark({
+          minNumber: 5,
+          maxNumber: 10,
+          targetErrorRate: 0,
+          fun() {
+            return new Promise((resolve) => setTimeout(resolve, Math.random()));
+          },
+          after() {},
+        }).run();
+
+        expect(r.msecs.length).toBe(10);
       });
     });
   });

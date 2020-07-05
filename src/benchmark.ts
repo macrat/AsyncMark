@@ -235,17 +235,17 @@ export default class Benchmark { // eslint-disable-line no-redeclare
       return;
     }
 
-    if (options.name) this.name = options.name;
-    if (options.targetErrorRate) this.targetErrorRate = options.targetErrorRate;
-    if (options.maxNumber) this.maxNumber = options.maxNumber;
-    if (options.minNumber) this.minNumber = options.minNumber;
-    if (options.number) this.number = options.number;
+    if (options.name !== undefined) this.name = options.name;
+    if (options.targetErrorRate !== undefined) this.targetErrorRate = options.targetErrorRate;
+    if (options.maxNumber !== undefined) this.maxNumber = options.maxNumber;
+    if (options.minNumber !== undefined) this.minNumber = options.minNumber;
+    if (options.number !== undefined) this.number = options.number;
 
-    if (options.before) this.before = options.before;
-    if (options.beforeEach) this.beforeEach = options.beforeEach;
-    if (options.fun) this.fun = options.fun;
-    if (options.afterEach) this.afterEach = options.afterEach;
-    if (options.after) this.after = options.after;
+    if (options.before !== undefined) this.before = options.before;
+    if (options.beforeEach !== undefined) this.beforeEach = options.beforeEach;
+    if (options.fun !== undefined) this.fun = options.fun;
+    if (options.afterEach !== undefined) this.afterEach = options.afterEach;
+    if (options.after !== undefined) this.after = options.after;
   }
 
   /**
