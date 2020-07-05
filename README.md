@@ -20,7 +20,7 @@ You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/).
 
 ## be simple
 ``` javascript
-import Benchmark from 'asyncmark';
+import { Benchmark } from 'asyncmark';
 
 
 new Benchmark(function() {
@@ -32,7 +32,7 @@ new Benchmark(function() {
 
 ## be customizable
 ``` javascript
-import {Suite} from 'asyncmark';
+import { Suite } from 'asyncmark';
 
 
 const suite = new Suite({
@@ -82,7 +82,7 @@ suite.run()
 
 ## with unit test
 ``` javascript
-import Benchmark from 'asyncmark';
+import { Benchmark } from 'asyncmark';
 
 
 describe('benchmark test', function() {
@@ -104,7 +104,7 @@ $ npm install asyncmark
 
 #### ES6
 ``` javascript
-import Benchmark, {Suite} from 'asyncmark';
+import { Benchmark, Suite } from 'asyncmark';
 ```
 
 #### CommonJS

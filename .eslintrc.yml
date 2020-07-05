@@ -16,7 +16,7 @@ overrides:
     extends:
       - airbnb-typescript/base
     parserOptions:
-      project: ./tsconfig.json
+      project: ./tsconfig.lint.json
     rules:
       no-proto: off
       no-underscore-dangle: [error, {allowAfterThis: true}]

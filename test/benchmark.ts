@@ -1,4 +1,4 @@
-import Bench2, { Benchmark, Result } from '../src';
+import { Benchmark, Result } from '../src';
 
 /* eslint-disable no-console */
 
@@ -6,10 +6,6 @@ import Bench2, { Benchmark, Result } from '../src';
  * @test {Benchmark}
  */
 describe('Benchmark', () => {
-  test('module exports', () => {
-    expect(Benchmark === Bench2).toBe(true);
-  });
-
   /**
    * @test {Benchmark#constructor}
    */

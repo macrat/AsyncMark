@@ -3,8 +3,9 @@
   "version": "0.3.6",
   "description": "A benchmarking library that supports Promise.",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "unpkg": "dist/asyncmark.min.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/index.min.js",
   "files": [
     "README.md",
     "LICESNSE",
@@ -14,9 +15,7 @@
     "test": "jest --coverage",
     "lint": "eslint --ext .ts,.js --ignore-pattern '/examples' --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
-    "build:dist": "npm-run-all build:dist:*",
-    "build:dist:node": "tsc -b tsconfig.node.json",
-    "build:dist:browser": "tsc -b tsconfig.browser.json && terser -o dist/asyncmark.min.js dist/asyncmark.js",
+    "build:dist": "node build.js",
     "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/"
   },
   "repository": {
@@ -35,6 +34,7 @@
   "bugs": "https://github.com/macrat/AsyncMark/issues",
   "homepage": "https://macrat.github.io/AsyncMark/",
   "devDependencies": {
+    "@rollup/plugin-typescript": "^5.0.1",
     "@types/jest": "^26.0.3",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
@@ -43,7 +43,8 @@
     "eslint-plugin-import": "^2.22.0",
     "jest": "^26.1.0",
     "npm-run-all": "^4.1.5",
-    "terser": "^4.8.0",
+    "rollup": "^2.19.0",
+    "rollup-plugin-terser": "^6.1.0",
     "ts-jest": "^26.1.1",
     "tslib": "^2.0.0",
     "typedoc": "^0.17.8",
