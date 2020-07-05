@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "jest --coverage",
-    "lint": "eslint --ext .ts,.js --ignore-pattern '/examples' --ignore-pattern '/on-web' .",
+    "lint": "eslint --ext .ts,.js --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
     "build:dist": "rollup -c rollup.config.js",
     "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/"
@@ -39,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
     "eslint": "^7.4.0",
+    "eslint-config-airbnb": "^18.2.0",
     "eslint-config-airbnb-typescript": "^8.0.2",
     "eslint-plugin-import": "^2.22.0",
     "jest": "^26.1.0",

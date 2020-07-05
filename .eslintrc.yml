@@ -10,7 +10,10 @@ parserOptions:
 overrides:
   - files: "**/*.js"
     extends:
-      - eslint:recommended
+      - eslint-config-airbnb/base
+    rules:
+      no-console: off
+      no-unused-expressions: off
 
   - files: "**/*.ts"
     extends:
