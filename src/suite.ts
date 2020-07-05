@@ -205,17 +205,17 @@ export default class Suite { // eslint-disable-line no-redeclare
   /**
    * Name of this suite.
    */
-  readonly name: string;
+  readonly name: string = 'unnamed';
 
   /**
    * Default options for benchmarks in this suite.
    */
-  benchmarkDefault: BenchmarkOptions;
+  benchmarkDefault: BenchmarkOptions = {};
 
   /**
    * Flag for executing each benchmark parallelly.
    */
-  parallel: boolean;
+  parallel: boolean = false;
 
   /**
    * A list of {@link Benchmark} or {@link Suite}.
@@ -231,7 +231,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  before: Suite.BeforeFunc;
+  before: Suite.BeforeFunc = () => undefined;
 
   /**
    * Setup before execute each child {@link Benchmark} or {@link Suite}.
@@ -242,7 +242,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  beforeEach: Suite.BeforeEachFunc;
+  beforeEach: Suite.BeforeEachFunc = () => undefined;
 
   /**
    * Setup before execute each test of benchmarks.
@@ -253,7 +253,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  beforeTest: Suite.BeforeTestFunc;
+  beforeTest: Suite.BeforeTestFunc = () => undefined;
 
   /**
    * Teardown after execute each test of benchmarks.
@@ -264,7 +264,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  afterTest: Suite.AfterTestFunc;
+  afterTest: Suite.AfterTestFunc = () => undefined;
 
   /**
    * Teardown after execute each benchmark.
@@ -275,7 +275,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  afterEach: Suite.AfterEachFunc;
+  afterEach: Suite.AfterEachFunc = () => undefined;
 
   /**
    * Teardown after execute all benchmarks.
@@ -286,22 +286,22 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  after: Suite.AfterFunc;
+  after: Suite.AfterFunc = () => undefined;
 
   /**
    * @param options  Options for this suite.
    */
   constructor(options: SuiteOptions = {}) {
-    this.name = options.name ?? 'unnamed';
+    this.name = options.name ?? this.name;
     this.benchmarkDefault = options.benchmarkDefault ?? {};
-    this.parallel = options.parallel ?? false;
+    this.parallel = options.parallel ?? this.parallel;
 
-    this.before = options.before ?? (() => undefined);
-    this.beforeEach = options.beforeEach ?? (() => undefined);
-    this.beforeTest = options.beforeTest ?? (() => undefined);
-    this.afterTest = options.afterTest ?? (() => undefined);
-    this.afterEach = options.afterEach ?? (() => undefined);
-    this.after = options.after ?? (() => undefined);
+    this.before = options.before ?? this.before;
+    this.beforeEach = options.beforeEach ?? this.beforeEach;
+    this.beforeTest = options.beforeTest ?? this.beforeTest;
+    this.afterTest = options.afterTest ?? this.afterTest;
+    this.afterEach = options.afterEach ?? this.afterEach;
+    this.after = options.after ?? this.after;
   }
 
   /**
