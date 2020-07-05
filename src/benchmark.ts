@@ -112,11 +112,11 @@ export type BenchmarkOptions = {
  *
  * Benchmark will execute by flow like this.
  *
- *   - {@link Benchmark.before | before}
- *   - {@link Benchmark.beforeEach | beforeEach}
- *   - {@link Benchmark.fun | fun}
- *   - {@link Benchmark.afterEach | afterEach}
- *   - {@link Benchmark.after | after}
+ * - {@link Benchmark.before | before}
+ * - {@link Benchmark.beforeEach | beforeEach}
+ * - {@link Benchmark.fun | fun}
+ * - {@link Benchmark.afterEach | afterEach}
+ * - {@link Benchmark.after | after}
  *
  * Each function can override with options of the constructor.
  *

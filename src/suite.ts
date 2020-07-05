@@ -136,21 +136,22 @@ export type SuiteOptions = {
  *
  * Suite will execute by flow like this.
  *
- *   - {@link Suite.before}
- *   - {@link Suite.beforeEach}
- *   - {@link Benchmark.before}
- *   - {@link Suite.beforeTest}
- *   - {@link Benchmark.beforeEach}
- *   - {@link Benchmark.fun}
- *   - {@link Benchmark.afterEach}
- *   - {@link Suite.afterTest}
- *   - {@link Benchmark.after}
- *   - {@link Suite.afterEach}
- *   - {@link Suite.after}
+ * - {@link Suite.before}
+ * - {@link Suite.beforeEach}
+ * - {@link Benchmark.before}
+ * - {@link Suite.beforeTest}
+ * - {@link Benchmark.beforeEach}
+ * - {@link Benchmark.fun}
+ * - {@link Benchmark.afterEach}
+ * - {@link Suite.afterTest}
+ * - {@link Benchmark.after}
+ * - {@link Suite.afterEach}
+ * - {@link Suite.after}
  *
  * Each function can override with options of the constructor.
  *
  *
+ * ## Example
  * ``` typescript
  * import {Suite} from 'asyncmark';
  *

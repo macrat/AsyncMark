@@ -3,8 +3,8 @@
  *
  * @return  A timer value in milliseconds.
  *
- * @internal
  * @since 0.2.5
+ * @internal
  */
 function nowDate(): number {
   return Number(new Date());
@@ -78,7 +78,11 @@ const now = (() => {
  * console.log(await timeit(axios.get, ['http://example.com']));
  * ```
  *
- * @since 1.0.0
+ * ## Changelog
+ *
+ * - 1.0.0: Changed arguments order.
+ *
+ * @since 0.2.4
  */
 async function timeit<T extends unknown[], U extends Record<string, unknown>>(
   fun: ((...args: T) => Promise<void> | void),

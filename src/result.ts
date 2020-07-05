@@ -131,6 +131,11 @@ export default class Result {
    *
    * This function will throw {@link AsyncMarkAssertionError} if result is unaccepcable.
    *
+   * @param expected  Expected time in milliseconds number or string value.
+   *                  e.g. `<10ms` or `>=20s`.
+   *
+   * @return
+   *
    * ## Supported operators
    * |example       |means              |
    * |--------------|-------------------|
@@ -167,9 +172,6 @@ export default class Result {
    *
    * result.assert('>90ms', '<110ms');
    * ```
-   *
-   * @param expected  Expected time in milliseconds number or string value.
-   *                  e.g. `<10ms` or `>=20s`.
    *
    * @since 0.3.0
    */

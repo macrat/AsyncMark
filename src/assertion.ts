@@ -11,13 +11,14 @@ type Unit = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
 /**
  * Convert unit to number
  *
- * ``` typescript
- * assert(100 * unit('ms') == 0.1 * unit('sec'))
- * ```
- *
  * @param u  unit name like 'ms', 'sec' or etc.
  *
  * @return  number to convert milliseconds.
+ *
+ * ## Examples
+ * ``` typescript
+ * assert(100 * unit('ms') == 0.1 * unit('sec'))
+ * ```
  *
  * @since 0.3.0
  * @internal
@@ -74,6 +75,9 @@ class AssertRule {
    * Rule format is `{operator}{number}{unit}`; use like `<=10msec`.
    * Operator and unit are can omit. If omitted, uses `<=` and `msec`.
    *
+   * @param rule  Assert rule that milliseconds {@link Number} or {@link String} value
+   *              like '<10ms' or '>=20s'.
+   *
    * ## Supported operators
    * |example       |means              |
    * |--------------|-------------------|
@@ -89,9 +93,6 @@ class AssertRule {
    * |`42ms` or `42msec`|milliseconds|
    * |`42us` or `42usec`|microseconds|
    * |`42ns` or `42nsec`|nanoseconds |
-   *
-   * @param rule  Assert rule that milliseconds {@link Number} or {@link String} value
-   *              like '<10ms' or '>=20s'.
    */
   constructor(rule: number | string) {
     const m = String(rule).match(/^(|[<>]=?)(\d+(?:\.\d+)?)(|s|ms|us|ns|sec|msec|usec|nsec)$/);
