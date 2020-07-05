@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "esModuleInterop": true,
-    "isolatedModules": true
+    "esModuleInterop": true
   },
   "exclude": [
     "node_modules"
