@@ -6,12 +6,16 @@ export type TargetFunc = (
    *
    * @return  If returns Promise, {@link Benchmark} will measure the time it takes for the
    *          Promise to resolve. Otherwise will measure the time it to method return.
+   *
+   * @since 1.0.0
    */
   () => Promise<void> | void
 );
 
 /**
  * Callback functions set.
+ *
+ * @since 0.3.4
  */
 export type TestCallbacks = {
   beforeTest?: (

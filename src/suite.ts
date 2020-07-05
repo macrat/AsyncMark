@@ -8,6 +8,8 @@ namespace Suite {
      * Callback function for setup before execute {@link Suite} or {@link Benchmark}.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     () => Promise<void> | void
   );
@@ -20,6 +22,8 @@ namespace Suite {
      * @param benchmark  A {@link Benchmark} instance that will execute.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     (count: number, benchmark: Benchmark | Suite) => Promise<void> | void
   );
@@ -33,6 +37,8 @@ namespace Suite {
      * @param benchmark   A {@link Benchmark} instance that will execute.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     (suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void> | void
   );
@@ -47,6 +53,8 @@ namespace Suite {
      * @param msec        A result of this test.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     (
       suiteCount: number,
@@ -65,6 +73,8 @@ namespace Suite {
      * @param result     A result of this benchmark.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     (count: number, benchmark: Benchmark, result: Result) => Promise<void> | void
   );
@@ -76,6 +86,8 @@ namespace Suite {
      * @param results  a list of benchmark result.
      *
      * @return  Some Promise for awaiting, or undefined.
+     *
+     * @since 1.0.0
      */
     (results: Result[]) => Promise<void> | void
   );
@@ -83,6 +95,8 @@ namespace Suite {
 
 /**
  * The options for {@link Suite}.
+ *
+ * @since 0.3.4
  */
 export type SuiteOptions = {
   /**

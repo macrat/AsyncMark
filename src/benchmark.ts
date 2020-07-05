@@ -8,6 +8,8 @@ namespace Benchmark {
      * Callback function for setup before execute {@link Benchmark}.
      *
      * @return  {@link Benchmark} will await if returns Promise.
+     *
+     * @since 1.0.0
      */
     () => Promise<void> | void
   );
@@ -19,6 +21,8 @@ namespace Benchmark {
      * @param count  Count of done tests in this benchmark.
      *
      * @return  {@link Benchmark} will await if returns Promise.
+     *
+     * @since 1.0.0
      */
     (count: number) => Promise<void> | void
   );
@@ -31,6 +35,8 @@ namespace Benchmark {
      * @param msec   Duration of this execution.
      *
      * @return  {@link Benchmark} will await if returns Promise.
+     *
+     * @since 1.0.0
      */
     (count: number, msec: number) => Promise<void> | void
   );
@@ -42,6 +48,8 @@ namespace Benchmark {
      * @param result  Result of this benchmark.
      *
      * @return  {@link Benchmark} will await if returns Promise.
+     *
+     * @since 1.0.0
      */
     (result: Result) => Promise<void> | void
   );
@@ -49,6 +57,8 @@ namespace Benchmark {
 
 /**
  * The options for {@link Benchmark}.
+ *
+ * @since 0.3.4
  */
 export type BenchmarkOptions = {
   /**
