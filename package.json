@@ -16,7 +16,7 @@
     "lint": "eslint --ext .ts,.js --ignore-pattern '/examples' --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
     "build:dist": "npm-run-all build:dist:*",
-    "build:dist:node": "tsc -b tsconfig.json",
+    "build:dist:node": "tsc -b tsconfig.node.json",
     "build:dist:browser": "tsc -b tsconfig.browser.json && terser -o dist/asyncmark.min.js dist/asyncmark.js",
     "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/"
   },
