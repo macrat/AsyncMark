@@ -10,15 +10,15 @@ describe('AsyncMarkAssertionError', () => {
     const a = new AsyncMarkAssertionError(new AssertRule('100'), new Result('hoge', [100.1]));
     expect(a.name).toBe('AsyncMarkAssertionError');
     expect(a.message).toBe('benchmark "hoge": actual:100.1msec/op <= expected:100msec/op');
-    expect(a.actual).toBe('100.1 msec/op');
-    expect(a.expected).toBe('100 msec/op');
+    expect(a.actual).toBe(100.1);
+    expect(a.expected).toBe(100);
     expect(a.operator).toBe('<=');
 
     const b = new AsyncMarkAssertionError(new AssertRule('>0.1s'), new Result('fuga', [10]));
     expect(b.name).toBe('AsyncMarkAssertionError');
     expect(b.message).toBe('benchmark "fuga": actual:10msec/op > expected:100msec/op');
-    expect(b.actual).toBe('10 msec/op');
-    expect(b.expected).toBe('100 msec/op');
+    expect(b.actual).toBe(10);
+    expect(b.expected).toBe(100);
     expect(b.operator).toBe('>');
   });
 

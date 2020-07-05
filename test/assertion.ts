@@ -1,4 +1,4 @@
-import AssertRule, { unit, UnitValue } from '../src/assertion';
+import AssertRule, { unit, Unit } from '../src/assertion';
 import AsyncMarkAssertionError from '../src/error';
 import { Result } from '../src';
 
@@ -20,7 +20,7 @@ describe('assertion', () => {
     expect(unit('ns')).toBe(0.000001);
     expect(unit('nsec')).toBe(0.000001);
 
-    expect(() => unit('foobar' as UnitValue)).toThrowError(new Error('unknown unit name: "foobar"'));
+    expect(() => unit('foobar' as Unit)).toThrowError(new Error('unknown unit name: "foobar"'));
   });
 
   /**

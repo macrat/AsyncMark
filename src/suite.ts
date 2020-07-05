@@ -1,76 +1,132 @@
-import Benchmark, { BenchmarkOptions, TestCallbacks } from './benchmark';
+import Benchmark, { BenchmarkOptions } from './benchmark';
 import Result from './result';
+import { TargetFunc, TestCallbacks } from './callbacks';
 
-type BeforeFunc = (() => Promise<void>) | (() => void);
+namespace Suite {
+  export type BeforeFunc = (
+    /**
+     * Callback function for setup before execute {@link Suite} or {@link Benchmark}.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    () => Promise<void> | void
+  );
 
-type BeforeEachFunc = (
-  ((count: number, benchmark: Benchmark) => Promise<void>)
-  | ((count: number, benchmark: Benchmark) => void)
-);
+  export type BeforeEachFunc = (
+    /**
+     * Callback function for setup before each child {@link Benchmark} or {@link Suite}.
+     *
+     * @param count      Count of done benchmarks in this suite.
+     * @param benchmark  A {@link Benchmark} instance that will execute.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    (count: number, benchmark: Benchmark | Suite) => Promise<void> | void
+  );
 
-type BeforeTestFunc = (
-  ((suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void>)
-  | ((suiteCount: number, benchCount: number, benchmark: Benchmark) => void)
-);
+  export type BeforeTestFunc = (
+    /**
+     * Callback function for setup before each execution target function.
+     *
+     * @param suiteCount  Count of done suite or benchmarks in this suite.
+     * @param benchCount  Count of done execution in this benchmark.
+     * @param benchmark   A {@link Benchmark} instance that will execute.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    (suiteCount: number, benchCount: number, benchmark: Benchmark) => Promise<void> | void
+  );
 
-type AfterTestFunc = (
-  ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => Promise<void>)
-  | ((suiteCount: number, benchCount: number, benchmark: Benchmark, msec: number) => void)
-);
+  export type AfterTestFunc = (
+    /**
+     * Callback function for teardown after each execution target function.
+     *
+     * @param suiteCount  Count of done benchmarks in this suite.
+     * @param benchCount  Count of done tests in this benchmark.
+     * @param benchmark   A {@link Benchmark} instance that executed.
+     * @param msec        A result of this test.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    (
+      suiteCount: number,
+      benchCount: number,
+      benchmark: Benchmark,
+      msec: number,
+    ) => Promise<void> | void
+  );
 
-type AfterEachFunc = (
-  ((count: number, benchmark: Benchmark, result: Result) => Promise<void>)
-  | ((count: number, benchmark: Benchmark, result: Result) => void)
-);
+  export type AfterEachFunc = (
+    /**
+     * Callback function for setup before each child {@link Benchmark} or {@link Suite}.
+     *
+     * @param count      Count of done benchmarks in this suite.
+     * @param benchmark  A {@link Benchmark} instance that executed.
+     * @param result     A result of this benchmark.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    (count: number, benchmark: Benchmark, result: Result) => Promise<void> | void
+  );
 
-type AfterFunc = ((results: Result[]) => Promise<void>) | ((results: Result[]) => void);
+  export type AfterFunc = (
+    /**
+     * Callback function for teardown before execute {@link Suite} or {@link Benchmark}.
+     *
+     * @param results  a list of benchmark result.
+     *
+     * @return  Some Promise for awaiting, or undefined.
+     */
+    (results: Result[]) => Promise<void> | void
+  );
+}
 
 /**
  * The options for {@link Suite}.
  */
 export type SuiteOptions = {
   /**
-   * name of this suite.
+   * Name of this suite.
    */
   name?: string;
 
   /**
-   * flag for executing each benchmark parallelly.
+   * Flag for executing each benchmark parallelly.
    */
   parallel?: boolean;
 
   /**
-   * setup function. see {@link Suite#before}.
+   * Setup function. see {@link Suite.before}.
    */
-  before?: BeforeFunc;
+  before?: Suite.BeforeFunc;
 
   /**
-   * setup function. see {@link Suite#beforeEach}.
+   * Setup function. see {@link Suite.beforeEach}.
    */
-  beforeEach?: BeforeEachFunc;
+  beforeEach?: Suite.BeforeEachFunc;
 
   /**
-   * setup function. see {@link Suite#beforeTest}.
+   * Setup function. see {@link Suite.beforeTest}.
    */
-  beforeTest?: BeforeTestFunc;
+  beforeTest?: Suite.BeforeTestFunc;
 
   /**
-   * teardown function. see {@link Suite#afterTest}.
+   * Teardown function. see {@link Suite.afterTest}.
    */
-  afterTest?: AfterTestFunc;
+  afterTest?: Suite.AfterTestFunc;
 
   /**
-   * teardown function. see {@link Suite#afterEach}.
+   * Teardown function. see {@link Suite.afterEach}.
    */
-  afterEach?: AfterEachFunc;
+  afterEach?: Suite.AfterEachFunc;
 
   /**
-   * teardown function. see {@link Suite#after}.
+   * Teardown function. see {@link Suite.after}.
    */
-  after?: AfterFunc;
+  after?: Suite.AfterFunc;
 
   /**
-   * default options for {@link Suite#add}.
+   * Default options for {@link Suite.add}.
    */
   benchmarkDefault?: BenchmarkOptions;
 };
@@ -80,22 +136,22 @@ export type SuiteOptions = {
  *
  * Suite will execute by flow like this.
  *
- *   - {@link Suite#before}
- *   - {@link Suite#beforeEach}
- *   - {@link Benchmark#before}
- *   - {@link Suite#beforeTest}
- *   - {@link Benchmark#beforeEach}
- *   - {@link Benchmark#fun}
- *   - {@link Benchmark#afterEach}
- *   - {@link Suite#afterTest}
- *   - {@link Benchmark#after}
- *   - {@link Suite#afterEach}
- *   - {@link Suite#after}
+ *   - {@link Suite.before}
+ *   - {@link Suite.beforeEach}
+ *   - {@link Benchmark.before}
+ *   - {@link Suite.beforeTest}
+ *   - {@link Benchmark.beforeEach}
+ *   - {@link Benchmark.fun}
+ *   - {@link Benchmark.afterEach}
+ *   - {@link Suite.afterTest}
+ *   - {@link Benchmark.after}
+ *   - {@link Suite.afterEach}
+ *   - {@link Suite.after}
  *
  * Each function can override with options of the constructor.
  *
  *
- * @example
+ * ``` typescript
  * import {Suite} from 'asyncmark';
  *
  *
@@ -142,6 +198,7 @@ export type SuiteOptions = {
  *         console.log(min.name + ' is best way!');
  *     }).
  *     catch(err => console.error(err));
+ * ```
  */
 export default class Suite {
   /**
@@ -160,7 +217,7 @@ export default class Suite {
   parallel: boolean;
 
   /**
-   * A list of {@link Benchmark}.
+   * A list of {@link Benchmark} or {@link Suite}.
    */
   benchmarks: (Benchmark | Suite)[];
 
@@ -169,46 +226,33 @@ export default class Suite {
    *
    * At the time executing this method, `this` is the unique object for the suite.
    * So you can use `this` for storing testing data like a database.
-   * Data of `this` that set in this method will discard after call {@link Suite#after}.
+   * Data of `this` that set in this method will discard after call {@link Suite.after}.
    *
    * In default, do nothing.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  before: BeforeFunc;
+  before: Suite.BeforeFunc;
 
   /**
-   * Setup before execute each benchmark.
+   * Setup before execute each child {@link Benchmark} or {@link Suite}.
    *
    * At the time executing this method, `this` is the unique object for the benchmark.
    * So you can use `this` for storing testing data like a database.
-   * Data of `this` that set in this method will discard after call {@link Suite#afterEach}.
+   * Data of `this` that set in this method will discard after call {@link Suite.afterEach}.
    *
    * In default, do nothing.
-   *
-   * @param count - count of done benchmarks in this suite.
-   * @param benchmark - a {@link Benchmark} instance that will execute.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  beforeEach: BeforeEachFunc;
+  beforeEach: Suite.BeforeEachFunc;
 
   /**
    * Setup before execute each test of benchmarks.
    *
    * At the time executing this method, `this` is the unique object for the test.
    * So you can use `this` for storing testing data like a database.
-   * Data of `this` that set in this method will discard after call {@link Suite#afterTest}.
+   * Data of `this` that set in this method will discard after call {@link Suite.afterTest}.
    *
    * In default, do nothing.
-   *
-   * @param suiteCount - count of done benchmarks in this suite.
-   * @param benchCount - count of done tests in this benchmark.
-   * @param benchmark - a {@link Benchmark} instance that will execute.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  beforeTest: BeforeTestFunc;
+  beforeTest: Suite.BeforeTestFunc;
 
   /**
    * Teardown after execute each test of benchmarks.
@@ -218,15 +262,8 @@ export default class Suite {
    * Data of `this` that set in this method will discard after call this method
    *
    * In default, do nothing.
-   *
-   * @param suiteCount - count of done benchmarks in this suite.
-   * @param benchCount - count of done tests in this benchmark.
-   * @param benchmark - a {@link Benchmark} instance that executed.
-   * @param msec - a result of this test.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  afterTest: AfterTestFunc;
+  afterTest: Suite.AfterTestFunc;
 
   /**
    * Teardown after execute each benchmark.
@@ -236,14 +273,8 @@ export default class Suite {
    * Data of `this` that set in this method will discard after call this method.
    *
    * In default, do nothing.
-   *
-   * @param count - count of done benchmarks in this suite.
-   * @param benchmark - a {@link Benchmark} instance that executed.
-   * @param result - a result of this benchmark.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  afterEach: AfterEachFunc;
+  afterEach: Suite.AfterEachFunc;
 
   /**
    * Teardown after execute all benchmarks.
@@ -253,15 +284,11 @@ export default class Suite {
    * Data of `this` that set in this method will discard after call this method.
    *
    * In default, do nothing.
-   *
-   * @param results - a list of benchmark result.
-   *
-   * @return {@link Suite} will await if returns {@link Promise}. Resolved value never evaluation.
    */
-  after: AfterFunc;
+  after: Suite.AfterFunc;
 
   /**
-   * @param [options] - options for this suite.
+   * @param options  Options for this suite.
    */
   constructor(options: SuiteOptions = {}) {
     this.name = options.name || 'unnamed';
@@ -281,9 +308,9 @@ export default class Suite {
   /**
    * Adding {@link Benchmark} instance into this {@link Suite}.
    *
-   * @param benchmark - the benchmark instance for adding.
+   * @param benchmark  The benchmark instance for adding.
    *
-   * @return returns this suite for method chain.
+   * @return  Returns this suite for method chain.
    */
   addBenchmark(benchmark: Benchmark): Suite {
     this.benchmarks.push(benchmark);
@@ -293,9 +320,9 @@ export default class Suite {
   /**
    * Adding child {@link Suite} instance into this {@link Suite}.
    *
-   * @param suite - the suite instance for adding.
+   * @param suite  The suite instance for adding.
    *
-   * @return returns this suite for method chain.
+   * @return  Returns this suite for method chain.
    */
   addSuite(suite: Suite): Suite {
     this.benchmarks.push(suite);
@@ -305,11 +332,11 @@ export default class Suite {
   /**
    * Make new benchmark or suite and adding into this {@link Suite}.
    *
-   * @param child - {@link Benchmark}, {@link Suite} or arguments for {@link Benchmark#constructor}.
+   * @param child  {@link Benchmark}, {@link Suite} or arguments for {@link Benchmark.constructor}.
    *
-   * @return returns this suite for method chain.
+   * @return  Returns this suite for method chain.
    */
-  add(child: Benchmark | Suite | BenchmarkOptions | (() => Promise<void>) | (() => void)): Suite {
+  add(child: Benchmark | Suite | BenchmarkOptions | TargetFunc): Suite {
     if (child instanceof Benchmark) {
       this.addBenchmark(child);
     } else if (child instanceof Suite) {
@@ -327,31 +354,28 @@ export default class Suite {
   }
 
   /**
-   * Make callbacks for {@link Benchmark#run}.
+   * Make callbacks for {@link Benchmark.run}.
    *
-   * @param count - count of benchmark in this suite.
-   * @param parentCallbacks - callback functions of parent suite.
-   *                          same as callbacks of {@link Suite#run}.
+   * @param count            Count of benchmark in this suite.
+   * @param parentCallbacks  Callback functions of parent suite.
+   *                         Same as callbacks of {@link Suite.run}.
    *
-   * @return callbacks.
-   *
-   * @ignore
+   * @return  Callbacks.
    */
   private _makeCallbacks(count: number, parentCallbacks: TestCallbacks): TestCallbacks {
-    const { beforeTest } = this;
-    const { afterTest } = this;
+    const { beforeTest, afterTest } = this;
 
     return {
-      async beforeTest(c, b) {
+      async beforeTest(c: number, b: Benchmark | Suite) {
         if (parentCallbacks.beforeTest) {
-          parentCallbacks.beforeTest.call(this, c, b);
+          await parentCallbacks.beforeTest.call(this, c, b);
         }
-        beforeTest.call(this, count, c, b);
+        await beforeTest.call(this, count, c, b);
       },
-      async afterTest(c, b, r) {
-        afterTest.call(this, count, c, b, r);
+      async afterTest(c: number, b: Benchmark | Suite, r: number) {
+        await afterTest.call(this, count, c, b, r);
         if (parentCallbacks.afterTest) {
-          parentCallbacks.afterTest.call(this, c, b, r);
+          await parentCallbacks.afterTest.call(this, c, b, r);
         }
       },
     };
@@ -360,12 +384,10 @@ export default class Suite {
   /**
    * Execute benchmarks parallelly.
    *
-   * @param context - the context for execute.
-   * @param callbacks - callback functions. same as callbacks of {@link Suite#run}.
+   * @param context    The context for execute.
+   * @param callbacks  Callback functions. same as callbacks of {@link Suite.run}.
    *
-   * @return result of benchmarks.
-   *
-   * @ignore
+   * @return  Result of benchmarks.
    */
   private async _runParallel(context: any, callbacks: TestCallbacks): Promise<Result[]> {
     await this.before.call(context);
@@ -387,12 +409,10 @@ export default class Suite {
   /**
    * Execute benchmarks sequential.
    *
-   * @param context - the context for execute.
-   * @param callbacks - callback functions. same as callbacks of {@link Suite#run}.
+   * @param context    The context for execute.
+   * @param callbacks  Callback functions. same as callbacks of {@link Suite.run}.
    *
-   * @return result of benchmarks.
-   *
-   * @ignore
+   * @return  Result of benchmarks.
    */
   private async _runSequential(context: any, callbacks: TestCallbacks): Promise<Result[]> {
     await this.before.call(context);
@@ -419,14 +439,14 @@ export default class Suite {
   /**
    * Execute benchmarks in this suite.
    *
-   * All benchmarks will execute parallel if enabled {@link Suite#parallel} option.
+   * All benchmarks will execute parallel if enabled {@link Suite.parallel} option.
    * Else do execute sequentially by added order.
    *
-   * @param [context] - the `this` for each benchmarking functions.
-   *                    `__proto__` will override with this instance.
-   * @param [callbacks] - callback functions.
+   * @param context    The `this` for each benchmarking functions.
+   *                   `__proto__` will override with this instance.
+   * @param callbacks  Callback functions.
    *
-   * @return {Promise<Result[]>} An array of {@link Result}s.
+   * @return  An array of {@link Result}s.
    */
   async run(context: any = {}, callbacks: TestCallbacks = {}): Promise<Result[]> {
     const ctx = { ...context };

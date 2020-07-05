@@ -1,9 +1,9 @@
 /**
- * Get a timer value in milliseconds resolution with {@link Date} class.
+ * Get a timer value in milliseconds resolution with Date class.
  *
- * @return a timer value in milliseconds.
+ * @return  A timer value in milliseconds.
  *
- * @ignore
+ * @internal
  * @since 0.2.5
  */
 function nowDate(): number {
@@ -11,24 +11,24 @@ function nowDate(): number {
 }
 
 /**
- * Get a timer value in microseconds resolution with {@link Performance.now} function.
+ * Get a timer value in microseconds resolution with Performance.now function.
  *
- * @return a timer value in milliseconds. (microseconds resolution)
+ * @return  A timer value in milliseconds. (microseconds resolution)
  *
- * @ignore
  * @since 0.2.5
+ * @internal
  */
 function nowNow(): number {
   return performance.now();
 }
 
 /**
- * Get a timer value in nanoseconds resolution with {@link Process.hrtime} function.
+ * Get a timer value in nanoseconds resolution with Process.hrtime function.
  *
- * @return a timer value in milliseconds. (nanoseconds resolution)
+ * @return  A timer value in milliseconds. (nanoseconds resolution)
  *
- * @ignore
  * @since 0.2.5
+ * @internal
  */
 function nowHrtime(): number {
   const hr = process.hrtime();
@@ -38,9 +38,9 @@ function nowHrtime(): number {
 /**
  * Get the current time as high resolution as possible in the current platform.
  *
- * @return a timer value in milliseconds.
+ * @return  A timer value in milliseconds.
  *
- * @ignore
+ * @internal
  */
 const now = (() => {
   if (typeof process !== 'undefined' && process.hrtime) {
@@ -57,21 +57,26 @@ const now = (() => {
  *
  * wait for done if the target function returns a thenable object. so you can use async function.
  *
- * NOTE: this function will execute target function only once.
+ * **NOTE:** this function will execute target function only once.
  *
- * @param fun - the target function.
- * @param [args] - arguments to passing to target function.
- * @param [context] - the `this` for target function.
+ * @param fun      The target function.
+ * @param args     Arguments to passing to target function.
+ * @param context  The `this` for target function.
  *
  * @return milliseconds taked executing.
  *
- * @example
+ * ## Examples
+ * ### Simple usage
+ * ``` typescript
  * const msec = await timeit(function() {
  *     # do something heavy.
  * });
+ * ```
  *
- * @example
+ * ### With arguments
+ * ``` typescript
  * console.log(await timeit(axios.get, ['http://example.com']));
+ * ```
  *
  * @since 1.0.0
  */

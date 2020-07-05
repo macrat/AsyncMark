@@ -1,106 +1,110 @@
 import Result from './result';
 import { timeit } from './timer';
+import { TargetFunc, TestCallbacks } from './callbacks';
 
-interface Context extends Record<string, unknown> {
-  __proto__?: Benchmark;
+namespace Benchmark {
+  export type BeforeFunc = (
+    /**
+     * Callback function for setup before execute {@link Benchmark}.
+     *
+     * @return  {@link Benchmark} will await if returns Promise.
+     */
+    () => Promise<void> | void
+  );
+
+  export type BeforeEachFunc = (
+    /**
+     * Callback function for setup before each execute.
+     *
+     * @param count  Count of done tests in this benchmark.
+     *
+     * @return  {@link Benchmark} will await if returns Promise.
+     */
+    (count: number) => Promise<void> | void
+  );
+
+  export type AfterEachFunc = (
+    /**
+     * Callback function for teardown each execute.
+     *
+     * @param count  Count of done tests in this benchmark.
+     * @param msec   Duration of this execution.
+     *
+     * @return  {@link Benchmark} will await if returns Promise.
+     */
+    (count: number, msec: number) => Promise<void> | void
+  );
+
+  export type AfterFunc = (
+    /**
+     * Callback function for teardown after {@link Benchmark}
+     *
+     * @param result  Result of this benchmark.
+     *
+     * @return  {@link Benchmark} will await if returns Promise.
+     */
+    (result: Result) => Promise<void> | void
+  );
 }
 
-type BeforeTestFunc = (
-  ((count: number, benchmark: Benchmark) => Promise<void>)
-  | ((count: number, benchmark: Benchmark) => void)
-);
-
-type BeforeFunc = (() => Promise<void>) | (() => void);
-
-type BeforeEachFunc = ((count: number) => Promise<void>) | ((count: number) => void);
-
-type TargetFunc = (() => Promise<void>) | (() => void);
-
-type AfterEachFunc = (
-  ((count: number, msec: number) => Promise<void>)
-  | ((count: number, msec: number) => void)
-);
-
-type AfterFunc = ((result: Result) => Promise<void>) | ((result: Result) => void);
-
-type AfterTestFunc = (
-  ((count: number, benchmark: Benchmark, msec: number) => Promise<void>)
-  | ((count: number, benchmark: Benchmark, msec: number) => void)
-);
-
 /**
- * The options for this benchmark.
+ * The options for {@link Benchmark}.
  */
 export type BenchmarkOptions = {
   /**
-   * @ignore
+   * @internal
    */
   __proto__?: BenchmarkOptions;
 
   /**
-   * name of this benchmark.
+   * Name of this benchmark.
    */
   name?: string;
 
   /**
-   * wanted maximum error rate. see {@link Benchmark#targetErrorRate}.
+   * Wanted maximum error rate. See {@link Benchmark.targetErrorRate}.
    */
   targetErrorRate?: number;
 
   /**
-   * maximum number of executing test. see {@link Benchmark#maxNumber}.
+   * Maximum number of executing test. See {@link Benchmark.maxNumber}.
    */
   maxNumber?: number;
 
   /**
-   * minimal number of executing test. see {@link Benchmark#minNumber}.
+   * Minimal number of executing test. See {@link Benchmark.minNumber}.
    */
   minNumber?: number;
 
   /**
-   * the number of executing the test. see {@link Benchmark#number}.
+   * the number of executing the test. see {@link Benchmark.number}.
    */
   number?: number;
 
   /**
-   * setup function. see {@link Benchmark#before}.
+   * Setup function. See {@link Benchmark.before}.
    */
-  before?: BeforeFunc;
+  before?: Benchmark.BeforeFunc;
 
   /**
-   * setup function. see {@link Benchmark#beforeEach}.
+   * Setup function. See {@link Benchmark.beforeEach}.
    */
-  beforeEach?: BeforeEachFunc;
+  beforeEach?: Benchmark.BeforeEachFunc;
 
   /**
-   * target function for benchmarking. see {@link Benchmark#fun}.
+   * Target function for benchmarking. See {@link Benchmark.fun}.
    */
   fun?: TargetFunc;
 
   /**
-   * teardown function. see {@link Benchmark#afterEach}.
+   * Teardown function. See {@link Benchmark.afterEach}.
    */
-  afterEach?: AfterEachFunc;
+  afterEach?: Benchmark.AfterEachFunc;
 
   /**
-   * teardown function. see {@link Benchmark#after}.
+   * Teardown function. See {@link Benchmark.after}.
    */
-  after?: AfterFunc;
-};
-
-/**
- * callback functions.
- */
-export type TestCallbacks = {
-  /**
-   * callback function that will be called when before executing each test.
-   */
-  beforeTest?: BeforeTestFunc;
-
-  /**
-   * callback function that will be called when after executing each test.
-   */
-  afterTest?: AfterTestFunc;
+  after?: Benchmark.AfterFunc;
 };
 
 /**
@@ -108,16 +112,16 @@ export type TestCallbacks = {
  *
  * Benchmark will execute by flow like this.
  *
- *   - before
- *   - beforeEach
- *   - fun
- *   - afterEach
- *   - after
+ *   - {@link Benchmark.before | before}
+ *   - {@link Benchmark.beforeEach | beforeEach}
+ *   - {@link Benchmark.fun | fun}
+ *   - {@link Benchmark.afterEach | afterEach}
+ *   - {@link Benchmark.after | after}
  *
  * Each function can override with options of the constructor.
  *
  *
- * @example
+ * ``` typescript
  * import Benchmark from 'asyncmark';
  *
  *
@@ -129,6 +133,7 @@ export type TestCallbacks = {
  *         });
  *     },
  * }).run().catch(console.error);
+ * ```
  */
 export default class Benchmark {
   /**
@@ -138,25 +143,25 @@ export default class Benchmark {
 
   /**
    * Wanted maximum error rate.
-   * This value will be ignore if set {@link Benchmark#number}.
+   * This value will be ignore if set {@link Benchmark.number}.
    */
   readonly targetErrorRate: number;
 
   /**
    * Maximum number of executing test.
-   * This value will be ignore if set {@link Benchmark#number}.
+   * This value will be ignore if set {@link Benchmark.number}.
    */
   readonly maxNumber: number;
 
   /**
    * Minimal number of executing test.
-   * This value will be ignore if set {@link Benchmark#number}.
+   * This value will be ignore if set {@link Benchmark.number}.
    */
   readonly minNumber: number;
 
   /**
    * The number of executing the test.
-   * Will decide automatically in between {@link Benchmark#minNumber} to {@link Benchmark#maxNumber}
+   * Will decide automatically in between {@link Benchmark.minNumber} to {@link Benchmark.maxNumber}
    * if set null.
    */
   readonly number: number;
@@ -166,40 +171,31 @@ export default class Benchmark {
    *
    * At the time executing this method, `this` is the unique object for the benchmark.
    * So you can use `this` for storing testing data like a database.
-   * Data of `this` that set in this method will discard after call {@link Benchmark#after}
+   * Data of `this` that set in this method will discard after call {@link Benchmark.after}
    *
    * In default, do nothing.
-   *
-   * @return  {@link Benchmark} will await if returns {@link Promise}.
    */
-  before: BeforeFunc;
+  before: Benchmark.BeforeFunc;
 
   /**
    * Setup before each tests.
    *
    * At the time executing this method, `this` is the unique object for the test.
    * So you can use `this` for storing testing data.
-   * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+   * Data of `this` that set in this method will discard after call {@link Benchmark.afterEach}
    *
    * In default, do nothing.
-   *
-   * @param count - count of done tests in this benchmark.
-   *
-   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  beforeEach: BeforeEachFunc;
+  beforeEach: Benchmark.BeforeEachFunc;
 
   /**
    * The target function for benchmarking.
    *
    * At the time executing this method, `this` is the unique object for the test.
    * So you can use `this` for storing testing data.
-   * Data of `this` that set in this method will discard after call {@link Benchmark#afterEach}
+   * Data of `this` that set in this method will discard after call {@link Benchmark.afterEach}
    *
    * In default, couses error that `Error('target function is not defined')`.
-   *
-   * @return  If returns {@link Promise}, {@link Benchmark} will measure the time it takes for the
-   *          Promise to resolve. Otherwise will measure the time it to method return.
    */
   fun: TargetFunc;
 
@@ -211,13 +207,8 @@ export default class Benchmark {
    * Data of `this` that set in this method will discard after call this method.
    *
    * In default, do nothing.
-   *
-   * @param count - count of done tests in this benchmark.
-   * @param msec - duration of this execution.
-   *
-   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  afterEach: AfterEachFunc;
+  afterEach: Benchmark.AfterEachFunc;
 
   /**
    * Teardown after execute benchmark.
@@ -227,15 +218,11 @@ export default class Benchmark {
    * Data of `this` that set in this method will discard after call this method.
    *
    * In default, shows test result.
-   *
-   * @param result - result of this benchmark.
-   *
-   * @return {@link Benchmark} will await if returns {@link Promise}.
    */
-  after: AfterFunc;
+  after: Benchmark.AfterFunc;
 
   /**
-   * @param options - The options for this benchmark or benchmarking function.
+   * @param options  The options for this benchmark or benchmarking function.
    */
   constructor(options: BenchmarkOptions | TargetFunc) {
     this.name = 'unnamed';
@@ -274,16 +261,13 @@ export default class Benchmark {
   /**
    * Execute benchmark.
    *
-   * @param [context] - the `this` for each benchmarking functions.
-   *                    `__proto__` will override with this instance.
-   * @param [callbacks] - callback functions.
+   * @param context    The `this` for each benchmarking functions.
+   *                   `__proto__` will override with this instance.
+   * @param callbacks  Callback functions.
    *
    * @return A result of benchmark.
    */
-  async run<T extends Context>(
-    context: T = {} as T,
-    callbacks: TestCallbacks = {},
-  ): Promise<Result> {
+  async run(context: any = {}, callbacks: TestCallbacks = {}): Promise<Result> {
     const ctxInTest = { ...context };
     ctxInTest.__proto__ = this;
 

@@ -3,7 +3,7 @@ import AssertRule from './assertion';
 /**
  * The result of benchmark.
  *
- * This value will included outlier. Please use {@link Result#dropOutlier} if you want drop they.
+ * This value will included outlier. Please use {@link Result.dropOutlier} if you want drop they.
  */
 export default class Result {
   /**
@@ -17,10 +17,8 @@ export default class Result {
   readonly msecs: number[];
 
   /**
-   * @param name - name of benchmark.
-   * @param msecs - times of benchmark result.
-   *
-   * @ignore
+   * @param name   Name of benchmark.
+   * @param msecs  Times of benchmark result.
    */
   constructor(name: string, msecs: number[]) {
     this.name = name;
@@ -101,9 +99,9 @@ export default class Result {
   /**
    * Make new Result that droped outlier.
    *
-   * @param [threshold=2] the threshold of outlier testing.
+   * @param threshold  The threshold of outlier testing.
    *
-   * @return new {@link Result} instance.
+   * @return  New {@link Result} instance.
    */
   dropOutlier(threshold = 2): Result {
     const avg = this.average;
@@ -114,7 +112,7 @@ export default class Result {
   /**
    * Convert to string for printing.
    *
-   * @return human redable string
+   * @return  Human redable string
    */
   toString(): string {
     const avg = Math.round(this.average * 10000) / 10000;
@@ -130,6 +128,8 @@ export default class Result {
    *
    * Expected rule format is `{operator}{number}{unit}`; use like `<=10msec`.
    * Operator and unit are can omit. If omitted, uses `<=` and `msec`.
+   *
+   * This function will throw {@link AsyncMarkAssertionError} if result is unaccepcable.
    *
    * ## Supported operators
    * |example       |means              |
@@ -147,24 +147,29 @@ export default class Result {
    * |"42us" or "42usec"|microseconds|
    * |"42ns" or "42nsec"|nanoseconds |
    *
-   * @param expected - expected time in milliseconds {@link Number} or {@String} value.
-   *                   e.g. '<10ms' or '>=20s'.
+   * ## Examples
+   * ### Simple usage
    *
-   * @throw {assert.AssertionError} when result is unacceptable.
-   *
-   * @example
+   * ``` typescript
    * const result = await Benchmark(function() {
    *     # do something that expect done in least 100msec
    * }).run();
    *
    * result.assert(100);
+   * ```
    *
-   * @example
+   * ### Combination rule
+   *
+   * ``` typescript
    * const result = await Benchmark(async function() {
    *     await sleep_function(100);
    * }).run();
    *
    * result.assert('>90ms', '<110ms');
+   * ```
+   *
+   * @param expected  Expected time in milliseconds number or string value.
+   *                  e.g. `<10ms` or `>=20s`.
    *
    * @since 0.3.0
    */
