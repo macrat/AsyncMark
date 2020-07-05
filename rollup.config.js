@@ -17,19 +17,15 @@ export default [
     plugins: [typescript()],
     output: [{
       format: 'umd',
-      exports: 'named',
       file: 'dist/index.js',
       name: 'AsyncMark',
-    }],
-  },
-  {
-    input: 'src/index.ts',
-    plugins: [typescript(), terser()],
-    output: [{
+      sourcemap: true,
+    }, {
       format: 'umd',
-      exports: 'named',
+      plugins: [terser()],
       file: 'dist/index.min.js',
       name: 'AsyncMark',
+      sourcemap: true,
     }],
   },
 ];
