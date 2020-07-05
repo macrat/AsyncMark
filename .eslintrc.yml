@@ -12,6 +12,7 @@ overrides:
     extends:
       - eslint-config-airbnb/base
     rules:
+      import/no-unresolved: [error, {ignore: [dist/]}]
       no-console: off
       no-unused-expressions: off
 
