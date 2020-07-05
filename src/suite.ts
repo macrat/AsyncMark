@@ -200,7 +200,7 @@ export type SuiteOptions = {
  *     catch(err => console.error(err));
  * ```
  */
-export default class Suite {
+export default class Suite { // eslint-disable-line no-redeclare
   /**
    * Name of this suite.
    */

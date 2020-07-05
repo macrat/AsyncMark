@@ -135,7 +135,7 @@ export type BenchmarkOptions = {
  * }).run().catch(console.error);
  * ```
  */
-export default class Benchmark {
+export default class Benchmark { // eslint-disable-line no-redeclare
   /**
    * Name of this benchmark.
    */
