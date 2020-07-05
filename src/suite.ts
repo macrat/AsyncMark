@@ -204,7 +204,7 @@ export default class Suite { // eslint-disable-line no-redeclare
   /**
    * Name of this suite.
    */
-  name: string;
+  readonly name: string;
 
   /**
    * Default options for benchmarks in this suite.
@@ -219,7 +219,7 @@ export default class Suite { // eslint-disable-line no-redeclare
   /**
    * A list of {@link Benchmark} or {@link Suite}.
    */
-  benchmarks: (Benchmark | Suite)[];
+  benchmarks: (Benchmark | Suite)[] = [];
 
   /**
    * Setup before execute all benchmarks.
@@ -294,8 +294,6 @@ export default class Suite { // eslint-disable-line no-redeclare
     this.name = options.name || 'unnamed';
     this.benchmarkDefault = options.benchmarkDefault || {};
     this.parallel = options.parallel || false;
-
-    this.benchmarks = [];
 
     this.before = options.before || (() => undefined);
     this.beforeEach = options.beforeEach || (() => undefined);

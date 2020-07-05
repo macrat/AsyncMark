@@ -139,32 +139,32 @@ export default class Benchmark { // eslint-disable-line no-redeclare
   /**
    * Name of this benchmark.
    */
-  readonly name: string;
+  readonly name: string = 'unnamed';
 
   /**
    * Wanted maximum error rate.
    * This value will be ignore if set {@link Benchmark.number}.
    */
-  readonly targetErrorRate: number;
+  readonly targetErrorRate: number = 0.1;
 
   /**
    * Maximum number of executing test.
    * This value will be ignore if set {@link Benchmark.number}.
    */
-  readonly maxNumber: number;
+  readonly maxNumber: number = 10000;
 
   /**
    * Minimal number of executing test.
    * This value will be ignore if set {@link Benchmark.number}.
    */
-  readonly minNumber: number;
+  readonly minNumber: number = 30;
 
   /**
    * The number of executing the test.
    * Will decide automatically in between {@link Benchmark.minNumber} to {@link Benchmark.maxNumber}
    * if set null.
    */
-  readonly number: number;
+  readonly number: number = null;
 
   /**
    * Setup before execute benchmark.
@@ -175,7 +175,7 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  before: Benchmark.BeforeFunc;
+  before: Benchmark.BeforeFunc = () => undefined;
 
   /**
    * Setup before each tests.
@@ -186,7 +186,7 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  beforeEach: Benchmark.BeforeEachFunc;
+  beforeEach: Benchmark.BeforeEachFunc = () => undefined;
 
   /**
    * The target function for benchmarking.
@@ -197,7 +197,9 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * In default, couses error that `Error('target function is not defined')`.
    */
-  fun: TargetFunc;
+  fun: TargetFunc = () => {
+    throw new Error('target function is not defined');
+  };
 
   /**
    * Teardown after each tests.
@@ -208,7 +210,7 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * In default, do nothing.
    */
-  afterEach: Benchmark.AfterEachFunc;
+  afterEach: Benchmark.AfterEachFunc = () => undefined;
 
   /**
    * Teardown after execute benchmark.
@@ -219,43 +221,31 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * In default, shows test result.
    */
-  after: Benchmark.AfterFunc;
+  after: Benchmark.AfterFunc = (result: Result) => {
+    /* eslint-disable-next-line no-console */
+    console.log(String(result.dropOutlier()));
+  };
 
   /**
    * @param options  The options for this benchmark or benchmarking function.
    */
   constructor(options: BenchmarkOptions | TargetFunc) {
-    this.name = 'unnamed';
-    this.targetErrorRate = 0.1;
-    this.maxNumber = 10000;
-    this.minNumber = 30;
-    this.number = null;
-
-    this.before = () => undefined;
-    this.beforeEach = () => undefined;
-    this.fun = () => {
-      throw new Error('target function is not defined');
-    };
-    this.afterEach = () => undefined;
-    this.after = (result: Result) => {
-      console.log(String(result.dropOutlier())); // eslint-disable-line no-console
-    };
-
     if (typeof options === 'function') {
       this.fun = options;
-    } else {
-      if (options.name) this.name = options.name;
-      if (options.targetErrorRate) this.targetErrorRate = options.targetErrorRate;
-      if (options.maxNumber) this.maxNumber = options.maxNumber;
-      if (options.minNumber) this.minNumber = options.minNumber;
-      if (options.number) this.number = options.number;
-
-      if (options.before) this.before = options.before;
-      if (options.beforeEach) this.beforeEach = options.beforeEach;
-      if (options.fun) this.fun = options.fun;
-      if (options.afterEach) this.afterEach = options.afterEach;
-      if (options.after) this.after = options.after;
+      return;
     }
+
+    if (options.name) this.name = options.name;
+    if (options.targetErrorRate) this.targetErrorRate = options.targetErrorRate;
+    if (options.maxNumber) this.maxNumber = options.maxNumber;
+    if (options.minNumber) this.minNumber = options.minNumber;
+    if (options.number) this.number = options.number;
+
+    if (options.before) this.before = options.before;
+    if (options.beforeEach) this.beforeEach = options.beforeEach;
+    if (options.fun) this.fun = options.fun;
+    if (options.afterEach) this.afterEach = options.afterEach;
+    if (options.after) this.after = options.after;
   }
 
   /**
@@ -267,7 +257,10 @@ export default class Benchmark { // eslint-disable-line no-redeclare
    *
    * @return A result of benchmark.
    */
-  async run(context: any = {}, callbacks: TestCallbacks = {}): Promise<Result> {
+  async run(
+    context: any = {},
+    { beforeTest = () => undefined, afterTest = () => undefined }: TestCallbacks = {},
+  ): Promise<Result> {
     const ctxInTest = { ...context };
     ctxInTest.__proto__ = this;
 
@@ -281,20 +274,14 @@ export default class Benchmark { // eslint-disable-line no-redeclare
     for (let i = 0; i < loopNum; i += 1) {
       const ctxInLoop = { ...ctxInTest };
 
-      if (callbacks.beforeTest) {
-        await callbacks.beforeTest.call(ctxInLoop, i, this);
-      }
-
+      await beforeTest.call(ctxInLoop, i, this);
       await this.beforeEach.call(ctxInLoop, i);
 
       const msec = await timeit(this.fun, [], ctxInLoop);
       msecs.push(msec);
 
       await this.afterEach.call(ctxInLoop, i, msec);
-
-      if (callbacks.afterTest) {
-        await callbacks.afterTest.call(ctxInLoop, i, this, msec);
-      }
+      await afterTest.call(ctxInLoop, i, this, msec);
 
       if (
         !this.number
