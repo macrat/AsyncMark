@@ -1,4 +1,4 @@
-const AsyncMark = require('../dist/asyncmark.js');
+const AsyncMark = require('../dist/index.js');
 
 
 const suite = new AsyncMark.Suite({

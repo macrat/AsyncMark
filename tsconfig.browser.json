@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
-    "declaration": true,
     "esModuleInterop": true,
+    "module": "amd",
+    "moduleResolution": "node",
     "outDir": "dist",
+    "outFile": "dist/asyncmark.js",
     "rootDir": "src",
+    "sourceMap": true,
     "target": "es5"
   },
   "include": [
