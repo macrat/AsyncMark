@@ -6,7 +6,7 @@ import AsyncMarkAssertionError from './error';
  *
  * @internal
  */
-type Unit = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
+export type Unit = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
 
 /**
  * Convert unit to number
@@ -23,7 +23,7 @@ type Unit = 's' | 'sec' | '' | 'ms' | 'msec' | 'us' | 'usec' | 'ns' | 'nsec';
  * @since 0.3.0
  * @internal
  */
-function unit(u: Unit): number {
+export function unit(u: Unit): number {
   switch (u) {
     case 's':
     case 'sec':
@@ -50,7 +50,7 @@ function unit(u: Unit): number {
 /**
  * Assertion operator type.
  */
-type Operator = '<' | '<=' | '>' | '>=';
+export type Operator = '<' | '<=' | '>' | '>=';
 
 /**
  * The assertion rule
@@ -58,7 +58,7 @@ type Operator = '<' | '<=' | '>' | '>=';
  * @since 0.3.0
  * @internal
  */
-class AssertRule {
+export default class AssertRule {
   /**
    * Operator string that set in rule like '<' or '>='.
    */
@@ -77,6 +77,8 @@ class AssertRule {
    *
    * @param rule  Assert rule that milliseconds {@link Number} or {@link String} value
    *              like '<10ms' or '>=20s'.
+   *
+   * @return
    *
    * ## Supported operators
    * |example       |means              |
@@ -136,6 +138,3 @@ class AssertRule {
     }
   }
 }
-
-export { AssertRule as default, unit };
-export type { Operator, Unit };

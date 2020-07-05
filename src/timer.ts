@@ -6,7 +6,7 @@
  * @since 0.2.5
  * @internal
  */
-function nowDate(): number {
+export function nowDate(): number {
   return Number(new Date());
 }
 
@@ -18,7 +18,7 @@ function nowDate(): number {
  * @since 0.2.5
  * @internal
  */
-function nowNow(): number {
+export function nowNow(): number {
   return performance.now();
 }
 
@@ -30,7 +30,7 @@ function nowNow(): number {
  * @since 0.2.5
  * @internal
  */
-function nowHrtime(): number {
+export function nowHrtime(): number {
   const hr = process.hrtime();
   return (hr[0] * 1e9 + hr[1]) / 1e6;
 }
@@ -42,7 +42,7 @@ function nowHrtime(): number {
  *
  * @internal
  */
-const now = (() => {
+export const now = (() => {
   if (typeof process !== 'undefined' && process.hrtime) {
     return nowHrtime;
   }
@@ -84,7 +84,7 @@ const now = (() => {
  *
  * @since 0.2.4
  */
-async function timeit<T extends unknown[], U extends Record<string, unknown>>(
+export async function timeit<T extends unknown[], U extends Record<string, unknown>>(
   fun: ((...args: T) => Promise<void> | void),
   args: T = [] as unknown as T,
   context: U = {} as U,
@@ -95,7 +95,3 @@ async function timeit<T extends unknown[], U extends Record<string, unknown>>(
 
   return end - start;
 }
-
-export {
-  timeit, now, nowDate, nowNow, nowHrtime,
-};

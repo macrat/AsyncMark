@@ -6,7 +6,7 @@ import Result from './result';
  *
  * @since 1.0.0
  */
-class AsyncMarkAssertionError extends Error {
+export default class AsyncMarkAssertionError extends Error {
   /**
    * @internal
    */
@@ -48,5 +48,3 @@ class AsyncMarkAssertionError extends Error {
     }
   }
 }
-
-export { AsyncMarkAssertionError as default };

@@ -36,14 +36,14 @@ export default class Result {
    * The time of fastest test in milliseconds.
    */
   get fastest(): number {
-    return this.msecs.reduce((x, y) => Math.min(x, y));
+    return Math.min(...this.msecs);
   }
 
   /**
    * The time of slowest test in milliseconds.
    */
   get slowest(): number {
-    return this.msecs.reduce((x, y) => Math.max(x, y));
+    return Math.max(...this.msecs);
   }
 
   /**
@@ -104,9 +104,12 @@ export default class Result {
    * @return  New {@link Result} instance.
    */
   dropOutlier(threshold = 2): Result {
-    const avg = this.average;
-    const { std } = this;
-    return new Result(this.name, this.msecs.filter((x) => Math.abs((x - avg) / std) <= threshold));
+    const { average, std } = this;
+
+    return new Result(
+      this.name,
+      this.msecs.filter((x) => Math.abs((x - average) / std) <= threshold),
+    );
   }
 
   /**
