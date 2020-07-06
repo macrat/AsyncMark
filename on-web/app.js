@@ -216,44 +216,44 @@ const __update_graph__ = _.throttle(() => setTimeout(function() {
 
         const timeline = document.getElementById('timeline');
         timeline.innerHTML = '';
-		MG.data_graphic({
-			title: 'operations / msec',
-			chart_type: histdata.length > 0 ? 'line' : 'missing-data',
-			data: timedata,
+        MG.data_graphic({
+            title: 'operations / msec',
+            chart_type: histdata.length > 0 ? 'line' : 'missing-data',
+            data: timedata,
             legend: names,
-			width: timeline.clientWidth,
-			height: timeline.clientHeight,
+            width: timeline.clientWidth,
+            height: timeline.clientHeight,
             right: 120,
             left: 100,
             area: false,
-			x_accessor: 'time',
-			y_accessor: 'ops/sec',
+            x_accessor: 'time',
+            y_accessor: 'ops/sec',
             y_label: 'ops/sec',
-			x_sort: true,
-			target: timeline,
-		});
+            x_sort: true,
+            target: timeline,
+        });
 
         const histogram = document.getElementById('histogram');
         histogram.innerHTML = '';
-		MG.data_graphic({
-			title: 'histogram of ops/sec',
-			chart_type: histdata.length > 0 ? 'line' : 'missing-data',
-			data: histdata,
+        MG.data_graphic({
+            title: 'histogram of ops/sec',
+            chart_type: histdata.length > 0 ? 'line' : 'missing-data',
+            data: histdata,
             markers: __bench_result__.map(x => ({'label': x.name, 'ops/sec': x.result.dropOutlier().opsPerSec})),
-			interpolate: d3.curveLinear,
-			missing_is_zero: true,
+            interpolate: d3.curveLinear,
+            missing_is_zero: true,
             legend: names,
-			width: timeline.clientWidth,
-			height: timeline.clientHeight,
+            width: timeline.clientWidth,
+            height: timeline.clientHeight,
             right: 120,
             left: 100,
             area: false,
-			x_accessor: 'ops/sec',
-			y_accessor: 'count',
+            x_accessor: 'ops/sec',
+            y_accessor: 'count',
             x_label: 'ops/sec',
             y_label: 'count',
-			target: histogram,
-		});
+            target: histogram,
+        });
     }, 1);
 }, 200), 200);
 
@@ -303,10 +303,10 @@ function __execute__() {
     __executing__ = true;
     document.getElementById('executebtn').classList.remove('btn-enabled');
 
-	const __code__ = __cm__.getDoc().getValue();
-	if (location.hash.slice(1) !== encodeURI(__code__)) {
-		window.history.pushState(null, '', '#' + encodeURI(__code__));
-	}
+    const __code__ = __cm__.getDoc().getValue();
+    if (location.hash.slice(1) !== encodeURI(__code__)) {
+        window.history.pushState(null, '', '#' + encodeURI(__code__));
+    }
 
     setTimeout(() => {
         __log__ = [];
@@ -332,7 +332,7 @@ function __execute__() {
 
         p.catch(err => {
             document.getElementById('executebtn').classList.add('btn-enabled');
-			__executing__ = false;
+            __executing__ = false;
 
             console.error(err.stack || err);
             __e__(err);
@@ -343,7 +343,7 @@ function __execute__() {
 
 __update_graph__();
 window.addEventListener('resize', __update_graph__);
-document.getElementById('executebtn').addEventListener('click', __execute__);;
+document.getElementById('executebtn').addEventListener('click', __execute__);
 
 document.querySelectorAll('thead th').forEach(elm => {
     elm.addEventListener('click', () => {
@@ -363,10 +363,10 @@ document.querySelectorAll('thead th').forEach(elm => {
 
 
 function __load_hash__() {
-	const code = decodeURI(location.hash.slice(1));
-	if (code !== __cm__.getDoc().getValue()) {
-		__cm__.getDoc().setValue(code || __initial__script__);
-	}
+    const code = decodeURI(location.hash.slice(1));
+    if (code !== __cm__.getDoc().getValue()) {
+        __cm__.getDoc().setValue(code || __initial__script__);
+    }
 }
 __load_hash__();
 window.addEventListener('popstate', __load_hash__);

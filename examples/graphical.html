@@ -40,7 +40,7 @@ new AsyncMark.Benchmark({
 	afterEach(count, msec) {
 		document.querySelector('tbody').innerHTML += `<tr><td>${count + 1}</td><td>${msec}</td></tr>`;
 
-		plotting_data.push({count: count, time: msec});
+		plotting_data.push({ count: count, time: msec });
 		document.querySelector('#timeline').innerHTML = '';
 		MG.data_graphic({
 			title: 'times of each test',

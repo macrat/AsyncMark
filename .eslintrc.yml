@@ -1,0 +1,27 @@
+env:
+  browser: true
+  es6: true
+  node: true
+
+parserOptions:
+  ecmaVersion: 2017
+  sourceType: module
+
+overrides:
+  - files: "**/*.js"
+    extends:
+      - eslint-config-airbnb/base
+    rules:
+      import/no-unresolved: [error, {ignore: [dist/]}]
+      no-console: off
+      no-unused-expressions: off
+
+  - files: "**/*.ts"
+    extends:
+      - airbnb-typescript/base
+    parserOptions:
+      project: ./tsconfig.lint.json
+    rules:
+      no-proto: off
+      no-underscore-dangle: [error, {allowAfterThis: true}]
+      import/no-cycle: off
