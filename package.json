@@ -1,6 +1,6 @@
 {
   "name": "asyncmark",
-  "version": "1.0.0-dev.0",
+  "version": "1.0.0-dev.1",
   "description": "A benchmarking library that supports Promise.",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
