@@ -12,7 +12,8 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage test/*.ts",
+    "test:bundle": "jest test/bundle/*.ts",
     "lint": "eslint --ext .ts,.js --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
     "build:dist": "rollup -c rollup.config.js",
