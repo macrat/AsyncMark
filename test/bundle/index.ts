@@ -1,4 +1,5 @@
-import { Benchmark, Suite, AsyncMarkAssertError } from '../../dist/index.js';
+/* eslint-disable-next-line import/extensions */
+import { Benchmark, Suite, AsyncMarkAssertionError } from '../../dist';
 
 function timer(time: number): Promise<void> {
   return new Promise<void>((resolve) => {
@@ -15,7 +16,7 @@ describe('after bundle test', () => {
     }).run();
 
     expect(() => result.assert('<10ms', '>0ms')).not.toThrowError();
-    expect(() => result.assert('>100ms')).toThrowError(AsyncMarkAssertError);
+    expect(() => result.assert('>100ms')).toThrowError(AsyncMarkAssertionError);
   });
 
   test('simple suite', async () => {
