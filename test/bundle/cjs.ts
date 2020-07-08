@@ -1,4 +1,4 @@
-import { Benchmark, Suite, AsyncMarkAssertError } from '../../dist';
+import { Benchmark, Suite, AsyncMarkAssertError } from '../../dist/index.js';
 
 function timer(time: number): Promise<void> {
   return new Promise<void>((resolve) => {
