@@ -9,3 +9,5 @@ export { TargetFunc, TestCallbacks } from './callbacks';
 export { Operator } from './assertion';
 
 export { timeit } from './timer';
+
+export { default as AsyncMarkAssertionError } from './error';
