@@ -5,6 +5,7 @@
   "extends": [
     "config:base"
   ],
+  "semanticCommits": true,
   "minor": {
     "automerge": true
   }
