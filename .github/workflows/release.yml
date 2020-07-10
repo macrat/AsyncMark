@@ -1,11 +1,14 @@
-name: test
+name: release
 
 on:
-  pull_request:
+  push:
+    branches:
+      - stable
+      - dev
 
 jobs:
-  lint:
-    name: lint
+  test:
+    name: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -13,37 +16,24 @@ jobs:
         with:
           node-version: '14'
       - run: npm ci
-      - run: npm run lint
-
-  test:
-    name: test
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ['12', '13', '14']
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm ci
       - uses: paambaati/codeclimate-action@v2.6.0
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_ID }}
         with:
           coverageCommand: npm run test
 
-  build:
-    name: build
+  release:
+    name: release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: ['12', '13', '14']
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '14'
       - run: npm ci
       - run: npm run build
       - run: npm run test:bundle
+      - run: npm run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
