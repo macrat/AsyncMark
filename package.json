@@ -1,6 +1,5 @@
 {
   "name": "asyncmark",
-  "version": "1.0.1",
   "description": "A benchmarking library that supports Promise.",
   "main": "dist/index.js",
   "module": "dist/esm/index.js",
@@ -17,7 +16,8 @@
     "lint": "eslint --ext .ts,.js --ignore-pattern '/on-web' .",
     "build": "npm-run-all build:*",
     "build:dist": "rollup -c rollup.config.js",
-    "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/"
+    "build:docs": "typedoc --mode file --stripInternal --excludePrivate --out docs/ src/",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
@@ -47,6 +47,7 @@
     "npm-run-all": "4.1.5",
     "rollup": "2.21.0",
     "rollup-plugin-terser": "6.1.0",
+    "semantic-release": "^17.1.1",
     "ts-jest": "26.1.1",
     "tslib": "2.0.0",
     "typedoc": "0.17.8",

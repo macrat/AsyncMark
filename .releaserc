@@ -1,0 +1,6 @@
+{
+  "branches": [
+    {"name": "stable"},
+    {"name": "dev", "channel": "dev", "prerelease": "dev"}
+  ]
+}
