@@ -1,149 +1,253 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="default no-js">
 <head>
-  <meta charset="utf-8">
-  <base data-ice="baseUrl">
-  <title data-ice="title">Home | asyncmark</title>
-  <link type="text/css" rel="stylesheet" href="css/style.css">
-  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
-  <script src="script/prettify/prettify.js"></script>
-  <script src="script/manual.js"></script>
-<meta name="description" content="A benchmarking library that supports Promise."><meta property="twitter:card" content="summary"><meta property="twitter:title" content="asyncmark"><meta property="twitter:description" content="A benchmarking library that supports Promise."></head>
-<body class="layout-container" data-ice="rootContainer">
-
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>asyncmark</title>
+	<meta name="description" content="Documentation for asyncmark">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
 <header>
-  <a href="./">Home</a>
-  
-  <a href="identifiers.html">Reference</a>
-  <a href="source.html">Source</a>
-  <a href="test.html" data-ice="testLink">Test</a>
-  <div class="search-box">
-  <span>
-    <img src="./image/search.png">
-    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
-  </span>
-    <ul class="search-result"></ul>
-  </div>
-<a style="position:relative; top:3px;" href="https://github.com/macrat/AsyncMark"><img width="20px" src="./image/github.png"></a></header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">asyncmark</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>asyncmark</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#asyncmark" id="asyncmark" style="color: inherit; text-decoration: none;">
+					<h1>AsyncMark</h1>
+				</a>
+				<p>A benchmarking library for javascript that supports Promise.</p>
+				<p><a href="https://nodei.co/npm/asyncmark/"><img src="https://nodei.co/npm/asyncmark.png" alt="NPM"></a></p>
+				<p><a href="https://github.com/macrat/AsyncMark/actions?query=workflow%3Atest"><img src="https://github.com/macrat/AsyncMark/workflows/test/badge.svg" alt="Test Status"></a>
+					<a href="https://codeclimate.com/github/macrat/AsyncMark/test_coverage"><img src="https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/test_coverage" alt="Test Coverage"></a>
+				<a href="https://codeclimate.com/github/macrat/AsyncMark/maintainability"><img src="https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/maintainability" alt="Maintainability"></a></p>
+				<p><a href="https://david-dm.org/macrat/asyncmark"><img src="https://david-dm.org/macrat/asyncmark/status.svg" alt="dependencies Status"></a>
+					<a href="https://david-dm.org/macrat/asyncmark?type=dev"><img src="https://david-dm.org/macrat/asyncmark/dev-status.svg" alt="devDependencies Status"></a>
+				<a href="https://david-dm.org/macrat/asyncmark?type=optional"><img src="https://david-dm.org/macrat/asyncmark/optional-status.svg" alt="optionalDependencies Status"></a></p>
+				<p><a href="https://github.com/macrat/AsyncMark/blob/master/LICENSE"><img src="https://img.shields.io/github/license/macrat/AsyncMark.svg" alt="license"></a>
+				<a href="https://macrat.github.io/AsyncMark/"><img src="https://macrat.github.io/AsyncMark/badge.svg" alt="document"></a></p>
+				<p>You can <a href="https://macrat.github.io/AsyncMark/on-web/">try benchmark on the web</a>.</p>
+				<a href="#be-simple" id="be-simple" style="color: inherit; text-decoration: none;">
+					<h2>be simple</h2>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { Benchmark } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;asyncmark&#x27;</span>;
 
-<nav class="navigation" data-ice="nav"><div>
-  <ul>
-    
-  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/benchmark.js~Benchmark.html">Benchmark</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/result.js~Result.html">Result</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/suite.js~Suite.html">Suite</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-timeit">timeit</a></span></span></li>
-</ul>
-</div>
-</nav>
 
-<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="asyncmark">AsyncMark</h1><p>A benchmarking library for javascript that supports Promise.</p>
-<p><a href="https://nodei.co/npm/asyncmark/"><img src="https://nodei.co/npm/asyncmark.png" alt="NPM"></a></p>
-<p><a href="https://github.com/macrat/AsyncMark/actions?query=workflow%3Atest"><img src="https://github.com/macrat/AsyncMark/workflows/test/badge.svg" alt="Test Status"></a>
-<a href="https://codeclimate.com/github/macrat/AsyncMark/test_coverage"><img src="https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/test_coverage" alt="Test Coverage"></a>
-<a href="https://codeclimate.com/github/macrat/AsyncMark/maintainability"><img src="https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/maintainability" alt="Maintainability"></a>
-<a href="https://david-dm.org/macrat/asyncmark?type=dev"><img src="https://david-dm.org/macrat/asyncmark/dev-status.svg" alt="devDependencies Status"></a>
-<a href="https://david-dm.org/macrat/asyncmark?type=optional"><img src="https://david-dm.org/macrat/asyncmark/optional-status.svg" alt="optionalDependencies Status"></a>
-<a href="https://github.com/macrat/AsyncMark/blob/master/LICENSE"><img src="https://img.shields.io/github/license/macrat/AsyncMark.svg" alt="license"></a>
-<a href="https://macrat.github.io/AsyncMark/"><img src="https://macrat.github.io/AsyncMark/badge.svg" alt="document"></a></p>
-<p>You can <a href="https://macrat.github.io/AsyncMark/on-web/index.html">try benchmark on the web</a>.</p>
-<h2 id="be-simple">be simple</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark from &apos;asyncmark&apos;;
-
-
-new Benchmark(function() {
-    return new Promise((resolve, reject) =&gt; {
-        setTimeout(resolve, 100);
+<span class="hljs-keyword">new</span> Benchmark(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+        <span class="hljs-built_in">setTimeout</span>(resolve, <span class="hljs-number">100</span>);
     });
-}).run().catch(console.error);</code>
-</code></pre>
-<h2 id="be-customizable">be customizable</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import {Suite} from &apos;asyncmark&apos;;
+}).run().catch(<span class="hljs-built_in">console</span>.error);</code></pre>
+				<a href="#be-customizable" id="be-customizable" style="color: inherit; text-decoration: none;">
+					<h2>be customizable</h2>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { Suite } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;asyncmark&#x27;</span>;
 
 
-const suite = new Suite({
-    name: &apos;ways to find a character&apos;,
+<span class="hljs-keyword">const</span> suite = <span class="hljs-keyword">new</span> Suite({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;ways to find a character&#x27;</span>,
     beforeEach() {
-        this.text = &apos;hello world&apos;;
+        <span class="hljs-built_in">this</span>.text = <span class="hljs-string">&#x27;hello world&#x27;</span>;
     },
-    parallel: true,
+    <span class="hljs-attr">parallel</span>: <span class="hljs-literal">true</span>,
 });
 
-suite.add(function() {
-    /o/.test(this.text);
+suite.add(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    /o/.test(<span class="hljs-built_in">this</span>.text);
 });
 
 suite.add({
-    name: &apos;String#indexOf&apos;,
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;String#indexOf&#x27;</span>,
     before() {
-        console.log(&apos;starting String#indexOf...&apos;);
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;starting String#indexOf...&#x27;</span>);
     },
     fun() {
-        this.text.indexOf(&apos;o&apos;) &gt; -1;
+        <span class="hljs-built_in">this</span>.text.indexOf(<span class="hljs-string">&#x27;o&#x27;</span>) &gt; <span class="hljs-number">-1</span>;
     },
 });
 
-suite.add(new Benchmark({
-    name: &apos;String#match&apos;,
+suite.add(<span class="hljs-keyword">new</span> Benchmark({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;String#match&#x27;</span>,
     fun() {
-        Boolean(this.text.match(/o/));
+        <span class="hljs-built_in">Boolean</span>(<span class="hljs-built_in">this</span>.text.match(<span class="hljs-regexp">/o/</span>));
     },
     after(result) {
-        console.log(&apos;String#match is done! &apos; + result);
+        <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;String#match is done! &#x27;</span> + result);
     },
 }));
 
 suite.run()
-    .then(results =&gt; {
-        let min = results[0];
-        results.forEach(x =&gt; {
-            if (min.average &gt; x.average) {
+    .then(<span class="hljs-function"><span class="hljs-params">results</span> =&gt;</span> {
+        <span class="hljs-keyword">let</span> min = results[<span class="hljs-number">0</span>];
+        results.forEach(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> {
+            <span class="hljs-keyword">if</span> (min.average &gt; x.average) {
                 min = x;
             }
         });
-        console.log(min.name + &apos; is best way!&apos;);
+        <span class="hljs-built_in">console</span>.log(min.name + <span class="hljs-string">&#x27; is best way!&#x27;</span>);
     })
-    .catch(err =&gt; console.error(err));</code>
-</code></pre>
-<h2 id="with-unit-test">with unit test</h2><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark from &apos;asyncmark&apos;;
+    .catch(<span class="hljs-function"><span class="hljs-params">err</span> =&gt;</span> <span class="hljs-built_in">console</span>.error(err));</code></pre>
+				<a href="#with-unit-test" id="with-unit-test" style="color: inherit; text-decoration: none;">
+					<h2>with unit test</h2>
+				</a>
+				<pre><code class="language-javascript">import { Benchmark } from &#x27;asyncmark&#x27;;
 
 
-describe(&apos;benchmark test&apos;, function() {
-    it(&apos;foobar&apos;, async function() {
+describe(&#x27;benchmark test&#x27;, function() {
+    it(&#x27;foobar&#x27;, async function() {
         const result = await new Benchmark(function() {
             # do_something
         }).run();
 
         result.assert(&quot;&lt;100ms&quot;);  # expect faster than 100ms.
     });
-});</code>
-</code></pre>
-<h2 id="installation">installation</h2><h3 id="node-js">Node.js</h3><pre><code class="lang-shell"><code class="source-code prettyprint">$ npm install asyncmark</code>
-</code></pre>
-<h4 id="es6">ES6</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">import Benchmark, {Suite} from &apos;asyncmark&apos;;</code>
-</code></pre>
-<h4 id="commonjs">CommonJS</h4><pre><code class="lang-javascript"><code class="source-code prettyprint">const AsyncMark = require(&apos;asyncmark&apos;);
+});</code></pre>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>installation</h2>
+				</a>
+				<a href="#nodejs" id="nodejs" style="color: inherit; text-decoration: none;">
+					<h3>Node.js</h3>
+				</a>
+				<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> npm install asyncmark</span></code></pre>
+				<a href="#es6" id="es6" style="color: inherit; text-decoration: none;">
+					<h4>ES6</h4>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { Benchmark, Suite } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;asyncmark&#x27;</span>;</code></pre>
+				<a href="#commonjs" id="commonjs" style="color: inherit; text-decoration: none;">
+					<h4>CommonJS</h4>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> AsyncMark = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;asyncmark&#x27;</span>);
 
-const Benchmark = AsyncMark.Benchmark;
-const Suite = AsyncMark.Suite;</code>
-</code></pre>
-<h3 id="browser">Browser</h3><pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;https://unpkg.com/asyncmark&quot;&gt;&lt;/script&gt;
-&lt;script&gt;
-const Benchmark = AsyncMark.Benchmark;
-const Suite = AsyncMark.Suite;
-&lt;/script&gt;</code>
-</code></pre>
+<span class="hljs-keyword">const</span> Benchmark = AsyncMark.Benchmark;
+<span class="hljs-keyword">const</span> Suite = AsyncMark.Suite;</code></pre>
+				<a href="#browser" id="browser" style="color: inherit; text-decoration: none;">
+					<h3>Browser</h3>
+				</a>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/asyncmark&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span>&gt;</span><span class="javascript">
+<span class="hljs-keyword">const</span> Benchmark = AsyncMark.Benchmark;
+<span class="hljs-keyword">const</span> Suite = AsyncMark.Suite;
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/asyncmarkassertionerror.html" class="tsd-kind-icon">Async<wbr>Mark<wbr>Assertion<wbr>Error</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/benchmark.html" class="tsd-kind-icon">Benchmark</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/result.html" class="tsd-kind-icon">Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/suite.html" class="tsd-kind-icon">Suite</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#benchmarkoptions" class="tsd-kind-icon">Benchmark<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#operator" class="tsd-kind-icon">Operator</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#suiteoptions" class="tsd-kind-icon">Suite<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#targetfunc" class="tsd-kind-icon">Target<wbr>Func</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#testcallbacks" class="tsd-kind-icon">Test<wbr>Callbacks</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#timeit" class="tsd-kind-icon">timeit</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
 </div>
-</div>
-
-<footer class="footer">
-  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+			</ul>
+		</div>
+	</div>
 </footer>
-
-<script src="script/search_index.js"></script>
-<script src="script/search.js"></script>
-<script src="script/pretty-print.js"></script>
-<script src="script/inherited-summary.js"></script>
-<script src="script/test-summary.js"></script>
-<script src="script/inner-link.js"></script>
-<script src="script/patch-for-local.js"></script>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
 </body>
 </html>

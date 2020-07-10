@@ -1,0 +1,776 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Benchmark | asyncmark</title>
+	<meta name="description" content="Documentation for asyncmark">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">asyncmark</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="benchmark.html">Benchmark</a>
+				</li>
+			</ul>
+			<h1>Class Benchmark</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Class for benchmarking.</p>
+					</div>
+					<p>Benchmark will execute by flow like this.</p>
+					<ul>
+						<li><a href="benchmark.html#before">before</a></li>
+						<li><a href="benchmark.html#beforeeach">beforeEach</a></li>
+						<li><a href="benchmark.html#fun">fun</a></li>
+						<li><a href="benchmark.html#aftereach">afterEach</a></li>
+						<li><a href="benchmark.html#after">after</a></li>
+					</ul>
+					<p>Each function can override with options of the constructor.</p>
+					<pre><code class="language-typescript"><span class="hljs-keyword">import</span> Benchmark <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;asyncmark&#x27;</span>;
+
+
+<span class="hljs-keyword">new</span> Benchmark({
+    name: <span class="hljs-string">&#x27;timeout&#x27;</span>,
+    fun() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+            <span class="hljs-built_in">setTimeout</span>(resolve, <span class="hljs-number">100</span>);
+        });
+    },
+}).run().catch(<span class="hljs-built_in">console</span>.error);</code></pre>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">Benchmark</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="benchmark.html#aftereachfunc" class="tsd-kind-icon">After<wbr>Each<wbr>Func</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="benchmark.html#afterfunc" class="tsd-kind-icon">After<wbr>Func</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="benchmark.html#beforeeachfunc" class="tsd-kind-icon">Before<wbr>Each<wbr>Func</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-class tsd-is-static"><a href="benchmark.html#beforefunc" class="tsd-kind-icon">Before<wbr>Func</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="benchmark.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="benchmark.html#maxnumber" class="tsd-kind-icon">max<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="benchmark.html#minnumber" class="tsd-kind-icon">min<wbr>Number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="benchmark.html#name" class="tsd-kind-icon">name</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="benchmark.html#number" class="tsd-kind-icon">number</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="benchmark.html#targeterrorrate" class="tsd-kind-icon">target<wbr>Error<wbr>Rate</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#after" class="tsd-kind-icon">after</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#aftereach" class="tsd-kind-icon">after<wbr>Each</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#before" class="tsd-kind-icon">before</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#beforeeach" class="tsd-kind-icon">before<wbr>Each</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#fun" class="tsd-kind-icon">fun</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="benchmark.html#run" class="tsd-kind-icon">run</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="aftereachfunc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> After<wbr>Each<wbr>Func</h3>
+					<div class="tsd-signature tsd-kind-icon">After<wbr>Each<wbr>Func<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, msec<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L30">src/benchmark.ts:30</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, msec<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+											<div class="lead">
+												<p>Callback function for teardown each execute.</p>
+											</div>
+											<dl class="tsd-comment-tags">
+												<dt>since</dt>
+												<dd><p>1.0.0</p>
+												</dd>
+											</dl>
+										</div>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>count: <span class="tsd-signature-type">number</span></h5>
+												<div class="tsd-comment tsd-typography">
+													<p>Count of done tests in this benchmark.</p>
+												</div>
+											</li>
+											<li>
+												<h5>msec: <span class="tsd-signature-type">number</span></h5>
+												<div class="tsd-comment tsd-typography">
+													<p>Duration of this execution.</p>
+												</div>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+										<p><a href="benchmark.html">Benchmark</a> will await if returns Promise.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="afterfunc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> After<wbr>Func</h3>
+					<div class="tsd-signature tsd-kind-icon">After<wbr>Func<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="result.html" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L44">src/benchmark.ts:44</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="result.html" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+											<div class="lead">
+												<p>Callback function for teardown after <a href="benchmark.html">Benchmark</a></p>
+											</div>
+											<dl class="tsd-comment-tags">
+												<dt>since</dt>
+												<dd><p>1.0.0</p>
+												</dd>
+											</dl>
+										</div>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>result: <a href="result.html" class="tsd-signature-type">Result</a></h5>
+												<div class="tsd-comment tsd-typography">
+													<p>Result of this benchmark.</p>
+												</div>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+										<p><a href="benchmark.html">Benchmark</a> will await if returns Promise.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="beforeeachfunc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Before<wbr>Each<wbr>Func</h3>
+					<div class="tsd-signature tsd-kind-icon">Before<wbr>Each<wbr>Func<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L17">src/benchmark.ts:17</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>count<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+											<div class="lead">
+												<p>Callback function for setup before each execute.</p>
+											</div>
+											<dl class="tsd-comment-tags">
+												<dt>since</dt>
+												<dd><p>1.0.0</p>
+												</dd>
+											</dl>
+										</div>
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>count: <span class="tsd-signature-type">number</span></h5>
+												<div class="tsd-comment tsd-typography">
+													<p>Count of done tests in this benchmark.</p>
+												</div>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+										<p><a href="benchmark.html">Benchmark</a> will await if returns Promise.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+					<a name="beforefunc" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> Before<wbr>Func</h3>
+					<div class="tsd-signature tsd-kind-icon">Before<wbr>Func<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L6">src/benchmark.ts:6</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<div class="tsd-comment tsd-typography">
+											<div class="lead">
+												<p>Callback function for setup before execute <a href="benchmark.html">Benchmark</a>.</p>
+											</div>
+											<dl class="tsd-comment-tags">
+												<dt>since</dt>
+												<dd><p>1.0.0</p>
+												</dd>
+											</dl>
+										</div>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+										<p><a href="benchmark.html">Benchmark</a> will await if returns Promise.</p>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Benchmark<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="../globals.html#benchmarkoptions" class="tsd-signature-type">BenchmarkOptions</a><span class="tsd-signature-symbol"> | </span><a href="../globals.html#targetfunc" class="tsd-signature-type">TargetFunc</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="benchmark.html" class="tsd-signature-type">Benchmark</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L237">src/benchmark.ts:237</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="../globals.html#benchmarkoptions" class="tsd-signature-type">BenchmarkOptions</a><span class="tsd-signature-symbol"> | </span><a href="../globals.html#targetfunc" class="tsd-signature-type">TargetFunc</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<div class="lead">
+											<p>The options for this benchmark or benchmarking function.</p>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="benchmark.html" class="tsd-signature-type">Benchmark</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="maxnumber" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> max<wbr>Number</h3>
+					<div class="tsd-signature tsd-kind-icon">max<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 10000</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L164">src/benchmark.ts:164</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Maximum number of executing test.
+							This value will be ignore if set <a href="benchmark.html#number">Benchmark.number</a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="minnumber" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> min<wbr>Number</h3>
+					<div class="tsd-signature tsd-kind-icon">min<wbr>Number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 30</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L170">src/benchmark.ts:170</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Minimal number of executing test.
+							This value will be ignore if set <a href="benchmark.html#number">Benchmark.number</a>.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="name" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
+					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;unnamed&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L152">src/benchmark.ts:152</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Name of this benchmark.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="number" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> number</h3>
+					<div class="tsd-signature tsd-kind-icon">number<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L177">src/benchmark.ts:177</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The number of executing the test.
+								Will decide automatically in between <a href="benchmark.html#minnumber">Benchmark.minNumber</a> to <a href="benchmark.html#maxnumber">Benchmark.maxNumber</a>
+							if set null.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="targeterrorrate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> target<wbr>Error<wbr>Rate</h3>
+					<div class="tsd-signature tsd-kind-icon">target<wbr>Error<wbr>Rate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0.1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L158">src/benchmark.ts:158</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Wanted maximum error rate.
+							This value will be ignore if set <a href="benchmark.html#number">Benchmark.number</a>.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="after" class="tsd-anchor"></a>
+					<h3>after</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">after<span class="tsd-signature-symbol">(</span>result<span class="tsd-signature-symbol">: </span><a href="result.html" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L234">src/benchmark.ts:234</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Teardown after execute benchmark.</p>
+								</div>
+								<p>At the time executing this method, <code>this</code> is the unique object for the benchmark.
+									So you can use <code>this</code> for storing testing data like a database.
+								Data of <code>this</code> that set in this method will discard after call this method.</p>
+								<p>In default, shows test result.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>result: <a href="result.html" class="tsd-signature-type">Result</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="aftereach" class="tsd-anchor"></a>
+					<h3>after<wbr>Each</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">after<wbr>Each<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L223">src/benchmark.ts:223</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Teardown after each tests.</p>
+								</div>
+								<p>At the time executing this method, <code>this</code> is the unique object for the test.
+									So you can use <code>this</code> for storing testing data.
+								Data of <code>this</code> that set in this method will discard after call this method.</p>
+								<p>In default, do nothing.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="before" class="tsd-anchor"></a>
+					<h3>before</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">before<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L188">src/benchmark.ts:188</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Setup before execute benchmark.</p>
+								</div>
+								<p>At the time executing this method, <code>this</code> is the unique object for the benchmark.
+									So you can use <code>this</code> for storing testing data like a database.
+								Data of <code>this</code> that set in this method will discard after call <a href="benchmark.html#after">Benchmark.after</a></p>
+								<p>In default, do nothing.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="beforeeach" class="tsd-anchor"></a>
+					<h3>before<wbr>Each</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">before<wbr>Each<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L199">src/benchmark.ts:199</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Setup before each tests.</p>
+								</div>
+								<p>At the time executing this method, <code>this</code> is the unique object for the test.
+									So you can use <code>this</code> for storing testing data.
+								Data of <code>this</code> that set in this method will discard after call <a href="benchmark.html#aftereach">Benchmark.afterEach</a></p>
+								<p>In default, do nothing.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="fun" class="tsd-anchor"></a>
+					<h3>fun</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">fun<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">never</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L210">src/benchmark.ts:210</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>The target function for benchmarking.</p>
+								</div>
+								<p>At the time executing this method, <code>this</code> is the unique object for the test.
+									So you can use <code>this</code> for storing testing data.
+								Data of <code>this</code> that set in this method will discard after call <a href="benchmark.html#aftereach">Benchmark.afterEach</a></p>
+								<p>In default, couses error that <code>Error(&#39;target function is not defined&#39;)</code>.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">never</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="run" class="tsd-anchor"></a>
+					<h3>run</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">run<span class="tsd-signature-symbol">(</span>context<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>afterTest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>beforeTest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="result.html" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L270">src/benchmark.ts:270</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Execute benchmark.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> context: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The <code>this</code> for each benchmarking functions.
+										<code>__proto__</code> will override with this instance.</p>
+									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> __namedParameters: <span class="tsd-signature-symbol">{ </span>afterTest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span>beforeTest<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>after<wbr>Test<span class="tsd-signature-symbol">: </span>function</h5>
+											<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon">after<wbr>Test<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<aside class="tsd-sources">
+														<ul>
+															<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L272">src/benchmark.ts:272</a></li>
+														</ul>
+													</aside>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+												</li>
+											</ul>
+										</li>
+										<li class="tsd-parameter">
+											<h5>before<wbr>Test<span class="tsd-signature-symbol">: </span>function</h5>
+											<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon">before<wbr>Test<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<aside class="tsd-sources">
+														<ul>
+															<li>Defined in <a href="https://github.com/macrat/AsyncMark/blob/04729e1/src/benchmark.ts#L272">src/benchmark.ts:272</a></li>
+														</ul>
+													</aside>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="result.html" class="tsd-signature-type">Result</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>A result of benchmark.</p>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="asyncmarkassertionerror.html" class="tsd-kind-icon">Async<wbr>Mark<wbr>Assertion<wbr>Error</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="benchmark.html" class="tsd-kind-icon">Benchmark</a>
+						<ul>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="benchmark.html#aftereachfunc" class="tsd-kind-icon">After<wbr>Each<wbr>Func</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="benchmark.html#afterfunc" class="tsd-kind-icon">After<wbr>Func</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="benchmark.html#beforeeachfunc" class="tsd-kind-icon">Before<wbr>Each<wbr>Func</a>
+							</li>
+							<li class=" tsd-kind-type-alias tsd-parent-kind-class tsd-is-static">
+								<a href="benchmark.html#beforefunc" class="tsd-kind-icon">Before<wbr>Func</a>
+							</li>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="benchmark.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="benchmark.html#maxnumber" class="tsd-kind-icon">max<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="benchmark.html#minnumber" class="tsd-kind-icon">min<wbr>Number</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="benchmark.html#name" class="tsd-kind-icon">name</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="benchmark.html#number" class="tsd-kind-icon">number</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="benchmark.html#targeterrorrate" class="tsd-kind-icon">target<wbr>Error<wbr>Rate</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#after" class="tsd-kind-icon">after</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#aftereach" class="tsd-kind-icon">after<wbr>Each</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#before" class="tsd-kind-icon">before</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#beforeeach" class="tsd-kind-icon">before<wbr>Each</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#fun" class="tsd-kind-icon">fun</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="benchmark.html#run" class="tsd-kind-icon">run</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="result.html" class="tsd-kind-icon">Result</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="suite.html" class="tsd-kind-icon">Suite</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#benchmarkoptions" class="tsd-kind-icon">Benchmark<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#operator" class="tsd-kind-icon">Operator</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#suiteoptions" class="tsd-kind-icon">Suite<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#targetfunc" class="tsd-kind-icon">Target<wbr>Func</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="../globals.html#testcallbacks" class="tsd-kind-icon">Test<wbr>Callbacks</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="../globals.html#timeit" class="tsd-kind-icon">timeit</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
