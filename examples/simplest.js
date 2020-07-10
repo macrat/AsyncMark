@@ -1,8 +1,5 @@
-const AsyncMark = require('../dist/asyncmark.js');
+const AsyncMark = require('../dist/index.js');
 
-
-new AsyncMark.Benchmark(function() {
-    return new Promise((resolve, reject) => {
-        setTimeout(resolve, 100);
-    });
-}).run().catch(console.error);
+new AsyncMark.Benchmark((() => new Promise((resolve) => {
+  setTimeout(resolve, 100);
+}))).run().catch(console.error);

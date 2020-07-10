@@ -5,19 +5,22 @@ A benchmarking library for javascript that supports Promise.
 
 [![NPM](https://nodei.co/npm/asyncmark.png)](https://nodei.co/npm/asyncmark/)
 
-[![Build Status](https://travis-ci.org/macrat/AsyncMark.svg?branch=master)](https://travis-ci.org/macrat/AsyncMark)
+[![Test Status](https://github.com/macrat/AsyncMark/workflows/test/badge.svg)](https://github.com/macrat/AsyncMark/actions?query=workflow%3Atest)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/test_coverage)](https://codeclimate.com/github/macrat/AsyncMark/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/cd3cd1561b170ca42584/maintainability)](https://codeclimate.com/github/macrat/AsyncMark/maintainability)
+
+[![dependencies Status](https://david-dm.org/macrat/asyncmark/status.svg)](https://david-dm.org/macrat/asyncmark)
 [![devDependencies Status](https://david-dm.org/macrat/asyncmark/dev-status.svg)](https://david-dm.org/macrat/asyncmark?type=dev)
 [![optionalDependencies Status](https://david-dm.org/macrat/asyncmark/optional-status.svg)](https://david-dm.org/macrat/asyncmark?type=optional)
+
 [![license](https://img.shields.io/github/license/macrat/AsyncMark.svg)](https://github.com/macrat/AsyncMark/blob/master/LICENSE)
 [![document](https://macrat.github.io/AsyncMark/badge.svg)](https://macrat.github.io/AsyncMark/)
 
-You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/index.html).
+You can [try benchmark on the web](https://macrat.github.io/AsyncMark/on-web/).
 
 ## be simple
 ``` javascript
-import Benchmark from 'asyncmark';
+import { Benchmark } from 'asyncmark';
 
 
 new Benchmark(function() {
@@ -29,7 +32,7 @@ new Benchmark(function() {
 
 ## be customizable
 ``` javascript
-import {Suite} from 'asyncmark';
+import { Suite } from 'asyncmark';
 
 
 const suite = new Suite({
@@ -79,7 +82,7 @@ suite.run()
 
 ## with unit test
 ``` javascript
-import Benchmark from 'asyncmark';
+import { Benchmark } from 'asyncmark';
 
 
 describe('benchmark test', function() {
@@ -101,7 +104,7 @@ $ npm install asyncmark
 
 #### ES6
 ``` javascript
-import Benchmark, {Suite} from 'asyncmark';
+import { Benchmark, Suite } from 'asyncmark';
 ```
 
 #### CommonJS
