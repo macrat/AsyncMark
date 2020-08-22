@@ -11,12 +11,12 @@ describe('timer', () => {
     test('measure', async () => {
       const times = [];
       for (let i = 0; i < 5; i += 1) {
-        times.push(timeit(() => new Promise((resolve) => setTimeout(resolve, 42))));
+        times.push(timeit(() => new Promise((resolve) => setTimeout(resolve, 10))));
       }
 
       const avg = (await Promise.all(times)).reduce((x, y) => x + y) / times.length;
 
-      expect(avg - 42).toBeLessThan(3);
+      expect(Math.abs(avg - 10)).toBeLessThan(times.length);
     });
 
     test('use context', async () => {
