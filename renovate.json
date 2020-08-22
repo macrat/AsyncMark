@@ -3,8 +3,10 @@
     "dev"
   ],
   "extends": [
-    "config:base"
+    "config:base",
+    ":timezone(Asia/Tokyo)"
   ],
+  "schedule": ["every weekend"],
   "semanticCommits": true,
   "minor": {
     "automerge": true
