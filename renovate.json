@@ -3,8 +3,11 @@
     "dev"
   ],
   "extends": [
-    "config:base"
+    "config:base",
+    ":timezone(Asia/Tokyo)"
   ],
+  "schedule": ["every weekend"],
+  "labels": ["dependencies"],
   "semanticCommits": true,
   "minor": {
     "automerge": true
