@@ -86,7 +86,7 @@ export const now = (() => {
  */
 export async function timeit<T extends unknown[], U extends Record<string, unknown>>(
   fun: ((...args: T) => Promise<void> | void),
-  args: T = [] as unknown as T,
+  args: T = [] as T,
   context: U = {} as U,
 ): Promise<number> {
   const start = now();
