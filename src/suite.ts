@@ -305,7 +305,7 @@ export default class Suite { // eslint-disable-line no-redeclare
   /**
    * @param options  Options for this suite.
    */
-  constructor(options: SuiteOptions = {}) {
+  constructor(options: Readonly<SuiteOptions> = {}) {
     this.name = options.name ?? this.name;
     this.benchmarkDefault = options.benchmarkDefault ?? {};
     this.parallel = options.parallel ?? this.parallel;
@@ -349,7 +349,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * @return  Returns this suite for method chain.
    */
-  add(child: Benchmark | Suite | BenchmarkOptions | TargetFunc): Suite {
+  add(child: Benchmark | Suite | Readonly<BenchmarkOptions> | TargetFunc): Suite {
     if (child instanceof Benchmark) {
       this.addBenchmark(child);
     } else if (child instanceof Suite) {
@@ -375,7 +375,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * @return  Callbacks.
    */
-  private _makeCallbacks(count: number, parentCallbacks: TestCallbacks): TestCallbacks {
+  private _makeCallbacks(count: number, parentCallbacks: Readonly<TestCallbacks>): TestCallbacks {
     const { beforeTest, afterTest } = this;
 
     return {
@@ -402,7 +402,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * @return  Result of benchmarks.
    */
-  private async _runParallel(context: any, callbacks: TestCallbacks): Promise<Result[]> {
+  private async _runParallel(context: any, callbacks: Readonly<TestCallbacks>): Promise<Result[]> {
     await this.before.call(context);
 
     const results = [].concat(...await Promise.all(this.benchmarks.map(async (x, i) => {
@@ -427,7 +427,10 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * @return  Result of benchmarks.
    */
-  private async _runSequential(context: any, callbacks: TestCallbacks): Promise<Result[]> {
+  private async _runSequential(
+    context: any,
+    callbacks: Readonly<TestCallbacks>,
+  ): Promise<Result[]> {
     await this.before.call(context);
 
     /* eslint-disable no-await-in-loop */
@@ -461,7 +464,7 @@ export default class Suite { // eslint-disable-line no-redeclare
    *
    * @return  An array of {@link Result}s.
    */
-  async run(context: any = {}, callbacks: TestCallbacks = {}): Promise<Result[]> {
+  async run(context: any = {}, callbacks: Readonly<TestCallbacks> = {}): Promise<Result[]> {
     const ctx = { ...context };
     ctx.__proto__ = this;
 

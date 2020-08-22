@@ -239,7 +239,7 @@ export default class Benchmark { // eslint-disable-line no-redeclare
   /**
    * @param options  The options for this benchmark or benchmarking function.
    */
-  constructor(options: BenchmarkOptions | TargetFunc) {
+  constructor(options: Readonly<BenchmarkOptions> | TargetFunc) {
     if (typeof options === 'function') {
       this.fun = options;
       return;
