@@ -50,7 +50,7 @@
     "semantic-release": "17.1.1",
     "ts-jest": "26.3.0",
     "tslib": "2.0.1",
-    "typedoc": "0.18.0",
+    "typedoc": "0.19.0",
     "typescript": "4.0.2"
   },
   "runkitExample": "const AsyncMark = require('asyncmark');\n\nnew AsyncMark.Benchmark(function() {\n    return new Promise((resolve, reject) => {\n        setTimeout(resolve, 100);\n    });\n}).run().catch(console.error);\n"
