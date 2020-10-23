@@ -17,7 +17,7 @@ jobs:
       - run: npm ci
       - run: npm run build:docs
       - run: cp -r on-web docs/
-      - uses: peaceiris/actions-gh-pages@v3.6.1
+      - uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: docs/
